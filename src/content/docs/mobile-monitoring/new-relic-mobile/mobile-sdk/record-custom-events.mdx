@@ -779,11 +779,11 @@ recordCustomEvent(eventType: string, eventName?: string, attributes?: {[key: str
             </td>
 
             <td>
-              `dictionary`
+              `object`
             </td>
 
             <td>
-              Optional. A map that includes a list of attributes that further designate subcategories to the `eventType`.
+              Optional. An object (or a `Map`) that includes a list of attributes that further designate subcategories to the `eventType`.
             </td>
           </tr>
         </tbody>
@@ -791,7 +791,7 @@ recordCustomEvent(eventType: string, eventName?: string, attributes?: {[key: str
 
       ## Return values [#return-values]
 
-      Returns `true` if the event is recorded successfully, or `false` if not.
+      This method doesn't return a value (`void`). If the event type, event name, or attributes are invalid, the agent logs an error and doesn't record the event.
 
       ## Example [#example]
 

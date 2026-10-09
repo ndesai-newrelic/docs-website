@@ -228,7 +228,7 @@ var sessionId = await NewrelicMobile.instance.currentSessionId();
       ## Syntax [#syntax]
 
 ```js
-currentSessionId(): Promise;
+currentSessionId(): Promise<string>;
 ```
 
       ## Description [#description]
@@ -237,7 +237,7 @@ currentSessionId(): Promise;
 
       ## Return values [#return-values]
 
-      Returns ID string for the current session.
+      Returns a `Promise` that resolves to the ID string for the current session. If the agent hasn't started, the promise resolves to `undefined`.
 
       ## Example [#example]
 

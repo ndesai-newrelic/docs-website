@@ -897,9 +897,9 @@ recordMetric(name: string, category: string, value?: number, countUnit?: string,
 
       ## Description [#description]
 
-      Records custom metrics (arbitrary numerical data), where `countUnit` is the measurement unit of the metric count and `valueUnit` is the measurement unit for the metric value. If you use `countUnit` or `valueUnit`, then you must set all three: `value`, `countUnit`, and `valueUnit`.
+      Records custom metrics (arbitrary numerical data), where `countUnit` is the measurement unit of the metric count and `valueUnit` is the measurement unit for the metric value. If you use `countUnit` or `valueUnit`, then you must set all three: `value`, `countUnit`, and `valueUnit`. If you set only one of the units, or a unit isn't one of the `NewRelic.MetricUnit` constants, the agent logs an error and doesn't record the metric.
 
-      Supported measurements for `countUnit` and `valueUnit` are:
+      Supported measurements for `countUnit` and `valueUnit` are the `NewRelic.MetricUnit` constants:
 
       * `PERCENT`
       * `BYTES`
@@ -951,7 +951,7 @@ recordMetric(name: string, category: string, value?: number, countUnit?: string,
             </td>
 
             <td>
-              Required. The metric category name, either custom or using a predefined [metric category](/docs/mobile-monitoring/new-relic-mobile-android/install-configure/work-android-sdk-api#cat).
+              Required. The metric category name. The category is displayed in the UI and is useful for organizing custom metrics. Use any string.
             </td>
           </tr>
 
@@ -965,7 +965,7 @@ recordMetric(name: string, category: string, value?: number, countUnit?: string,
             </td>
 
             <td>
-              Required. The value of the metric.
+              Optional. The value of the metric. The default is `-1`, which records the metric without a value.
             </td>
           </tr>
 
@@ -979,7 +979,7 @@ recordMetric(name: string, category: string, value?: number, countUnit?: string,
             </td>
 
             <td>
-              Required. The unit of measurement for the count.
+              Optional, but if you set it, you must also set `value` and `valueUnit`. The unit of measurement for the metric count. Use one of the `NewRelic.MetricUnit` constants.
             </td>
           </tr>
 
@@ -993,7 +993,7 @@ recordMetric(name: string, category: string, value?: number, countUnit?: string,
             </td>
 
             <td>
-              Required. The unit of measurement for the count.
+              Optional, but if you set it, you must also set `value` and `countUnit`. The unit of measurement for the metric value. Use one of the `NewRelic.MetricUnit` constants.
             </td>
           </tr>
         </tbody>

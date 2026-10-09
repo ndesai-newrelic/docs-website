@@ -151,8 +151,8 @@ class MainActivity : AppCompatActivity() {
     <TabsPageItem id="react">
       ## Syntax [#syntax]
 
-```
-NewRelic.recordReplay()
+```js
+NewRelic.recordReplay();
 ```
       ## Requirements
 
@@ -160,11 +160,9 @@ NewRelic.recordReplay()
 
       ## Description
 
-      `NewRelic.recordReplay()` can be called to manually force a replay to begin recording. You must meet the following requirements:
+      `NewRelic.recordReplay()` can be called to manually force a replay to begin recording. Your account must be entitled to record replays.
 
-      * Account is entitled to record replays
-
-      If a replay is already in progress, or not all of the above criteria are met, this API method will have no effect.
+      If a replay is already in progress, or your account isn't entitled to record replays, this API method has no effect.
 
       For information about pausing and resuming a replay, refer to [`NewRelic.pauseReplay()`](/docs/mobile-monitoring/new-relic-mobile/mobile-sdk/pause-replay)
 
@@ -176,7 +174,7 @@ NewRelic.recordReplay()
 
       Here's an example of forcing a replay to start recording.
       
-```
+```js
 NewRelic.recordReplay();
 ```
     </TabsPageItem>

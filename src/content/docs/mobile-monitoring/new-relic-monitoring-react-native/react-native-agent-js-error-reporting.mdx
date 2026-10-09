@@ -35,13 +35,14 @@ Before you begin, get the following from the same New Relic account:
 
 ### Android [#automatic-upload-android]
 
-Add your User API key to the `newrelic.properties` file in your project:
+Add your User API key and your Android application token to the `newrelic.properties` file in your app module directory, alongside `build.gradle`:
 
 ```properties
 com.newrelic.api_key=<YOUR_USER_API_KEY>
+com.newrelic.application_token=<YOUR_APPLICATION_TOKEN>
 ```
 
-Replace `<YOUR_USER_API_KEY>` with your User API key. The agent already knows the application token from `NewRelic.startAgent()`. When both values are valid, the agent generates and uploads the Android source map to New Relic automatically after each release build.
+Replace `<YOUR_USER_API_KEY>` with your User API key and `<YOUR_APPLICATION_TOKEN>` with your Android application token. The build-time Gradle task can't see the token you pass to `NewRelic.startAgent()` in JavaScript, because that call only configures the agent at runtime. That's why you must also set `com.newrelic.application_token` in this file. When both values are valid, the agent generates and uploads the Android source map to New Relic automatically after each release build.
 
 <Callout variant="tip">
   Automatic upload only runs for release builds by default. To get automatic source map upload for debug builds too, add `Debug` to the `uploadMapsForVariant` setting in your [New Relic Gradle plugin configuration](/docs/mobile-monitoring/new-relic-mobile-android/install-configure/configure-new-relic-gradle-plugin), for example `uploadMapsForVariant("Release", "Debug")`. Otherwise, [upload the debug build's source map manually](#manual-upload).
@@ -266,6 +267,11 @@ Responses use `Content-Type: application/json`.
     </tr>
 
     <tr>
+      <td>`409 Conflict`</td>
+      <td>A source map for this `jsBundleId` is already stored. The iOS build script treats this response as harmless, for example when you rebuild without changing the version, and doesn't report it as a failure.</td>
+    </tr>
+
+    <tr>
       <td>`413 Payload Too Large`</td>
       <td>The unzipped source map file exceeds 200 MB. Example: `{"message": "File too large.  Max size is currently 200 MiB"}`</td>
     </tr>
@@ -286,21 +292,9 @@ To symbolicate an OTA update, the upload must use:
 * A unique `jsBundleId` that matches the ID the agent reports during the JavaScript session.
 * The correct `appVersion`, which is the native version the bundle targets.
 
-You can upload the source map with a script in your CI/CD pipeline or manually with cURL.
+### Upload with cURL [#codepush-curl]
 
-### Method 1: Automated upload via script [#codepush-script]
-
-New Relic provides a Node.js helper script that you can run in your CI/CD pipeline immediately after the `appcenter codepush release-react` command.
-
-```bash
-# Example integration
-appcenter codepush release-react -a <Owner>/<App>
-node upload-nr-sourcemap.js --bundle android/index.android.bundle --map android/index.android.bundle.map --bundleId <NEW_ID>
-```
-
-### Method 2: Manual upload via cURL [#codepush-curl]
-
-If you prefer not to use the script, upload the source map (unzipped or zipped) to the symbol ingest API with cURL:
+Upload the source map (unzipped or zipped) to the symbol ingest API with cURL, for example from a step in your CI/CD pipeline that runs immediately after your CodePush release command:
 
 ```bash
 curl -X POST "https://symbol-ingest-api.service.newrelic.com/v1/react-native/sourcemaps" \
@@ -316,7 +310,11 @@ For the full list of headers, body fields, and responses, see the [upload API re
 
 ### Retrieve the jsBundleId [#retrieve-bundle-id]
 
-The `jsBundleId` used for the upload must match the bundle ID the agent reports for the JavaScript session. For CodePush releases, use the CodePush deployment or release identifier as the `jsBundleId` so the uploaded source map maps to the bundle running in your users' apps.
+The `jsBundleId` used for the upload must match the bundle ID the agent reports for the JavaScript session. The agent reports the `JSBundleId` attribute on each JavaScript error as exactly the string you pass to [`NewRelic.setJSAppVersion()`](/docs/mobile-monitoring/new-relic-mobile/mobile-sdk/set-application-version/#react). Call `setJSAppVersion()` after `NewRelic.startAgent()`; if you don't, the agent logs an error and sends the error without a bundle ID.
+
+For CodePush releases, pass the CodePush deployment or release identifier to `setJSAppVersion()` and use the same value as the `jsBundleId` so the uploaded source map maps to the bundle running in your users' apps.
+
+If you use the iOS build-phase script for [automatic upload](#automatic-upload-ios), the script uploads the source map with the app's `CFBundleShortVersionString` (the iOS app version) as the `jsBundleId`. In that case, pass the same value to `setJSAppVersion()` on iOS.
 
 <Callout variant="tip">
   To verify, audit, or remove source maps you've uploaded, see [List and delete React Native source maps](/docs/mobile-monitoring/new-relic-monitoring-react-native/list-delete-react-native-source-maps).

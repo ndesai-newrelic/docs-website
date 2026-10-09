@@ -2244,14 +2244,15 @@ backgroundReportingEnabled: true
     <TabsPageItem id="react">
       The React Native agent SDK allows you to configure default settings to change the behavior of the agent.
 
-      If you make any changes to the default settings, make sure to add the feature flags just after calling `appToken`.
+      To change a default setting, pass it in the configuration object that you give as the second argument to `NewRelic.startAgent()`. Settings you omit use their defaults, and settings take effect only at startup.
 
-      Here's a sample configuration:
+      Here's a sample configuration that shows each option set to its default value:
 
 ```javascript
+import { AppRegistry, Platform } from 'react-native';
 import NewRelic from 'newrelic-react-native-agent';
-import * as appVersion from './package.json';
-import {Platform} from 'react-native';
+import { name, version } from './package.json';
+import App from './App';
 
 let appToken;
 
@@ -2261,30 +2262,28 @@ if (Platform.OS === 'ios') {
   appToken = 'ANDROID_APP_TOKEN';
 }
 
-
 const agentConfiguration = {
-  Config config = Config(
-    analyticsEventEnabled: false,
-    crashReportingEnabled: false,
-    interactionTracingEnabled: false,
-    networkRequestEnabled: false,
-    networkErrorRequestEnabled: false,
-    httpResponseBodyCaptureEnabled: false,
-    loggingEnabled: false,
-    logLevel: NREnums.LogLevel.INFO,
-    webViewInstrumentation: false,
-    collectorAddress: "",
-    crashCollectorAddress: "",
-    sendConsoleEvents: false,
-    fedRampEnabled: false,
-    offlineStorageEnabled: false,
-    jsErrorReportingEnabled: true
-  )
+  analyticsEventEnabled: true, // Android only
+  crashReportingEnabled: true,
+  nativeCrashReportingEnabled: false, // Android only
+  jsErrorReportingEnabled: true,
+  interactionTracingEnabled: false,
+  networkRequestEnabled: true,
+  networkErrorRequestEnabled: true,
+  httpResponseBodyCaptureEnabled: true,
+  loggingEnabled: true,
+  logLevel: NewRelic.LogLevel.WARN,
+  webViewInstrumentation: true, // iOS only
+  collectorAddress: '',
+  crashCollectorAddress: '',
+  fedRampEnabled: false,
+  offlineStorageEnabled: true,
+  backgroundReportingEnabled: false
 };
 
-NewRelic.startAgent(appToken,agentConfiguration);
-NewRelic.setJSAppVersion(appVersion.version);
-AppRegistry.registerComponent(appName, () => App);
+NewRelic.startAgent(appToken, agentConfiguration);
+NewRelic.setJSAppVersion(version);
+AppRegistry.registerComponent(name, () => App);
 ```
 
       ## Available configurations [#react-native-configurations]
@@ -2305,7 +2304,7 @@ AppRegistry.registerComponent(appName, () => App);
         <tbody>
           <tr>
             <td>
-              (Android only) Enable or disable collection of event data.
+              (Android only) Enable or disable collection of event data. Default value is `true`. The iOS agent ignores this setting.
             </td>
 
             <td>
@@ -2317,7 +2316,7 @@ analyticsEventEnabled: true
 
           <tr>
             <td>
-              Enable or disable crash reporting.
+              Enable or disable crash reporting. Default value is `true`.
             </td>
 
             <td>
@@ -2329,7 +2328,7 @@ crashReportingEnabled: true
 
           <tr>
             <td>
-              Enable or disable native crash reporting.
+              (Android only) Enable or disable native crash reporting. Default value is `false`. The iOS agent ignores this setting.
             </td>
 
             <td>
@@ -2355,19 +2354,19 @@ jsErrorReportingEnabled: true
 
           <tr>
             <td>
-              Enable or disable interaction tracing. Trace instrumentation still occurs, but no traces are harvested. This will disable default and custom interactions.
+              Enable or disable interaction tracing. Default value is `false`. When interaction tracing is disabled, trace instrumentation still occurs, but no traces are harvested. This disables default and custom interactions.
             </td>
 
             <td>
 ```javascript
-interactionTracingEnabled: true
+interactionTracingEnabled: false
 ```
             </td>
           </tr>
 
           <tr>
             <td>
-              Enable or disable reporting successful HTTP requests to the `MobileRequest` event type.
+              Enable or disable reporting successful HTTP requests to the `MobileRequest` event type. Default value is `true`.
             </td>
 
             <td>
@@ -2379,7 +2378,7 @@ networkRequestEnabled: true
 
           <tr>
             <td>
-              Enable or disable reporting network and HTTP request errors to the `MobileRequestError` event type.
+              Enable or disable reporting network and HTTP request errors to the `MobileRequestError` event type. Default value is `true`.
             </td>
 
             <td>
@@ -2391,7 +2390,7 @@ networkErrorRequestEnabled: true
 
           <tr>
             <td>
-              Enable or disable capture of HTTP response bodies for HTTP error traces, and `MobileRequestError` events.
+              Enable or disable capture of HTTP response bodies for HTTP error traces, and `MobileRequestError` events. Default value is `true`.
             </td>
 
             <td>
@@ -2403,7 +2402,7 @@ httpResponseBodyCaptureEnabled: true
 
           <tr>
             <td>
-              Enable or disable agent logging.
+              Enable or disable agent logging. Default value is `true`.
             </td>
 
             <td>
@@ -2415,21 +2414,21 @@ loggingEnabled: true
 
           <tr>
             <td>
-              Specifies the log level. Omit this field for the default log level.
+              Specifies the log level. Omit this field for the default log level, `WARN`.
 
-              Options include: `ERROR` (least verbose), `WARNING`, `INFO`, `VERBOSE`, `AUDIT` (most verbose).
+              Options, set with the `NewRelic.LogLevel` constants, include: `ERROR` (least verbose), `WARN`, `INFO`, `VERBOSE`, `AUDIT`, and `DEBUG`. A value that is not one of these names, such as `WARNING`, is ignored and the default log level is used.
             </td>
 
             <td>
 ```javascript
-logLevel: NREnums.LogLevel.INFO
+logLevel: NewRelic.LogLevel.INFO
 ```
             </td>
           </tr>
 
           <tr>
             <td>
-              (iOS only) Enable/Disable automatic instrumentation of `WebViews`.
+              (iOS only) Enable/Disable automatic instrumentation of `WebViews`. Default value is `true`. The Android agent ignores this setting.
             </td>
 
             <td>
@@ -2441,7 +2440,7 @@ webViewInstrumentation: true
 
           <tr>
             <td>
-              Set a specific collector address for sending data. Omit this field for default address.
+              Set a specific collector address for sending data. Omit this field, or use an empty string, for the default address.
             </td>
 
             <td>
@@ -2453,7 +2452,7 @@ collectorAddress: "crash-upload-delegate.domain.com"
 
           <tr>
             <td>
-              Set a specific crash collector address for sending crashes. Omit this field for default address.
+              Set a specific crash collector address for sending crashes. Omit this field, or use an empty string, for the default address.
             </td>
 
             <td>
@@ -2477,7 +2476,7 @@ sendConsoleEvents: true
 
           <tr>
             <td>
-              Enable or disable reporting data using different endpoints for US government clients.
+              Enable or disable reporting data using different endpoints for US government clients. Default value is `false`.
             </td>
 
             <td>

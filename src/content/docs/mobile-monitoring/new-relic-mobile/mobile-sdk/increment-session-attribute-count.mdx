@@ -564,7 +564,7 @@ NewrelicMobile.instance.incrementAttribute("FlutterCustomAttrNumber", value :5.0
       ## Syntax [#syntax]
 
 ```js
-incrementAttribute(name: string, value?: number): void;
+incrementAttribute(attributeName: string, value?: number): void;
 ```
 
       ## Description [#description]
@@ -593,7 +593,7 @@ incrementAttribute(name: string, value?: number): void;
         <tbody>
           <tr>
             <td>
-              `name`
+              `attributeName`
             </td>
 
             <td>
@@ -615,7 +615,7 @@ incrementAttribute(name: string, value?: number): void;
             </td>
 
             <td>
-              Optional. The amount to increment the attribute by.
+              Optional. The amount to increment the attribute by. The default is `1`.
             </td>
           </tr>
         </tbody>
@@ -623,7 +623,7 @@ incrementAttribute(name: string, value?: number): void;
 
       ## Return values [#return-values]
 
-      Returns `true` if the event is recorded successfully, or `false` if not.
+      This method doesn't return a value (`void`).
 
       ## Example [#example]
 

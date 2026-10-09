@@ -459,7 +459,10 @@ setMaxEventBufferTime(maxBufferTimeInSeconds: number): void;
 
       ## Description [#description]
 
-      Sets the event harvest cycle length. Default is 60 seconds (1 minute). Minimum value can not be less than 60 seconds. Maximum value should not be greater than 600 seconds.
+      Sets the event harvest cycle length. Default is 60 seconds (1 minute). The allowed range depends on the platform:
+
+      * **iOS:** 60 to 600 seconds. Values outside this range are changed to the nearest limit.
+      * **Android:** Starting with Android agent 7.7.0, the minimum and the maximum are both 60 seconds, so any value is set to 60 seconds. The React Native agent 1.9.2 wraps Android agent 7.8.3.
 
       ## Parameters [#parameters]
 

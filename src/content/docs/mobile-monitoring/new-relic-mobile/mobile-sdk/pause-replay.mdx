@@ -144,8 +144,8 @@ class MainActivity : AppCompatActivity() {
     <TabsPageItem id="react">
       ## Syntax [#syntax]
 
-```
-NewRelic.pauseReplay()
+```js
+NewRelic.pauseReplay();
 ```
       ## Requirements
 
@@ -153,11 +153,11 @@ NewRelic.pauseReplay()
 
       ## Description
 
-      `newrelic.pauseReplay()` can be called to manually force a replay to pause recording.
+      `NewRelic.pauseReplay()` can be called to manually force a replay to pause recording.
 
       If a replay is not already in progress, this API method will have no effect.
 
-      If the mobile session is still valid, you can resume a paused replay by calling the [`newrelic.recordReplay()`](/docs/mobile-monitoring/new-relic-mobile/mobile-sdk/record-replay) API method.
+      If the mobile session is still valid, you can resume a paused replay by calling the [`NewRelic.recordReplay()`](/docs/mobile-monitoring/new-relic-mobile/mobile-sdk/record-replay) API method.
 
       ## Use Cases
 
@@ -167,8 +167,8 @@ NewRelic.pauseReplay()
 
       Here's an example of forcing a replay to pause recording.
 
-```
-NewRelic.pauseReplay()
+```js
+NewRelic.pauseReplay();
 ```
     </TabsPageItem>
   </TabsPages>

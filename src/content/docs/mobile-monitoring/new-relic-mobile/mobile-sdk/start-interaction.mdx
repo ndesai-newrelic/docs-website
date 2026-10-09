@@ -525,12 +525,14 @@ try {
       ## Syntax [#syntax]
 
 ```ts
-startInteraction(interactionName: string): Promise<InteractionId>;
+startInteraction(interactionName: string): Promise<string>;
 ```
 
       ## Description [#description]
 
-      Track a method as an interaction.
+      Track a method as an interaction. The returned promise resolves to the interaction ID, which you pass to [`endInteraction()`](/docs/mobile-monitoring/new-relic-mobile/mobile-sdk/stop-interaction) to end the interaction.
+
+      Interaction tracing is disabled by default in the React Native agent. Interactions are not harvested unless you set [`interactionTracingEnabled: true`](/docs/mobile-monitoring/new-relic-mobile/mobile-sdk/configure-settings/#react) in the configuration you pass to `NewRelic.startAgent()`.
 
       ## Parameters [#parameters]
 

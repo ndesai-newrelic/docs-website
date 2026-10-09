@@ -579,7 +579,7 @@ NewrelicMobile.instance.recordBreadcrumb("Button Got Pressed on Screen 3");
       ## Syntax [#syntax]
 
 ```js
-recordBreadcrumb(name: string, attributes?: {[key: string]: any}): void;
+recordBreadcrumb(eventName: string, attributes: {[key: string]: any}): void;
 ```
 
       ## Description [#description]
@@ -610,7 +610,7 @@ recordBreadcrumb(name: string, attributes?: {[key: string]: any}): void;
         <tbody>
           <tr>
             <td>
-              `name`
+              `eventName`
             </td>
 
             <td>
@@ -624,15 +624,15 @@ recordBreadcrumb(name: string, attributes?: {[key: string]: any}): void;
 
           <tr>
             <td>
-              `Attributes`
+              `attributes`
             </td>
 
             <td>
-              `Dictionary`
+              `object`
             </td>
 
             <td>
-              Optional. A map that includes a list of attributes of the breadcrumb event. Create attributes for any event descriptors you think will be useful.
+              Required. An object (or a `Map`) of key-value attributes for the breadcrumb event. Create attributes for any event descriptors you think will be useful. If you don't need any attributes, pass an empty object (`{}`). If you omit this parameter, the agent logs an error and doesn't record the breadcrumb.
             </td>
           </tr>
         </tbody>
@@ -640,7 +640,7 @@ recordBreadcrumb(name: string, attributes?: {[key: string]: any}): void;
 
       ## Return values [#return-values]
 
-      Returns `true` if the event is recorded successfully, or `false` if not.
+      This method doesn't return a value (`void`).
 
       ## Example [#example]
 

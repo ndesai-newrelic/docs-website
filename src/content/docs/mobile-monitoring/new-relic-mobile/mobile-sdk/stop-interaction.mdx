@@ -490,12 +490,14 @@ try {
       ## Syntax [#syntax]
 
 ```ts
-endInteraction(id: InteractionId): void;
+endInteraction(interactionId: string): void;
 ```
 
       ## Description [#description]
 
       This uses the string ID for the interaction you want to end. This string is returned when you use [`startInteraction()`](/docs/mobile-monitoring/new-relic-mobile/mobile-sdk/start-interaction).
+
+      Interaction tracing is disabled by default in the React Native agent. Interactions are not harvested unless you set [`interactionTracingEnabled: true`](/docs/mobile-monitoring/new-relic-mobile/mobile-sdk/configure-settings/#react) in the configuration you pass to `NewRelic.startAgent()`.
 
       ## Parameters [#parameters]
 
@@ -519,7 +521,7 @@ endInteraction(id: InteractionId): void;
         <tbody>
           <tr>
             <td>
-              `InteractionID`
+              `interactionId`
             </td>
 
             <td>

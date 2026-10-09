@@ -88,9 +88,9 @@ If you need to install the agent manually, follow these steps:
       // Optional:Enable or disable crash reporting.
       crashReportingEnabled: true,
 
-      // Optional:Enable or disable interaction tracing. Trace instrumentation still occurs, but no traces are harvested.
+      // Optional:Enable or disable interaction tracing. Default is false. When disabled, trace instrumentation still occurs, but no traces are harvested.
       // This will disable default and custom interactions.
-      interactionTracingEnabled: true,
+      interactionTracingEnabled: false,
 
       // Optional:Enable or disable reporting successful HTTP requests to the MobileRequest event type.
       networkRequestEnabled: true,
@@ -99,13 +99,13 @@ If you need to install the agent manually, follow these steps:
       networkErrorRequestEnabled: true,
       
       // Optional:Enable or disable capture of HTTP response bodies for HTTP error traces, and MobileRequestError events.
-      httpRequestBodyCaptureEnabled: true,
+      httpResponseBodyCaptureEnabled: true,
       
       // Optional:Enable or disable agent logging.
       loggingEnabled: true,
       
       // Optional:Specifies the log level. Omit this field for the default log level.
-      // Options include: ERROR (least verbose), WARNING, INFO, VERBOSE, AUDIT (most verbose).
+      // Options include: ERROR (least verbose), WARN, INFO, VERBOSE, AUDIT, and DEBUG. The default is WARN.
       logLevel: NewRelic.LogLevel.INFO,
       
       // iOS Specific
@@ -222,7 +222,7 @@ If you need to install the agent manually, follow these steps:
     npx react-native run-ios
     ```
 
-    In order to make sure that the React Native application functioning properly, you can run following commands, and fatal JS errors will show up as a crash in the New Relic UI.
+    In order to make sure that the React Native application functioning properly, you can run following commands, and fatal JS errors will be reported to New Relic as [`MobileJSError` events](/attribute-dictionary/?event=MobileJSError).
 
     For Android:
 

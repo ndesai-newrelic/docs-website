@@ -537,58 +537,80 @@ NewrelicMobile.instance.logAttributes({
 ### Syntax [#syntax]
 
 ```js
-NewRelic.logInfo(String message) : void
+NewRelic.logInfo(message: string): void
 
-NewRelic.logError(String message) : void
+NewRelic.logError(message: string): void
 
-NewRelic.logVerbose(String message) : void
+NewRelic.logVerbose(message: string): void
 
-NewRelic.logWarning(String message) : void
+NewRelic.logWarn(message: string): void
 
-NewRelic.logDebug(String message) : void
+NewRelic.logDebug(message: string): void
 
-NewRelic.log(LogLevel level, String message) : void
+NewRelic.log(logLevel: string, message: string): void
 
-NewRelic.logAll(Error error,attributes?: {[key: string]: any}) : void
+NewRelic.logAll(error: Error, attributes: Record<string, string | number | boolean>): void
 
-NewRelic.logAttributes(attributes?: {[key: string]: any}) : void
+NewRelic.logAttributes(attributes: Record<string, string | number | boolean>): void
 ```
 
+The `logLevel` value is one of the `NewRelic.LogLevel` constants: `ERROR`, `WARN`, `INFO`, `VERBOSE`, `AUDIT`, or `DEBUG`. An empty message, or an empty attributes object, is not sent and an error is written to the console.
 
 ### Example [#example]
 
-
-
 ```js
-NewRelic.logInfo();
+import NewRelic from "newrelic-react-native-agent";
+
+NewRelic.logInfo("This is an informational message");
 
 NewRelic.logError("This is an error message");
 
 NewRelic.logVerbose("This is a verbose message");
 
-NewRelic.logWarning("This is a warning message");
+NewRelic.logWarn("This is a warning message");
 
 NewRelic.logDebug("This is a debug message");
 
-NewRelic.log(LogLevel.INFO, "This is an informational message");
+NewRelic.log(NewRelic.LogLevel.INFO, "This is an informational message");
 
-Newrelic.logAll(new Error("This is an exception"), {
+NewRelic.logAll(new Error("This is an exception"), {
   BreadNumValue: 12.3,
-  BreadStrValue: "FlutterBread",
+  BreadStrValue: "ReactNativeBread",
   BreadBoolValue: true,
   message: "This is a message with attributes",
 });
 
-Newrelic.logAttributes({
+NewRelic.logAttributes({
   BreadNumValue: 12.3,
-  BreadStrValue: "FlutterBread",
+  BreadStrValue: "ReactNativeBread",
   BreadBoolValue: true,
   message: "This is a message with attributes",
-  level: newRelic.LogLevel.INFO,
+  level: NewRelic.LogLevel.INFO,
 });
 ```
 
- </TabsPageItem>
+### TypeScript example [#typescript-example]
+
+```typescript
+import NewRelic from "newrelic-react-native-agent";
+
+const attributes: Record<string, string | number | boolean> = {
+  BreadNumValue: 12.3,
+  BreadStrValue: "ReactNativeBread",
+  BreadBoolValue: true,
+  message: "This is a message with attributes",
+};
+
+NewRelic.logWarn("This is a warning message");
+
+NewRelic.log(NewRelic.LogLevel.INFO, "This is an informational message");
+
+NewRelic.logAll(new Error("This is an exception"), attributes);
+
+NewRelic.logAttributes({ ...attributes, level: NewRelic.LogLevel.INFO });
+```
+
+</TabsPageItem>
 
  <TabsPageItem id="xamarin">
 ### Syntax [#syntax]
