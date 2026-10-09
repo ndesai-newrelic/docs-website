@@ -7,7 +7,7 @@ tags:
 metaDescription: "New Relic's Ionic Capacitor agent for Android and iOS: Features, compatibility, requirements, installation, and upgrade procedures."
 redirects:
   - /docs/mobile-monitoring/new-relic-mobile-capacitor/get-started
-freshnessValidatedDate: 2024-08-26
+freshnessValidatedDate: 2026-10-09
 ---
 
 Our New Relic Ionic Capacitor agent monitors your Ionic Capacitor mobile app and provides deep insights into your app's performance, errors, and user experience. The agent automatically includes New Relic's native agents to provide mobile monitoring and performance visibility. Once you install and configure the agent, you'll be able to:
@@ -21,10 +21,82 @@ For more information, see [New Relic Ionic Capacitor agent on Github](https://gi
 
 ## Compatibility requirements [#requirements]
 
-Before you install the agent, ensure your app meets these requirements:
+Before you install the agent, ensure your app meets these requirements for plugin version 1.6.13:
+
+<table>
+  <thead>
+    <tr>
+      <th style={{ width: "300px" }}>
+        Requirement
+      </th>
+
+      <th>
+        Minimum
+      </th>
+    </tr>
+  </thead>
+
+  <tbody>
+    <tr>
+      <td>
+        Capacitor
+      </td>
+
+      <td>
+        8.0.0 or higher
+      </td>
+    </tr>
+
+    <tr>
+      <td>
+        Android
+      </td>
+
+      <td>
+        API level 24 (Android 7.0)
+      </td>
+    </tr>
+
+    <tr>
+      <td>
+        Java (Android build)
+      </td>
+
+      <td>
+        Java 21
+      </td>
+    </tr>
+
+    <tr>
+      <td>
+        iOS
+      </td>
+
+      <td>
+        iOS 15 with CocoaPods, or iOS 16 with Swift Package Manager
+      </td>
+    </tr>
+
+    <tr>
+      <td>
+        Wrapped native agents
+      </td>
+
+      <td>
+        Android agent 7.8.3 and iOS agent 7.7.7
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+The plugin includes the native Android and iOS agents, so you don't install them separately. For the full native requirements, see:
 
 * [Android-native requirements](/docs/mobile-monitoring/new-relic-mobile-android/get-started/new-relic-android-compatibility-requirements)
 * [iOS-native requirements](/docs/mobile-monitoring/new-relic-mobile-ios/get-started/new-relic-ios-compatibility-requirements)
+
+<Callout variant="important">
+  Earlier plugin versions have different iOS requirements. Versions before 1.5.12 support iOS 10 and higher, and versions 1.5.12 to 1.5.16 require iOS 16 or higher.
+</Callout>
 
 ## (Recommended) Guided installation [#guided-install]
 
@@ -132,12 +204,20 @@ If you need to install the agent manually, follow these steps:
 
     If your project is using plugin DSL, add this snippet:
 
-      In `android/app/build.gradle`:
+      In `android/settings.gradle`, add the plugin to the `plugins` block:
+        ```groovy
+        plugins {
+            ...
+            id "com.newrelic.agent.android" version "7.8.3" apply false  //<-- include this
+        }
+        ```
+
+      Then, in `android/app/build.gradle`:
         ```groovy
         plugins {
             id "com.android.application"
             id "kotlin-android"
-            id "com.newrelic.agent.android" version "7.5.1"  //<-- include this
+            id "com.newrelic.agent.android"  //<-- include this
         }
         ```
 
@@ -151,7 +231,7 @@ If you need to install the agent manually, follow these steps:
           }
           dependencies {
             ...
-            classpath "com.newrelic.agent.android:agent-gradle-plugin:7.5.1"
+            classpath "com.newrelic.agent.android:agent-gradle-plugin:7.8.3"
           }
         }
         ```
