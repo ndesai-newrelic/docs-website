@@ -1517,18 +1517,22 @@ backgroundReportingEnabled: true
     <TabsPageItem id="cordova">
       The Cordova agent SDK allows you to configure default settings to change the behavior of the agent.
 
-      If you make any changes to the default settings, make sure to add the feature flags just after calling `appToken`. 
+      You configure the Cordova agent when you add the plugin to your project, by passing each setting as a `--variable` argument to `cordova plugin add`, along with your application tokens. Settings you don't pass use the defaults shown in the table.
 
       Here's a sample configuration:
 
 ```shell
-# Disable Crash Reporting
-cordova plugin add https://github.com/newrelic/newrelic-cordova-plugin.git
-  --variable IOS_APP_TOKEN="YOUR_IOS_APP_TOKEN"
-  --variable ANDROID_APP_TOKEN="YOUR_ANDROID_APP_TOKEN"
-  --variable CRASH_REPORTING_ENABLED="false"
+# Disable crash reporting and offline storage
+cordova plugin add https://github.com/newrelic/newrelic-cordova-plugin.git \
+  --variable IOS_APP_TOKEN="YOUR_IOS_APP_TOKEN" \
+  --variable ANDROID_APP_TOKEN="YOUR_ANDROID_APP_TOKEN" \
+  --variable CRASH_REPORTING_ENABLED="false" \
   --variable OFFLINE_STORAGE_ENABLED="false"
 ```
+
+      <Callout variant="important">
+        On iOS, the agent requires a minimum deployment target of iOS 15.0. Add `<preference name="deployment-target" value="15.0" />` inside the `<platform name="ios">` element of your app's `config.xml`.
+      </Callout>
 
       ## Available configurations [#cordova-configurations]
 
@@ -1560,6 +1564,18 @@ CRASH_REPORTING_ENABLED = "true"
 
           <tr>
             <td>
+              Enable or disable adding distributed tracing headers to network requests.
+            </td>
+
+            <td>
+```shell
+DISTRIBUTED_TRACING_ENABLED = "true"
+```
+            </td>
+          </tr>
+
+          <tr>
+            <td>
               Enable or disable interaction tracing. Trace instrumentation still occurs, but no traces are harvested. This will disable default and custom interactions.
             </td>
 
@@ -1572,36 +1588,12 @@ INTERACTION_TRACING_ENABLED = "true"
 
           <tr>
             <td>
-              Enable or disable reporting successful HTTP requests to the `MobileRequest` event type.
+              Enable or disable default interactions. Trace instrumentation still occurs, but no traces are harvested. This disables default interactions only; custom interactions remain enabled.
             </td>
 
             <td>
-```typescript
-networkRequestEnabled: true
-```
-            </td>
-          </tr>
-
-          <tr>
-            <td>
-              Enable or disable reporting network and HTTP request errors to the `MobileRequestError` event type.
-            </td>
-
-            <td>
-```typescript
-networkErrorRequestEnabled: true
-```
-            </td>
-          </tr>
-
-          <tr>
-            <td>
-              Enable or disable capture of HTTP response bodies for HTTP error traces, and `MobileRequestError` events.
-            </td>
-
-            <td>
-```typescript
-httpResponseBodyCaptureEnabled: true
+```shell
+DEFAULT_INTERACTIONS_ENABLED = "true"
 ```
             </td>
           </tr>
@@ -1620,14 +1612,14 @@ LOGGING_ENABLED = "true"
 
           <tr>
             <td>
-              Specifies the log level. Omit this field for the default log level.
+              Specifies the log level. Omit this field for the default log level, `WARNING`.
 
-              Options include: `ERROR` (least verbose), `WARNING`, `INFO`, `VERBOSE`, `AUDIT` (most verbose).
+              Options include: `ERROR` (least verbose), `WARNING`, `INFO`, `VERBOSE`, `DEBUG`, `AUDIT` (most verbose).
             </td>
 
             <td>
 ```shell
-LOG_LEVEL = "INFO"
+LOG_LEVEL = "DEBUG"
 ```
             </td>
           </tr>
@@ -1646,7 +1638,7 @@ WEB_VIEW_INSTRUMENTATION = "true"
 
           <tr>
             <td>
-              Set a specific collector address for sending data. Omit this field for default address.
+              Set a specific collector address for sending data. Omit this field for default address. If you set only one of `COLLECTOR_ADDRESS` and `CRASH_COLLECTOR_ADDRESS`, the other uses its default address.
             </td>
 
             <td>
@@ -1670,12 +1662,12 @@ CRASH_COLLECTOR_ADDRESS = "crash-upload-delegate.domain.com"
 
           <tr>
             <td>
-              Enable or disable sending JavaScript console logs to New Relic.
+              Enable or disable forwarding JavaScript console output (`console.log`, `console.warn`, `console.error`, `console.debug`, and `console.assert`) to New Relic as log messages. Enabled by default.
             </td>
 
             <td>
-```typescript
-sendConsoleEvents: true
+```shell
+CONSOLE_LOGS_ENABLED = "true"
 ```
             </td>
           </tr>
@@ -1698,10 +1690,22 @@ FEDRAMP_ENABLED = "false"
             </td>
 
             <td>
-              Offline storage is enabled by default. To disable it, add the following feature flag:
+              Offline storage is enabled by default. To disable it, pass the following variable:
 
 ```shell
 OFFLINE_STORAGE_ENABLED = "false"
+```
+            </td>
+          </tr>
+
+          <tr>
+            <td>
+              (iOS only) Enable or disable the new, more stable event system in the iOS agent.
+            </td>
+
+            <td>
+```shell
+NEW_EVENT_SYSTEM_ENABLED = "true"
 ```
             </td>
           </tr>
@@ -1712,7 +1716,7 @@ OFFLINE_STORAGE_ENABLED = "false"
             </td>
 
             <td>
-              Background reporting is disabled by default. To enable it, add the following feature flag:
+              Background reporting is disabled by default. To enable it, pass the following variable:
 
 ```shell
 BACKGROUND_REPORTING_ENABLED = "true"
@@ -1729,6 +1733,22 @@ BACKGROUND_REPORTING_ENABLED = "true"
           </tr>
         </tbody>
       </table>
+
+      ## Runtime settings [#cordova-runtime]
+
+      Some settings aren't `--variable` options. You change them while the app is running by calling these methods on the `NewRelic` object:
+
+      * `NewRelic.networkRequestEnabled(enabled)`: Enable or disable reporting successful HTTP requests to the `MobileRequest` event type.
+      * `NewRelic.networkErrorRequestEnabled(enabled)`: Enable or disable reporting network and HTTP request errors to the `MobileRequestError` event type.
+      * `NewRelic.httpRequestBodyCaptureEnabled(enabled)`: Enable or disable capture of HTTP response bodies for HTTP error traces and `MobileRequestError` events.
+
+      Each method takes a boolean:
+
+```js
+NewRelic.networkRequestEnabled(false);
+NewRelic.networkErrorRequestEnabled(true);
+NewRelic.httpRequestBodyCaptureEnabled(true);
+```
     </TabsPageItem>
 
     <TabsPageItem id="maui">

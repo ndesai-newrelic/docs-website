@@ -56,6 +56,20 @@ If you need to install the agent manually, follow these steps:
   </Step>
 
   <Step>
+    ### (Required for iOS) Set the iOS deployment target [#ios-deployment-target]
+
+    The New Relic iOS agent requires a minimum deployment target of iOS 15.0. Add the following to your app's `config.xml`:
+
+    ```xml
+    <platform name="ios">
+        <preference name="deployment-target" value="15.0" />
+    </platform>
+    ```
+
+    This applies to both cordova-ios 8 and later (Swift Package Manager) and earlier versions (CocoaPods). On cordova-ios 8, if you skip this step, `cordova build ios` fails with an error that names `CordovaPlugins` rather than New Relic.
+  </Step>
+
+  <Step>
     ### (Optional) Configure the agent [#configure-agent]
 
     Add the following optional configurations to the `--variable` argument, which will call them upon agent start:
@@ -71,8 +85,8 @@ If you need to install the agent manually, follow these steps:
     * `LOGGING_ENABLED`: Enable or disable agent logging.
       * Possible values are `true` and `false`. Defaults to `true`.
     * `LOG_LEVEL`: Specifies the log level.
-      * Possible values are `ERROR` (least verbose), `WARNING` `INFO`, `VERBOSE`, `DEBUG`, `AUDIT` (most verbose).
-      * Defaults to `INFO` on Android and `WARNING` on iOS.
+      * Possible values are `ERROR` (least verbose), `WARNING`, `INFO`, `VERBOSE`, `DEBUG`, `AUDIT` (most verbose).
+      * Defaults to `WARNING`.
     * `WEB_VIEW_INSTRUMENTATION` (iOS ONLY): Enable (default) or disable automatic WKWebView instrumentation.
       * Possible values are `true` and `false`. Defaults to `true`.
     * `COLLECTOR_ADDRESS`: Specifies the URI authority component of the harvest data upload endpoint.
@@ -81,7 +95,9 @@ If you need to install the agent manually, follow these steps:
       * Possible values are `true` and `false`. Defaults to `false`.
     * `OFFLINE_STORAGE_ENABLED`: Enable or disable offline data storage when no internet connection is available.
       * Possible values are `true` and `false`. Defaults to `true`.
-    * `NEW_EVENT_SYSTEM_ENABLED`: Enable or disable to use our new, more stable, event system for iOS agent.
+    * `CONSOLE_LOGS_ENABLED`: Enable or disable forwarding JavaScript console output (`console.log`, `console.warn`, `console.error`, `console.debug`, and `console.assert`) to New Relic as log messages.
+      * Possible values are `true` and `false`. Defaults to `true`.
+    * `NEW_EVENT_SYSTEM_ENABLED` (iOS ONLY): Enable or disable the new, more stable, event system in the iOS agent.
       * Possible values are `true` and `false`. Defaults to `true`.
     * `BACKGROUND_REPORTING_ENABLED`: Enable or disable Background Events Reporting when the app is in the background.
       * Possible values are `true` and `false`. Defaults to `false`.
@@ -105,7 +121,7 @@ If you need to install the agent manually, follow these steps:
     npm install @awesome-cordova-plugins/newrelic
     ```
 
-    Make sure you paste your application token(s) into `appToken = ""` in the code above. If you deployed your hybrid app to both iOS and Android platforms, you'll need to add two separate tokens: one for iOS and one for Android.
+    Make sure you paste your application token(s) into the `--variable IOS_APP_TOKEN` and `--variable ANDROID_APP_TOKEN` arguments in the command above. If you deployed your hybrid app to both iOS and Android platforms, you'll need to add two separate tokens: one for iOS and one for Android.
   </Step>
 
   <Step>
