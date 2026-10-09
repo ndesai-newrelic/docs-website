@@ -1993,6 +1993,76 @@ newEventSystemEnabled: true
           </tr>
         </tbody>
       </table>
+
+      ## Change settings at runtime [#maui-runtime]
+
+      You can also enable or disable some of these features while the app is running, after you've started the agent. Each method takes a `bool` and returns `void`:
+
+      <table>
+        <thead>
+          <tr>
+            <th style={{ width: "400px" }}>
+              Method
+            </th>
+
+            <th>
+              Description
+            </th>
+          </tr>
+        </thead>
+
+        <tbody>
+          <tr>
+            <td>
+              `CrossNewRelic.Current.AnalyticsEventEnabled(bool enabled)`
+            </td>
+
+            <td>
+              (Android only) Enable or disable collection of event data. This method does nothing on iOS.
+            </td>
+          </tr>
+
+          <tr>
+            <td>
+              `CrossNewRelic.Current.NetworkRequestEnabled(bool enabled)`
+            </td>
+
+            <td>
+              Enable or disable reporting successful HTTP requests to the `MobileRequest` event type.
+            </td>
+          </tr>
+
+          <tr>
+            <td>
+              `CrossNewRelic.Current.NetworkErrorRequestEnabled(bool enabled)`
+            </td>
+
+            <td>
+              Enable or disable reporting network and HTTP request errors to the `MobileRequestError` event type.
+            </td>
+          </tr>
+
+          <tr>
+            <td>
+              `CrossNewRelic.Current.HttpResponseBodyCaptureEnabled(bool enabled)`
+            </td>
+
+            <td>
+              Enable or disable capture of HTTP response bodies for HTTP error traces and `MobileRequestError` events. `AgentStartConfiguration` has no option for this setting, so use this method to change it.
+            </td>
+          </tr>
+        </tbody>
+      </table>
+
+      Here's an example:
+
+```csharp
+// Stop reporting successful HTTP requests
+CrossNewRelic.Current.NetworkRequestEnabled(false);
+
+// Capture HTTP response bodies for HTTP errors
+CrossNewRelic.Current.HttpResponseBodyCaptureEnabled(true);
+```
     </TabsPageItem>
 
     <TabsPageItem id="flutter">

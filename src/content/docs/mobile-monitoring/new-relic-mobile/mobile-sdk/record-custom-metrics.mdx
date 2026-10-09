@@ -767,6 +767,9 @@ CrossNewRelic.Current.RecordMetric(string name, string category, double value, M
 ```csharp
 CrossNewRelic.Current.RecordMetric("Agent start", "Lifecycle");
 CrossNewRelic.Current.RecordMetric("Login Auth Metric", "Network", 78.9);
+
+// With units: the metric count is in operations, and the value is in seconds
+CrossNewRelic.Current.RecordMetric("Login Auth Time", "Network", 1.5, MetricUnit.OPERATIONS, MetricUnit.SECONDS);
 ```
     </TabsPageItem>
 

@@ -284,11 +284,14 @@ NSDictionary* dictionary = @{@"int" : @1, @"Test Group" : @"A | B"};
 
 ```csharp
 CrossNewRelic.Current.RecordException(System.Exception exception): void;
+CrossNewRelic.Current.RecordException(System.Exception exception, Dictionary<string, object> attributes): void;
 ```
 
       ## Description [#maui-description]
 
-      Manually record non-fatal exceptions.
+      Manually record non-fatal exceptions. Optionally pass a dictionary of attributes to add context to the exception. The overload that takes attributes is available in plugin version 1.1.1 and higher.
+
+      On iOS, the plugin sets the `name`, `reason`, and `cause` of the recorded exception to the exception message.
 
       ## Parameters [#maui-parameters]
 
@@ -323,6 +326,20 @@ CrossNewRelic.Current.RecordException(System.Exception exception): void;
               Required. The exception to be recorded.
             </td>
           </tr>
+
+          <tr>
+            <td>
+              `attributes`
+            </td>
+
+            <td>
+              `Dictionary<string, object>`
+            </td>
+
+            <td>
+              Optional. Only in the overload that takes attributes. A dictionary of key-value pairs that provide additional information about the exception.
+            </td>
+          </tr>
         </tbody>
       </table>
 
@@ -334,6 +351,22 @@ CrossNewRelic.Current.RecordException(System.Exception exception): void;
     } catch (Exception ex) {
       CrossNewRelic.Current.RecordException(ex);
     }
+```
+
+      Here's an example of recording a handled exception with attributes:
+
+```csharp
+try {
+  some_code_that_throws_error();
+} catch (Exception ex) {
+  CrossNewRelic.Current.RecordException(ex, new Dictionary<string, object>()
+    {
+      { "screen", "Checkout" },
+      { "retryCount", 2 },
+      { "isGuest", true }
+    }
+  );
+}
 ```
     </TabsPageItem>
 

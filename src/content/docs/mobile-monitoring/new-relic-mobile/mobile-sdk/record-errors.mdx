@@ -34,6 +34,10 @@ freshnessValidatedDate: 2023-07-26
       React Native
     </TabsBarItem>
 
+    <TabsBarItem id="maui">
+      .NET MAUI
+    </TabsBarItem>
+
     <TabsBarItem id="unreal">
       Unreal Engine
     </TabsBarItem>
@@ -514,6 +518,86 @@ try {
   foo.bar();
 } catch (e) {
   NewRelic.recordError(e, false, { screen: 'Checkout', 'Test Group': 'A | B' });
+}
+```
+    </TabsPageItem>
+
+    <TabsPageItem id="maui">
+      ## Syntax [#syntax]
+
+```csharp
+CrossNewRelic.Current.RecordException(System.Exception exception): void;
+CrossNewRelic.Current.RecordException(System.Exception exception, Dictionary<string, object> attributes): void;
+```
+
+      ## Description [#description]
+
+      In .NET MAUI, you record errors with `RecordException`. Use it for crash analysis: review the captured events to help you understand how often your app is throwing errors and under what conditions. In addition to any [custom attributes](/docs/mobile-monitoring/new-relic-mobile/maintenance/add-custom-data-new-relic-mobile) that you added, the events will also have associated [session attributes](/docs/insights/insights-data-sources/default-attributes/mobile-default-attributes-insights).
+
+      For the full reference, see [Record handled exception](/docs/mobile-monitoring/new-relic-mobile/mobile-sdk/record-handled-exceptions/#maui-syntax).
+
+      ## Parameters [#parameters]
+
+      <table>
+        <thead>
+          <tr>
+            <th width={200}>
+              Parameter
+            </th>
+
+            <th width={200}>
+              Type
+            </th>
+
+            <th>
+              Description
+            </th>
+          </tr>
+        </thead>
+
+        <tbody>
+          <tr>
+            <td>
+              `exception`
+            </td>
+
+            <td>
+              `Exception`
+            </td>
+
+            <td>
+              Required. The exception to be recorded.
+            </td>
+          </tr>
+
+          <tr>
+            <td>
+              `attributes`
+            </td>
+
+            <td>
+              `Dictionary<string, object>`
+            </td>
+
+            <td>
+              Optional. Only in the overload that takes attributes. A dictionary of key-value pairs that provide additional context for the error.
+            </td>
+          </tr>
+        </tbody>
+      </table>
+
+      ## Example [#example]
+
+```csharp
+try {
+  some_code_that_throws_error();
+} catch (Exception ex) {
+  CrossNewRelic.Current.RecordException(ex, new Dictionary<string, object>()
+    {
+      { "screen", "Checkout" },
+      { "Test Group", "A | B" }
+    }
+  );
 }
 ```
     </TabsPageItem>

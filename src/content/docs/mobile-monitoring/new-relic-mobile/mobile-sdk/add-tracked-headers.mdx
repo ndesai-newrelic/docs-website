@@ -360,6 +360,7 @@ NewRelic.addHTTPHeadersTrackingFor(["Car"]);
 
 ```csharp
 CrossNewRelic.Current.AddHTTPHeadersTrackingFor(List<string> headers): void;
+CrossNewRelic.Current.GetHTTPHeadersTrackingFor(): List<string>;
 ```
 
       ## Description [#description]
@@ -402,12 +403,19 @@ CrossNewRelic.Current.AddHTTPHeadersTrackingFor(List<string> headers): void;
         </tbody>
       </table>
 
+      ## Return values [#return-values]
+
+      `AddHTTPHeadersTrackingFor` returns `void`. `GetHTTPHeadersTrackingFor` returns a `List<string>` of the header names that you've registered for tracking. On iOS, `GetHTTPHeadersTrackingFor` always returns `null`.
+
       ## Examples [#examples]
 
       Here's an example of adding some HTTP header fields:
 
 ```csharp
 CrossNewRelic.Current.AddHTTPHeadersTrackingFor(new List<string> { "X-Request-Id", "X-Tenant-Id" });
+
+// Get the list of tracked headers. On iOS this returns null.
+List<string> trackedHeaders = CrossNewRelic.Current.GetHTTPHeadersTrackingFor();
 ```
     </TabsPageItem>
 

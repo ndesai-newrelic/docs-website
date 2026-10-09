@@ -183,6 +183,106 @@ If you need to install the agent manually, follow these steps:
   </Step>
 </Steps>
 
+## Agent setup methods [#setup-methods]
+
+The `NewRelic.MAUI.Plugin` namespace gives you access to the agent through `CrossNewRelic.Current`. Use these methods to set up the agent.
+
+### Start the agent [#start]
+
+```csharp
+CrossNewRelic.Current.Start(string applicationToken, AgentStartConfiguration agentConfig = null): void;
+```
+
+Starts the agent. We recommend using a separate application token for Android and iOS.
+
+<table>
+  <thead>
+    <tr>
+      <th style={{ width: "200px" }}>
+        Parameter
+      </th>
+
+      <th style={{ width: "250px" }}>
+        Type
+      </th>
+
+      <th>
+        Description
+      </th>
+    </tr>
+  </thead>
+
+  <tbody>
+    <tr>
+      <td>
+        `applicationToken`
+      </td>
+
+      <td>
+        `string`
+      </td>
+
+      <td>
+        Required. The application token for your app. See [Copy your application token](#app-token).
+      </td>
+    </tr>
+
+    <tr>
+      <td>
+        `agentConfig`
+      </td>
+
+      <td>
+        `AgentStartConfiguration`
+      </td>
+
+      <td>
+        Optional. Settings that change the default behavior of the agent. For the available options, see [Configure mobile monitoring settings](/docs/mobile-monitoring/new-relic-mobile/mobile-sdk/configure-settings/#maui).
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+### Record unhandled exceptions [#handle-uncaught-exceptions]
+
+```csharp
+CrossNewRelic.Current.HandleUncaughtException(): void;
+```
+
+Records unhandled exceptions to New Relic as handled exceptions. We recommend that you call this method before you call `Start`, as shown in [Add our agent configuration file to your .NET MAUI project](#add-configuration).
+
+### Instrument HttpClient [#http-message-handler]
+
+```csharp
+CrossNewRelic.Current.GetHttpMessageHandler(): HttpClientHandler;
+```
+
+Returns a handler that you pass to `HttpClient` to instrument your HTTP requests:
+
+```csharp
+HttpClient myClient = new HttpClient(CrossNewRelic.Current.GetHttpMessageHandler());
+```
+
+Platform differences:
+
+* <DNT>**Android:**</DNT> The handler adds the distributed tracing headers (`traceparent`, `tracestate`, and the New Relic payload header) to each request, adds the headers you registered with [`AddHTTPHeadersTrackingFor`](/docs/mobile-monitoring/new-relic-mobile/mobile-sdk/add-tracked-headers/#maui) to the recorded request, and records the request as an HTTP transaction.
+* <DNT>**iOS:**</DNT> The method returns a standard `HttpClientHandler`. The plugin doesn't add any handler-level instrumentation or distributed tracing headers on iOS.
+
+### Check whether the plugin is supported [#is-supported]
+
+```csharp
+CrossNewRelic.IsSupported: bool
+```
+
+Returns `true` when the plugin has an implementation for the platform your code is running on (Android or iOS). `CrossNewRelic.Current` throws a `NotImplementedException` on other platforms, so check `IsSupported` first if you share code with projects that target other platforms:
+
+```csharp
+if (CrossNewRelic.IsSupported)
+{
+  CrossNewRelic.Current.RecordBreadcrumb("AppStarted", new Dictionary<string, object>());
+}
+```
+
 ## Customize the agent instrumentation [#mobile-sdk]
 
 Need to customize your agent instrumentation? Our public mobile SDK API methods let you collect custom data, configure default settings, and more.
@@ -229,10 +329,10 @@ The following customizations are available for the .NET MAUI agent.
     </tr>
     <tr>
       <td id="create-custom">
-        Record handled exceptions.
+        Record handled exceptions, with or without attributes.
       </td>
       <td>
-        [Record handled exceptions](/docs/mobile-monitoring/new-relic-mobile/mobile-sdk/record-handled-exceptions)
+        [Record handled exceptions](/docs/mobile-monitoring/new-relic-mobile/mobile-sdk/record-handled-exceptions/#maui-syntax)
       </td>
     </tr>
     <tr>
@@ -265,6 +365,30 @@ The following customizations are available for the .NET MAUI agent.
       </td>
     </tr>
     <tr>
+      <td id="logs">
+        Send log messages to New Relic.
+      </td>
+      <td>
+        [Mobile logs](/docs/mobile-monitoring/mobile-monitoring-ui/mobile-logs)
+      </td>
+    </tr>
+    <tr>
+      <td id="tracked-headers">
+        Record HTTP headers as attributes on network request events.
+      </td>
+      <td>
+        [Add tracked headers](/docs/mobile-monitoring/new-relic-mobile/mobile-sdk/add-tracked-headers)
+      </td>
+    </tr>
+    <tr>
+      <td id="offline-storage">
+        Set the maximum size of offline storage.
+      </td>
+      <td>
+        [Set maximum offline storage size](/docs/mobile-monitoring/new-relic-mobile/mobile-sdk/set-max-offline-storage)
+      </td>
+    </tr>
+    <tr>
       <td>
         Shut down the agent.
       </td>
@@ -274,10 +398,10 @@ The following customizations are available for the .NET MAUI agent.
     </tr>
     <tr>
       <td>
-        Enable/disable default mobile monitoring settings.
+        Enable/disable default mobile monitoring settings, at startup or at runtime.
       </td>
       <td>
-        [Enable/disable monitoring features](/docs/mobile-monitoring/new-relic-mobile/mobile-sdk/configure-settings)
+        [Enable/disable monitoring features](/docs/mobile-monitoring/new-relic-mobile/mobile-sdk/configure-settings/#maui)
       </td>
     </tr>
     <tr>
