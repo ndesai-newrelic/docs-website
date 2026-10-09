@@ -324,11 +324,124 @@ The following customizations are available for the Flutter agent.
   </tbody>
 </table>
 
+## Track screen navigation [#flutter-navigation]
+
+To record screen navigation, add `NewRelicNavigationObserver` to your `MaterialApp`, `WidgetsApp`, or `CupertinoApp`. When a `PageRoute` is pushed, popped, or replaced, the observer records a `navigation` [breadcrumb](/docs/mobile-monitoring/new-relic-mobile/mobile-sdk/record-breadcrumb) with the attributes `methodType` (`didPush`, `didPop`, or `didReplace`), `from`, and `to`.
+
+Give each route a name with `RouteSettings(name: 'Your Route Name')`. Routes without a name are reported as `/`. For `go_router` pages (`MaterialPage`, `CupertinoPage`, and similar), the agent reports the page's child widget and key instead of the route name.
+
+```dart
+import 'package:newrelic_mobile/newrelic_navigation_observer.dart';
+
+MaterialApp(
+  navigatorObservers: [
+    NewRelicNavigationObserver(),
+  ],
+  // other parameters
+)
+```
+
+If you use the [`go_router`](https://pub.dev/packages/go_router) package, add the observer to the `observers` list of your `GoRouter`:
+
+```dart
+import 'package:go_router/go_router.dart';
+import 'package:newrelic_mobile/newrelic_navigation_observer.dart';
+
+final router = GoRouter(
+  routes: [
+    // your routes
+  ],
+  observers: [NewRelicNavigationObserver()],
+);
+```
+
+## Instrument HTTP requests [#flutter-http]
+
+When `httpInstrumentationEnabled` is `true` (the default), `startAgent()` sets `HttpOverrides.global` to a `NewRelicHttpOverrides` instance. It wraps every `dart:io` `HttpClient` in a `NewRelicHttpClient`, which automatically records `MobileRequest` and `MobileRequestError` events and, when `distributedTracingEnabled` is `true`, adds distributed tracing headers to the requests.
+
+### Chain with your own HttpOverrides [#flutter-http-overrides]
+
+`NewRelicHttpOverrides` wraps the `HttpOverrides` that are current when the agent starts. If your app uses its own `HttpOverrides` (for example, to set timeouts or to pin certificates), assign them to `HttpOverrides.global` before you start the agent, so the agent can chain with them:
+
+```dart
+import 'dart:io';
+
+class MyHttpOverrides extends HttpOverrides {
+  @override
+  HttpClient createHttpClient(SecurityContext? context) {
+    return super.createHttpClient(context)
+      ..connectionTimeout = const Duration(seconds: 15);
+  }
+}
+
+void main() {
+  // Set your overrides first. The agent chains with them when it starts.
+  HttpOverrides.global = MyHttpOverrides();
+
+  NewrelicMobile.instance.start(config, () {
+    runApp(const MyApp());
+  });
+}
+```
+
+If you must set `HttpOverrides.global` after the agent starts, or if you want to control how the underlying `HttpClient` is created, create `NewRelicHttpOverrides` yourself:
+
+```dart
+import 'dart:io';
+
+import 'package:newrelic_mobile/newrelic_http_overrides.dart';
+
+HttpOverrides.global = NewRelicHttpOverrides(
+  // Chain with your existing overrides.
+  current: MyHttpOverrides(),
+);
+
+// Or, provide the HttpClient that the agent wraps.
+HttpOverrides.global = NewRelicHttpOverrides(
+  createHttpClientFn: (SecurityContext? context) =>
+      HttpClient(context: context)..connectionTimeout = const Duration(seconds: 15),
+);
+```
+
+`NewRelicHttpOverrides` also accepts a `findProxyFromEnvironmentFn` to customize proxy resolution.
+
+### Wrap an HttpClient yourself [#flutter-http-client]
+
+To instrument a single `HttpClient` instead of using `HttpOverrides`, set `httpInstrumentationEnabled: false` in your `Config` and wrap the client in `NewRelicHttpClient`. Start the agent before you send requests.
+
+```dart
+import 'dart:io';
+
+import 'package:newrelic_mobile/newrelic_http_client.dart';
+
+final HttpClient client = NewRelicHttpClient(client: HttpClient());
+final HttpClientRequest request =
+    await client.getUrl(Uri.parse('https://example.com/searchpage'));
+final HttpClientResponse response = await request.close();
+```
+
+## Read the agent configuration [#flutter-get-config]
+
+`getAgentConfiguration()` returns the `Config` object that you passed when you started the agent. Call it only after the agent has started; if the agent hasn't started, the call throws.
+
+```dart
+Config getAgentConfiguration()
+```
+
+```dart
+final Config config = NewrelicMobile.instance.getAgentConfiguration();
+print(config.interactionTracingEnabled);
+```
+
+## Redirect debugPrint output [#flutter-debug-print]
+
+`startAgent()` calls `NewrelicMobile.instance.redirectDebugPrint()` for you. After that, Flutter's `debugPrint()` output is also forwarded to New Relic as `DEBUG` level logs, regardless of the `printStatementAsEventsEnabled` setting (which controls only `print()` output). You don't need to call `redirectDebugPrint()` yourself, and calling it more than once has no additional effect.
+
 ## Troubleshoot HTTP errors [#http-errors]
 
 Missing HTTP data in the UI?
 
-After installing the Flutter agent, wait at least 5 minutes. If no HTTP data appears on the HTTP errors and HTTP requests UI pages, make sure you are not overriding `HttpOverrides.global` inside your Flutter app.
+After installing the Flutter agent, wait at least 5 minutes. If no HTTP data appears on the HTTP errors and HTTP requests UI pages, make sure you are not replacing `HttpOverrides.global` inside your Flutter app after the agent starts. If your app needs its own `HttpOverrides`, see [Chain with your own HttpOverrides](#flutter-http-overrides).
 
 ## Query Flutter log data [#logs]
 

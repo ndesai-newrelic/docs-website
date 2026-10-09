@@ -35,6 +35,10 @@ freshnessValidatedDate: 2023-07-21
       .NET MAUI
     </TabsBarItem>
 
+    <TabsBarItem id="flutter">
+      Flutter
+    </TabsBarItem>
+
     <TabsBarItem id="react">
       React Native
     </TabsBarItem>
@@ -164,6 +168,28 @@ Shutdown() : void
 
 ```csharp
 CrossNewRelic.Current.Shutdown());
+```
+    </TabsPageItem>
+
+    <TabsPageItem id="flutter">
+      ## Syntax [#syntax]
+
+```dart
+Future<void> shutDown()
+```
+
+      ## Description [#description]
+
+      Shut down the agent within the current application lifecycle during runtime.
+
+      ## Return values [#return-values]
+
+      Returns a `Future<void>`.
+
+      ## Example [#example]
+
+```dart
+await NewrelicMobile.instance.shutDown();
 ```
     </TabsPageItem>
 

@@ -26,6 +26,10 @@ freshnessValidatedDate: 2023-07-20
       iOS
     </TabsBarItem>
 
+    <TabsBarItem id="flutter">
+      Flutter
+    </TabsBarItem>
+
     <TabsBarItem id="maui">
       .NET MAUI
     </TabsBarItem>
@@ -276,6 +280,28 @@ NSException* exception = [NSException exceptionWithName:@"MyException"
 NSDictionary* dictionary = @{@"int" : @1, @"Test Group" : @"A | B"};
 
 [NewRelic recordHandledException:exception withAttributes:dictionary];
+```
+    </TabsPageItem>
+
+    <TabsPageItem id="flutter">
+      ## Syntax [#flutter-syntax]
+
+```dart
+void recordError(Object error, StackTrace? stackTrace, {Map<String, dynamic>? attributes, bool isFatal = false})
+```
+
+      ## Description [#flutter-description]
+
+      In the Flutter agent, you record handled exceptions with `recordError()`. For the full parameter list, return value, and examples, see [Record errors](/docs/mobile-monitoring/new-relic-mobile/mobile-sdk/record-errors/).
+
+      ## Example [#flutter-example]
+
+```dart
+try {
+  someCodeThatThrowsAnError();
+} catch (e, stackTrace) {
+  NewrelicMobile.instance.recordError(e, stackTrace, attributes: {'screen': 'Checkout'});
+}
 ```
     </TabsPageItem>
 

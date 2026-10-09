@@ -1222,6 +1222,99 @@ await NewrelicMobile.instance.noticeHttpTransaction(
   responseBody: 'This is Test Payload',
 );
 ```
+
+      ## Generate distributed tracing data [#flutter-distributed-trace]
+
+      To build the `traceData` argument for `noticeHttpTransaction()`, and to add distributed tracing headers to a request, call `noticeDistributedTrace()` before you send the request.
+
+      ### Syntax [#flutter-trace-syntax]
+
+```dart
+Future<Map<String, dynamic>> noticeDistributedTrace(Map<String, dynamic> requestAttributes)
+```
+
+      ### Parameters [#flutter-trace-parameters]
+
+      <table>
+        <thead>
+          <tr>
+            <th width={200}>
+              Parameter
+            </th>
+
+            <th width={200}>
+              Type
+            </th>
+
+            <th>
+              Description
+            </th>
+          </tr>
+        </thead>
+
+        <tbody>
+          <tr>
+            <td>
+              `requestAttributes`
+            </td>
+
+            <td>
+              `Map<String, dynamic>`
+            </td>
+
+            <td>
+              Required. Currently ignored by the agent. Pass an empty map (`{}`).
+            </td>
+          </tr>
+        </tbody>
+      </table>
+
+      ### Return values [#flutter-trace-return-values]
+
+      Returns a `Future<Map<String, dynamic>>` with the distributed tracing data that the native agent generated. The keys are the constants defined in `DTTraceTags` (import `package:newrelic_mobile/newrelic_dt_trace.dart`):
+
+      * `DTTraceTags.traceParent` (`traceparent`), `DTTraceTags.traceState` (`tracestate`), and `DTTraceTags.newrelic` (`newrelic`): the headers to add to the outgoing request.
+      * `DTTraceTags.id` (`id`), `DTTraceTags.guid` (`guid`), and `DTTraceTags.traceId` (`trace.id`): trace identifiers.
+
+      Which keys have values depends on the platform. When you pass the map to `noticeHttpTransaction()`, the agent uses `id`, `guid`, and `trace.id` on Android, and `traceparent`, `tracestate`, and `newrelic` on iOS.
+
+      ### Example [#flutter-trace-example]
+
+```dart
+import 'package:newrelic_mobile/newrelic_dt_trace.dart';
+import 'package:newrelic_mobile/newrelic_mobile.dart';
+
+final int startTime = DateTime.now().millisecondsSinceEpoch;
+
+// Generate trace data and the headers to send with the request.
+final Map<String, dynamic> traceData =
+    await NewrelicMobile.instance.noticeDistributedTrace({});
+
+final Map<String, String> headers = {
+  for (final String tag in [
+    DTTraceTags.traceParent,
+    DTTraceTags.traceState,
+    DTTraceTags.newrelic,
+  ])
+    if (traceData[tag] != null) tag: traceData[tag] as String,
+};
+
+// Send the request with the headers, using your own transport.
+// final response = await myTransport.get(url, headers: headers);
+
+final int endTime = DateTime.now().millisecondsSinceEpoch;
+
+await NewrelicMobile.instance.noticeHttpTransaction(
+  'https://example.com/searchpage',
+  'GET',
+  200,
+  startTime,
+  endTime,
+  0,
+  300,
+  traceData,
+);
+```
     </TabsPageItem>
 
     <TabsPageItem id="react">

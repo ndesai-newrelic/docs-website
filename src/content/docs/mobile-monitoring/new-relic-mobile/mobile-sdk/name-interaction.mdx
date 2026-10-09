@@ -29,6 +29,10 @@ freshnessValidatedDate: 2023-07-20
     <TabsBarItem id="ios">
       iOS
     </TabsBarItem>
+
+    <TabsBarItem id="flutter">
+      Flutter
+    </TabsBarItem>
   </TabsBar>
 
   <TabsPages>
@@ -195,6 +199,70 @@ NewRelic.setInteractionName("Display MyCustomInteraction")
 @objc func customNewRelicInteractionName() -> String {
     return "CustomInteractionNameViewController"
 }
+```
+    </TabsPageItem>
+
+    <TabsPageItem id="flutter">
+      <Callout variant="important">
+        `setInteractionName()` works on Android only. On iOS, the call does nothing.
+      </Callout>
+
+      ## Syntax [#syntax]
+
+```dart
+Future<void> setInteractionName(String interactionName)
+```
+
+      ## Description [#description]
+
+      Set a new name for an interaction that is already being tracked by New Relic. The Flutter agent forwards this call to the native Android agent. On iOS, the call is a no-op.
+
+      To create a new interaction, see [`startInteraction()`](/docs/mobile-monitoring/new-relic-mobile/mobile-sdk/start-interaction).
+
+      ## Parameters [#parameters]
+
+      <table>
+        <thead>
+          <tr>
+            <th width={200}>
+              Parameter
+            </th>
+
+            <th width={200}>
+              Type
+            </th>
+
+            <th>
+              Description
+            </th>
+          </tr>
+        </thead>
+
+        <tbody>
+          <tr>
+            <td>
+              `interactionName`
+            </td>
+
+            <td>
+              `String`
+            </td>
+
+            <td>
+              Required. The name you want to give to the interaction.
+            </td>
+          </tr>
+        </tbody>
+      </table>
+
+      ## Return values [#return-values]
+
+      Returns a `Future<void>`.
+
+      ## Example [#example]
+
+```dart
+await NewrelicMobile.instance.setInteractionName('Display MyCustomInteraction');
 ```
     </TabsPageItem>
   </TabsPages>

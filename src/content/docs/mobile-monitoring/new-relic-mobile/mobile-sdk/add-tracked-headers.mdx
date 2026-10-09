@@ -476,6 +476,29 @@ void addHTTPHeadersTrackingFor(List<String> headers)
 ```dart
 NewrelicMobile.instance.addHTTPHeadersTrackingFor(["Content-Type", "X-Request-Id"]);
 ```
+
+      ## Get the tracked headers [#flutter-get-tracked-headers]
+
+      To read back the list of header fields that the agent is tracking, use `getHTTPHeadersTrackingFor()`.
+
+      ### Syntax [#flutter-get-syntax]
+
+```dart
+Future<dynamic> getHTTPHeadersTrackingFor()
+```
+
+      ### Return values [#flutter-get-return-values]
+
+      Returns a `Future<dynamic>` that completes with the list of header field names that the agent is tracking.
+
+      ### Example [#flutter-get-example]
+
+```dart
+NewrelicMobile.instance.addHTTPHeadersTrackingFor(["Content-Type", "X-Request-Id"]);
+
+final trackedHeaders = await NewrelicMobile.instance.getHTTPHeadersTrackingFor();
+print(trackedHeaders);
+```
     </TabsPageItem>
 
     <TabsPageItem id="react">
