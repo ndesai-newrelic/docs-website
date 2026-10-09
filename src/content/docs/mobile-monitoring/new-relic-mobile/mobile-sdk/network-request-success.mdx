@@ -497,7 +497,7 @@ NewRelic.createAndStartTimer() -> NRTimer!
             </td>
 
             <td>
-              Nullable. Used for distributed tracing. Pass the headers you added to the request.
+              Nullable. Used for distributed tracing. Pass the trace dictionary that you generated for the request (`generateDistributedTracingContext` or `generateDistributedTracingHeaders`). See [Manually instrument HTTP requests with distributed tracing (iOS)](/docs/mobile-monitoring/new-relic-mobile/mobile-sdk/manual-http-instrumentation-ios).
             </td>
           </tr>
 

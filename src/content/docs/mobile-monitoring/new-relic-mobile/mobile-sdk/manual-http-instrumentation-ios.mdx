@@ -1,0 +1,449 @@
+---
+title: Manually instrument HTTP requests with distributed tracing (iOS)
+type: apiDoc
+shortDescription: Shows how to report HTTP requests and propagate distributed tracing headers yourself, for any HTTP client in your iOS app.
+tags:
+  - Mobile monitoring
+  - Mobile SDK API
+  - Custom instrumentation
+  - Distributed tracing
+  - New Relic Mobile iOS
+  - iOS SDK API
+metaDescription: Learn how to manually instrument HTTP requests in your iOS app, with distributed tracing, for any HTTP client by using the New Relic iOS agent API.
+freshnessValidatedDate: never
+---
+
+The iOS agent instruments some networking APIs automatically. For requests it doesn't capture, you can do the same work yourself with the agent's API: create distributed tracing headers, add them to your outgoing request, and then report the result of the request. This guide shows the steps in Swift and Objective-C, and gives examples for `URLSession`, Alamofire, and a wrapper that works with any HTTP client.
+
+This guide uses methods that are available in agent version 7.7.8 and higher.
+
+## When to use manual instrumentation [#when]
+
+Before you add manual instrumentation, check whether the agent already reports your requests. Reporting a request twice creates duplicate events.
+
+The agent installs automatic instrumentation for these networking APIs:
+
+* `NSURLSession` data tasks and upload tasks. Automatic instrumentation is enabled by `NRFeatureFlag_NSURLSessionInstrumentation`, which is on by default.
+* Swift async `URLSession` functions, only when you enable `NRFeatureFlag_SwiftAsyncURLSessionSupport`, which is off by default.
+* `NSURLConnection`, unless you enable the deprecated `NRFeatureFlag_ExperimentalNetworkingInstrumentation` flag.
+* Network traffic from `WKWebView`, with the limitations in [iOS agent compatibility and requirements](/docs/mobile-monitoring/new-relic-mobile-ios/get-started/new-relic-ios-compatibility-requirements).
+
+The agent adds distributed tracing headers to the requests that it instruments when `NRFeatureFlag_DistributedTracing` is enabled, which is the default. For the full list of flags, see [Configure mobile monitoring settings](/docs/mobile-monitoring/new-relic-mobile/mobile-sdk/configure-settings#ios).
+
+Use manual instrumentation when:
+
+* You turned off automatic `NSURLSession` instrumentation, and you want to choose which requests are reported.
+* You use Swift async/await `URLSession` functions and don't enable `NRFeatureFlag_SwiftAsyncURLSessionSupport`.
+* You use a networking library or a custom networking stack whose requests the automatic instrumentation doesn't see. The agent's automatic hooks are on `NSURLSession`, `NSURLConnection`, and `WKWebView`, so traffic that doesn't go through those APIs isn't captured.
+
+If you aren't sure whether a client is instrumented, send a test request, and then look for a `MobileRequest` event for it. See [Verify your data](#verify).
+
+## How manual instrumentation works [#flow]
+
+For each request, follow these steps:
+
+1. **Start timing.** Create a timer with `createAndStartTimer`, or record the start time in milliseconds since the Unix epoch.
+2. **Generate a trace.** Call `generateDistributedTracingContext` (or `generateDistributedTracingHeaders`) to create the trace for this request.
+3. **Add the headers to the request.** Set the `traceparent` and `tracestate` headers on the outgoing request, so that downstream services can join the trace.
+4. **Send the request** with your HTTP client.
+5. **Report the result.** Call `noticeNetworkRequest` when you receive a response, or `noticeNetworkFailure` when the request fails. Pass the trace dictionary as `traceHeaders`, so that the event is reported against the same trace that you put on the wire.
+
+### Generate the trace [#generate]
+
+The agent has two methods that create the trace.
+
+| Method | Returns | When to use |
+|---|---|---|
+| `+ (NSDictionary<NSString *, NSString *> *)generateDistributedTracingHeaders` | The W3C `traceparent` and `tracestate` headers for a new trace. | Use it when you only need headers. You can pass the same dictionary as `traceHeaders`; the agent reads the trace ID and span ID from the `traceparent` header. |
+| `+ (NSDictionary<NSString *, NSString *> *)generateDistributedTracingContext` (agent version 7.7.8 and higher) | One new trace as a single dictionary: the `traceparent` and `tracestate` headers, plus the trace identity in the `trace.id`, `id`, and `guid` entries. | Use it when your code both makes and reports the request. You set the two headers on the request, and then pass the whole dictionary as `traceHeaders`, so the agent doesn't need to parse the headers. |
+
+In Swift, these methods are `NewRelic.generateDistributedTracingHeaders()` and `NewRelic.generateDistributedTracingContext()`, and both return `[String: String]`.
+
+Be aware of the following:
+
+* Each call creates a new trace. Call the method once per request, and use the same dictionary for the headers and for the report.
+* Both methods return an empty dictionary if the agent can't create a trace, for example when it doesn't yet have the account and application IDs. Add headers only for keys that exist.
+* The `generate` methods don't check `NRFeatureFlag_DistributedTracing`. That flag only controls the headers that the agent adds to requests it instruments.
+
+### Report the request [#report]
+
+Report a request that received a response with `noticeNetworkRequest`. Report a request that failed to receive a response with `noticeNetworkFailure`. Both have an overload that takes a timer, and an overload that takes `startTime` and `endTime` in milliseconds since the Unix epoch.
+
+```objectivec
++ (void)noticeNetworkRequestForURL:(NSURL *)url
+                        httpMethod:(NSString *)httpMethod
+                         withTimer:(NRTimer *)timer
+                   responseHeaders:(NSDictionary *)headers
+                        statusCode:(NSInteger)httpStatusCode
+                         bytesSent:(NSUInteger)bytesSent
+                     bytesReceived:(NSUInteger)bytesReceived
+                      responseData:(NSData *)responseData
+                      traceHeaders:(NSDictionary<NSString *, NSString *> * _Nullable)traceHeaders
+                         andParams:(NSDictionary * _Nullable)params;
+
++ (void)noticeNetworkFailureForURL:(NSURL *)url
+                        httpMethod:(NSString *)httpMethod
+                         withTimer:(NRTimer *)timer
+                      traceHeaders:(NSDictionary * _Nullable)traceHeaders
+                    andFailureCode:(NSInteger)iOSFailureCode;
+```
+
+```swift
+NewRelic.noticeNetworkRequest(for: URL, httpMethod: String, with: NRTimer, responseHeaders: [AnyHashable: Any], statusCode: Int, bytesSent: UInt, bytesReceived: UInt, responseData: Data, traceHeaders: [String: String]?, andParams: [AnyHashable: Any]?)
+
+NewRelic.noticeNetworkFailure(for: URL, httpMethod: String, with: NRTimer, traceHeaders: [AnyHashable: Any]?, andFailureCode: Int)
+```
+
+Keep these points in mind:
+
+* `url`, `httpMethod`, the timer (or `startTime` and `endTime`), `responseHeaders`, `statusCode`, `bytesSent`, `bytesReceived`, and `responseData` are required for a response. `traceHeaders` and `params` are nullable. The `params` parameter is documented as unused, so pass `nil`.
+* Pass `traceHeaders` on every report. If you don't, the agent can't tie the event to the trace that you put on the wire. For a failure, the agent then generates a new trace that doesn't match the request.
+* The agent records a response with a status code of 400 or higher as a `MobileRequestError` event, so you don't need to call `noticeNetworkFailure` for HTTP error responses. Use `noticeNetworkFailure` only when there is no response, such as for timeouts and connection errors.
+* `iOSFailureCode` should be one of [Apple's URL loading error codes](https://developer.apple.com/documentation/foundation/1508628-url_loading_system_error_codes), such as `NSURLErrorTimedOut`. If your client doesn't report URL error codes, use `NSURLErrorUnknown`.
+* The `noticeNetwork` methods stop the timer that you pass in. The overloads that take `traceHeaders` for failures are available in agent version 7.7.8 and higher.
+
+For the full parameter descriptions, see [Track HTTP requests](/docs/mobile-monitoring/new-relic-mobile/mobile-sdk/network-request-success) and [Track failing HTTP requests](/docs/mobile-monitoring/new-relic-mobile/mobile-sdk/network-request-failures).
+
+## URLSession [#urlsession]
+
+This example wraps a `URLSession` request. Use it when you turned off automatic `NSURLSession` instrumentation, or when you use async/await `URLSession` functions without `NRFeatureFlag_SwiftAsyncURLSessionSupport`. Don't use it for requests that the agent already instruments.
+
+### Swift [#urlsession-swift]
+
+```swift
+import Foundation
+import NewRelic
+
+func instrumentedData(for originalRequest: URLRequest) async throws -> (Data, URLResponse) {
+    var request = originalRequest
+
+    // Generate one trace for this request, and add its headers to the request
+    let traceContext = NewRelic.generateDistributedTracingContext()
+    for name in ["traceparent", "tracestate"] {
+        if let value = traceContext[name] {
+            request.setValue(value, forHTTPHeaderField: name)
+        }
+    }
+
+    let timer = NewRelic.createAndStartTimer()
+    let method = request.httpMethod ?? "GET"
+
+    do {
+        let (data, response) = try await URLSession.shared.data(for: request)
+        let httpResponse = response as? HTTPURLResponse
+
+        NewRelic.noticeNetworkRequest(for: request.url,
+                                      httpMethod: method,
+                                      with: timer,
+                                      responseHeaders: httpResponse?.allHeaderFields ?? [:],
+                                      statusCode: httpResponse?.statusCode ?? 0,
+                                      bytesSent: UInt(request.httpBody?.count ?? 0),
+                                      bytesReceived: UInt(data.count),
+                                      responseData: data,
+                                      traceHeaders: traceContext,
+                                      andParams: nil)
+        return (data, response)
+    } catch {
+        // The request failed before it received a response
+        NewRelic.noticeNetworkFailure(for: request.url,
+                                      httpMethod: method,
+                                      with: timer,
+                                      traceHeaders: traceContext,
+                                      andFailureCode: (error as NSError).code)
+        throw error
+    }
+}
+```
+
+### Objective-C [#urlsession-objc]
+
+```objectivec
+#import <NewRelic/NewRelic.h>
+
+- (NSURLSessionDataTask *)instrumentedDataTaskWithRequest:(NSURLRequest *)originalRequest
+                                        completionHandler:(void (^)(NSData *data, NSURLResponse *response, NSError *error))completionHandler {
+    NSMutableURLRequest *request = [originalRequest mutableCopy];
+
+    // Generate one trace for this request, and add its headers to the request
+    NSDictionary<NSString *, NSString *> *traceContext = [NewRelic generateDistributedTracingContext];
+    for (NSString *name in @[@"traceparent", @"tracestate"]) {
+        NSString *value = traceContext[name];
+        if (value) {
+            [request setValue:value forHTTPHeaderField:name];
+        }
+    }
+
+    NRTimer *timer = [NewRelic createAndStartTimer];
+    NSString *method = request.HTTPMethod ?: @"GET";
+
+    return [[NSURLSession sharedSession] dataTaskWithRequest:request
+                                           completionHandler:^(NSData *data, NSURLResponse *response, NSError *error) {
+        NSHTTPURLResponse *httpResponse = [response isKindOfClass:[NSHTTPURLResponse class]] ? (NSHTTPURLResponse *)response : nil;
+
+        if (httpResponse) {
+            [NewRelic noticeNetworkRequestForURL:request.URL
+                                      httpMethod:method
+                                       withTimer:timer
+                                 responseHeaders:httpResponse.allHeaderFields
+                                      statusCode:httpResponse.statusCode
+                                       bytesSent:request.HTTPBody.length
+                                   bytesReceived:data.length
+                                    responseData:data ?: [NSData data]
+                                    traceHeaders:traceContext
+                                       andParams:nil];
+        } else {
+            // The request failed before it received a response
+            [NewRelic noticeNetworkFailureForURL:request.URL
+                                      httpMethod:method
+                                       withTimer:timer
+                                    traceHeaders:traceContext
+                                  andFailureCode:error ? error.code : NSURLErrorUnknown];
+        }
+
+        completionHandler(data, response, error);
+    }];
+}
+```
+
+Call `resume` on the returned task to start the request.
+
+## Alamofire [#alamofire]
+
+Alamofire is a Swift library, so this example is Swift only. For Objective-C, see [any HTTP client](#generic).
+
+The agent's source and documentation don't mention Alamofire, so this guide can't confirm whether Alamofire requests are instrumented automatically. Alamofire makes its requests with `URLSession`, so first check whether your Alamofire requests already appear as `MobileRequest` events. If they do, you don't need this code. If they don't, use an Alamofire `RequestInterceptor` to add the trace headers, and an `EventMonitor` to report the result.
+
+The example reads the `traceparent` and `tracestate` headers back from the final request in the event monitor and passes them as `traceHeaders`. The agent accepts these W3C headers and uses their trace ID and span ID. It is based on the Alamofire 5 API.
+
+### Swift [#alamofire-swift]
+
+```swift
+import Alamofire
+import NewRelic
+
+// Adds a new trace to every request
+final class NewRelicTraceInterceptor: RequestInterceptor {
+    func adapt(_ urlRequest: URLRequest,
+               for session: Session,
+               completion: @escaping (Result<URLRequest, Error>) -> Void) {
+        var request = urlRequest
+        let traceContext = NewRelic.generateDistributedTracingContext()
+        for name in ["traceparent", "tracestate"] {
+            if let value = traceContext[name] {
+                request.setValue(value, forHTTPHeaderField: name)
+            }
+        }
+        completion(.success(request))
+    }
+}
+
+// Reports each finished request to New Relic
+final class NewRelicEventMonitor: EventMonitor {
+    let queue = DispatchQueue(label: "com.example.newrelic-event-monitor")
+
+    func requestDidFinish(_ request: Request) {
+        guard let urlRequest = request.request, let url = urlRequest.url else { return }
+
+        let method = urlRequest.httpMethod ?? "GET"
+
+        // Recover the trace that the interceptor put on the request
+        var traceHeaders: [String: String] = [:]
+        for name in ["traceparent", "tracestate"] {
+            if let value = urlRequest.value(forHTTPHeaderField: name) {
+                traceHeaders[name] = value
+            }
+        }
+
+        // Milliseconds since the Unix epoch
+        let interval = request.metrics?.taskInterval
+        let startTime = (interval?.start ?? Date()).timeIntervalSince1970 * 1000
+        let endTime = (interval?.end ?? Date()).timeIntervalSince1970 * 1000
+
+        if let response = request.response {
+            let body = (request as? DataRequest)?.data ?? Data()
+            NewRelic.noticeNetworkRequest(for: url,
+                                          httpMethod: method,
+                                          startTime: startTime,
+                                          endTime: endTime,
+                                          responseHeaders: response.allHeaderFields,
+                                          statusCode: response.statusCode,
+                                          bytesSent: UInt(urlRequest.httpBody?.count ?? 0),
+                                          bytesReceived: UInt(body.count),
+                                          responseData: body,
+                                          traceHeaders: traceHeaders,
+                                          andParams: nil)
+        } else if let error = request.error {
+            // No response: report a failure with the URL error code, if there is one
+            let code = (error.underlyingError as NSError?)?.code ?? NSURLErrorUnknown
+            NewRelic.noticeNetworkFailure(for: url,
+                                          httpMethod: method,
+                                          startTime: startTime,
+                                          endTime: endTime,
+                                          traceHeaders: traceHeaders,
+                                          andFailureCode: code)
+        }
+    }
+}
+
+let session = Session(interceptor: NewRelicTraceInterceptor(),
+                      eventMonitors: [NewRelicEventMonitor()])
+
+session.request("https://www.newrelic.com").validate().response { response in
+    // Handle the response
+}
+```
+
+## Any HTTP client [#generic]
+
+If your HTTP client isn't `URLSession`-based, or you want one code path for several clients, wrap the call to your client. The wrapper creates the trace, hands the trace headers to your client, times the call, and reports the response or the error. Your client only needs to give you the status code, the response headers, and the body, and to accept extra request headers.
+
+In these examples, `myClient` stands in for your own HTTP client, such as a custom networking stack or a gRPC-style client. Replace it with your client's API.
+
+### Swift [#generic-swift]
+
+```swift
+import Foundation
+import NewRelic
+
+struct ClientResponse {
+    let statusCode: Int
+    let headers: [AnyHashable: Any]
+    let body: Data
+}
+
+/// Runs `send`, passing it the trace headers to add to the request, and reports the result to New Relic.
+func withNewRelic(url: URL,
+                  method: String,
+                  requestBytes: UInt = 0,
+                  send: ([String: String]) async throws -> ClientResponse) async throws -> ClientResponse {
+    // Generate one trace, and keep the headers to send
+    let traceContext = NewRelic.generateDistributedTracingContext()
+    var traceHeaders: [String: String] = [:]
+    for name in ["traceparent", "tracestate"] {
+        if let value = traceContext[name] {
+            traceHeaders[name] = value
+        }
+    }
+
+    // Milliseconds since the Unix epoch
+    let startTime = Date().timeIntervalSince1970 * 1000
+
+    do {
+        let response = try await send(traceHeaders)
+        let endTime = Date().timeIntervalSince1970 * 1000
+
+        NewRelic.noticeNetworkRequest(for: url,
+                                      httpMethod: method,
+                                      startTime: startTime,
+                                      endTime: endTime,
+                                      responseHeaders: response.headers,
+                                      statusCode: response.statusCode,
+                                      bytesSent: requestBytes,
+                                      bytesReceived: UInt(response.body.count),
+                                      responseData: response.body,
+                                      traceHeaders: traceContext,
+                                      andParams: nil)
+        return response
+    } catch {
+        let endTime = Date().timeIntervalSince1970 * 1000
+
+        // Use the URL error code if the error is a URLError; otherwise, report an unknown failure
+        let code = (error as? URLError)?.errorCode ?? NSURLErrorUnknown
+        NewRelic.noticeNetworkFailure(for: url,
+                                      httpMethod: method,
+                                      startTime: startTime,
+                                      endTime: endTime,
+                                      traceHeaders: traceContext,
+                                      andFailureCode: code)
+        throw error
+    }
+}
+
+// Example use. Replace `myClient.post` with your client's API.
+let url = URL(string: "https://api.example.com/orders")!
+let payload = Data("{\"item\":42}".utf8)
+
+Task {
+    do {
+        let response = try await withNewRelic(url: url, method: "POST", requestBytes: UInt(payload.count)) { traceHeaders in
+            let result = try await myClient.post(url, headers: traceHeaders, body: payload)
+            return ClientResponse(statusCode: result.statusCode, headers: result.headers, body: result.body)
+        }
+        // Handle the response
+    } catch {
+        // Handle the error. The failure is already reported to New Relic.
+    }
+}
+```
+
+### Objective-C [#generic-objc]
+
+```objectivec
+#import <NewRelic/NewRelic.h>
+
+// Your client calls this block when it has a response, or an error if it failed
+typedef void (^MyClientCompletion)(NSInteger statusCode, NSDictionary *responseHeaders, NSData *body, NSError *error);
+
+// Your client sends the request. `traceHeaders` are the headers to add to the request.
+typedef void (^MyClientSend)(NSDictionary<NSString *, NSString *> *traceHeaders, MyClientCompletion completion);
+
+void MyInstrumentedRequest(NSURL *url, NSString *method, NSUInteger requestBytes, MyClientSend send, MyClientCompletion completion) {
+    // Generate one trace, and keep the headers to send
+    NSDictionary<NSString *, NSString *> *traceContext = [NewRelic generateDistributedTracingContext];
+    NSMutableDictionary<NSString *, NSString *> *traceHeaders = [NSMutableDictionary dictionary];
+    for (NSString *name in @[@"traceparent", @"tracestate"]) {
+        NSString *value = traceContext[name];
+        if (value) {
+            traceHeaders[name] = value;
+        }
+    }
+
+    NRTimer *timer = [NewRelic createAndStartTimer];
+
+    send(traceHeaders, ^(NSInteger statusCode, NSDictionary *responseHeaders, NSData *body, NSError *error) {
+        if (error) {
+            // Use the URL error code if there is one; otherwise, report an unknown failure
+            NSInteger code = [error.domain isEqualToString:NSURLErrorDomain] ? error.code : NSURLErrorUnknown;
+            [NewRelic noticeNetworkFailureForURL:url
+                                      httpMethod:method
+                                       withTimer:timer
+                                    traceHeaders:traceContext
+                                  andFailureCode:code];
+        } else {
+            [NewRelic noticeNetworkRequestForURL:url
+                                      httpMethod:method
+                                       withTimer:timer
+                                 responseHeaders:responseHeaders ?: @{}
+                                      statusCode:statusCode
+                                       bytesSent:requestBytes
+                                   bytesReceived:body.length
+                                    responseData:body ?: [NSData data]
+                                    traceHeaders:traceContext
+                                       andParams:nil];
+        }
+        completion(statusCode, responseHeaders, body, error);
+    });
+}
+
+// Example use. Replace `[myClient post:...]` with your client's API.
+NSURL *url = [NSURL URLWithString:@"https://api.example.com/orders"];
+NSData *payload = [@"{\"item\":42}" dataUsingEncoding:NSUTF8StringEncoding];
+
+MyInstrumentedRequest(url, @"POST", payload.length,
+    ^(NSDictionary<NSString *, NSString *> *traceHeaders, MyClientCompletion done) {
+        [myClient post:url headers:traceHeaders body:payload completion:done];
+    },
+    ^(NSInteger statusCode, NSDictionary *responseHeaders, NSData *body, NSError *error) {
+        // Handle the response
+    });
+```
+
+## Verify your data [#verify]
+
+After you run a request through your instrumentation:
+
+1. Wait for the agent to harvest its data, and then run a [NRQL query](/docs/query-your-data/nrql-new-relic-query-language/get-started/introduction-nrql-new-relics-query-language) for the `MobileRequest` event, or for the `MobileRequestError` event if the request failed or the status code was 400 or higher. The events include the trace attributes `trace.id`, `id`, and `guid` when the agent reported the request against a trace. For the attributes on these events, see [Mobile default event attributes](/docs/insights/insights-data-sources/default-data/mobile-default-event-attributes-insights#mobilerequest-attributes).
+2. Check that the `trace.id` value matches the trace ID in the `traceparent` header that your request sent. The trace ID is the second dash-separated part of the header.
+3. If your backend services are instrumented with New Relic distributed tracing, open the trace in the distributed tracing UI and look for the mobile span at the start of the trace. For where to find mobile spans, see [New Relic iOS mobile monitoring with distributed tracing](/docs/mobile-monitoring/new-relic-mobile-ios/get-started/new-relic-ios-and-dt#find-data).
+
+If events appear without trace attributes, make sure that you pass the trace dictionary as `traceHeaders`, and that the `generate` method returned a non-empty dictionary. To see more detail from the agent, turn on agent logging. For details, see [Configure agent logging with NRLogger](/docs/mobile-monitoring/new-relic-mobile-ios/configuration/ios-remote-logging#nrlogger).
