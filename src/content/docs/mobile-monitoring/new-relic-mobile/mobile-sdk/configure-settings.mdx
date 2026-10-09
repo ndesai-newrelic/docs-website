@@ -1734,7 +1734,9 @@ BACKGROUND_REPORTING_ENABLED = "true"
     <TabsPageItem id="maui">
       The .NET MAUI agent SDK allows you to configure default settings to change the behavior of the agent.
 
-      If you make any changes to the default settings, make sure to add the feature flags just after calling `appToken`.
+      To change the default settings, create an `AgentStartConfiguration` object and pass it as the second argument to `CrossNewRelic.Current.Start(applicationToken, agentConfig)`. Set only the options you want to change, using named arguments. For example: `new AgentStartConfiguration(crashReportingEnabled: false)`. Any option you don't set keeps its default.
+
+      Some options apply to only one platform. The option descriptions in the [table](#maui-configurations) note this, and the plugin ignores an option on the platform where it doesn't apply.
 
       Here's a sample configuration:
 
@@ -1773,24 +1775,25 @@ private static void StartNewRelic()
 {
   CrossNewRelic.Current.HandleUncaughtException();
 
-  // Set optional agent configuration. Options are: 
-  // crashReportingEnabled, loggingEnabled, logLevel, collectorAddress, 
-  // crashCollectorAddress,analyticsEventEnabled, networkErrorRequestEnabled,
+  // Set optional agent configuration. Options are:
+  // crashReportingEnabled, loggingEnabled, logLevel, collectorAddress,
+  // crashCollectorAddress, analyticsEventEnabled, networkErrorRequestEnabled,
   // networkRequestEnabled, interactionTracingEnabled, webViewInstrumentation,
-  // fedRampEnabled, offlineStorageEnabled, newEventSystemEnabled, backgroundReportingEnabled
-  // AgentStartConfiguration agentConfig = new AgentStartConfiguration(crashReportingEnabled:false);
+  // fedRampEnabled, offlineStorageEnabled, backgroundReportingEnabled, newEventSystemEnabled
+  AgentStartConfiguration agentConfig = new AgentStartConfiguration(
+    crashReportingEnabled: true,
+    loggingEnabled: true,
+    logLevel: LogLevel.INFO
+  );
 
+  // We recommend using a separate application token for each platform.
   if (DeviceInfo.Current.Platform == DevicePlatform.Android)
   {
-    CrossNewRelic.Current.Start("APP_TOKEN_HERE");
-    // Start with optional agent configuration
-    // CrossNewRelic.Current.Start("APP_TOKEN_HERE", agentConfig);
-  } 
+    CrossNewRelic.Current.Start("ANDROID_APP_TOKEN_HERE", agentConfig);
+  }
   else if (DeviceInfo.Current.Platform == DevicePlatform.iOS)
   {
-    CrossNewRelic.Current.Start("APP_TOKEN_HERE");
-    // Start with optional agent configuration
-    // CrossNewRelic.Current.Start("APP_TOKEN_HERE", agentConfig);
+    CrossNewRelic.Current.Start("IOS_APP_TOKEN_HERE", agentConfig);
   }
 }
 ```
@@ -1813,7 +1816,7 @@ private static void StartNewRelic()
         <tbody>
           <tr>
             <td>
-              (Android only) Enable or disable collection of event data.
+              (Android only) Enable or disable collection of event data. The default is `true`. This option has no effect on iOS.
             </td>
 
             <td>
@@ -1825,7 +1828,7 @@ analyticsEventEnabled: true
 
           <tr>
             <td>
-              Enable or disable crash reporting.
+              Enable or disable crash reporting. The default is `true`.
             </td>
 
             <td>
@@ -1837,7 +1840,7 @@ crashReportingEnabled: true
 
           <tr>
             <td>
-              Enable or disable agent logging.
+              Enable or disable agent logging. The default is `true`.
             </td>
 
             <td>
@@ -1849,7 +1852,7 @@ loggingEnabled: true
 
           <tr>
             <td>
-              Enable or disable reporting successful HTTP requests to the `MobileRequest` event type.
+              Enable or disable reporting successful HTTP requests to the `MobileRequest` event type. The default is `true`.
             </td>
 
             <td>
@@ -1861,7 +1864,7 @@ networkRequestEnabled: true
 
           <tr>
             <td>
-              Enable or disable reporting network and HTTP request errors to the `MobileRequestError` event type.
+              Enable or disable reporting network and HTTP request errors to the `MobileRequestError` event type. The default is `true`.
             </td>
 
             <td>
@@ -1873,7 +1876,7 @@ networkErrorRequestEnabled: true
 
           <tr>
             <td>
-              Enable or disable interaction tracing. Trace instrumentation still occurs, but no traces are harvested. This will disable default and custom interactions. by default false
+              Enable or disable default interaction tracing. The default is `false`. When it's `false`, the agent disables the default (automatic) interactions only; as of plugin version 1.1.15, this no longer disables custom interactions that you start with [`StartInteraction`](/docs/mobile-monitoring/new-relic-mobile/mobile-sdk/start-interaction/#maui).
             </td>
 
             <td>
@@ -1885,19 +1888,19 @@ interactionTracingEnabled: false
 
           <tr>
             <td>
-              Enable/Disable automatic instrumentation of WebViews.
+              (iOS only) Enable or disable automatic instrumentation of WebViews. The default is `true`. This option has no effect on Android.
             </td>
 
             <td>
 ```csharp
-webViewInstrumentation: false
+webViewInstrumentation: true
 ```
             </td>
           </tr>
 
           <tr>
             <td>
-              Enable or disable reporting data using different endpoints for US government clients.
+              Enable or disable reporting data using different endpoints for US government clients. The default is `false`.
             </td>
 
             <td>
@@ -1909,33 +1912,33 @@ fedRampEnabled: false
 
           <tr>
             <td>
-              Specifies the log level. Omit this field for the default log level.
+              Specifies the log level, using the `LogLevel` enum. The default is `LogLevel.WARNING`. Omit this field to use the default log level.
 
-              Options include: `ERROR` (least verbose), `WARNING`, `INFO`, `VERBOSE`, `AUDIT` (most verbose).
+              Options include: `LogLevel.ERROR` (least verbose), `LogLevel.WARNING`, `LogLevel.INFO`, `LogLevel.VERBOSE`, `LogLevel.AUDIT`, and `LogLevel.DEBUG`. On Android, `AUDIT` and `DEBUG` map to the same level.
             </td>
 
             <td>
 ```csharp
-logLevel: NREnums.LogLevel.INFO
+logLevel: LogLevel.INFO
 ```
             </td>
           </tr>
 
           <tr>
             <td>
-              Set a specific collector address for sending data. Omit this field for default address.
+              Set a specific collector address for sending data. Omit this field to use the default address.
             </td>
 
             <td>
 ```csharp
-collectorAddress: "crash-upload-delegate.domain.com"
+collectorAddress: "collector.domain.com"
 ```
             </td>
           </tr>
 
           <tr>
             <td>
-              Set a specific crash collector address for sending crashes. Omit this field for default address.
+              Set a specific crash collector address for sending crashes. Omit this field to use the default address.
             </td>
 
             <td>
@@ -1951,7 +1954,7 @@ crashCollectorAddress: "crash-upload-delegate.domain.com"
             </td>
 
             <td>
-              Offline storage is enabled by default. To disable it, add the following feature flag:
+              Offline storage is enabled by default. To disable it, set the following option:
 
 ```csharp
 offlineStorageEnabled: false
@@ -1961,19 +1964,31 @@ offlineStorageEnabled: false
 
           <tr>
             <td>
-              Enable or disable background reporting when application goes to the background state.
+              Enable or disable background reporting when the application goes to the background state. This option applies to both Android and iOS.
             </td>
 
             <td>
-              Background reporting is disabled by default. To enable it, add the following feature flag:
+              Background reporting is disabled by default. To enable it, set the following option:
 
 ```csharp
 backgroundReportingEnabled: true
 ```
 
-              To use background instrumentation, you'll need the following in your iOS app project:
+              (iOS only) To use background instrumentation on iOS, you'll need the following in your iOS app project:
 
               * In your app's `Info.plist` file, add the key "Permitted background task scheduler identifiers". This key should be an array containing a single string value, which is your app's bundle identifier.
+            </td>
+          </tr>
+
+          <tr>
+            <td>
+              (iOS only) Enable or disable the newer, more stable event system in the iOS agent. The default is `true`. This option has no effect on Android.
+            </td>
+
+            <td>
+```csharp
+newEventSystemEnabled: true
+```
             </td>
           </tr>
         </tbody>
