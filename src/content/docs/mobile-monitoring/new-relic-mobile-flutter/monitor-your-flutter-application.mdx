@@ -7,7 +7,7 @@ tags:
     - Get started
 metaDescription: "New Relic's Flutter agent for Android and iOS: Features, compatibility, requirements, installation, and upgrade procedures."
 isTutorial: true
-freshnessValidatedDate: 2024-08-26
+freshnessValidatedDate: 2026-10-09
 ---
 
 
@@ -53,12 +53,17 @@ If you need to install the agent manually, follow these steps:
     Before you install the Flutter agent, make sure your Flutter app meets these version requirements:
 
     * Flutter 2.5.0 or higher
-    * Dart versions 2.16.2 or higher, up to but not including 3.0.0
+    * Dart 2.17.0 or higher, up to but not including 4.0.0
     * For Android-native apps:
       * Android API 24 or higher
       * See [Android-native requirements](/docs/mobile-monitoring/new-relic-mobile-android/get-started/new-relic-android-compatibility-requirements)
     * For iOS-native apps:
+      * iOS 15.0 or higher
       * See [iOS-native requirements](/docs/mobile-monitoring/new-relic-mobile-ios/get-started/new-relic-ios-compatibility-requirements)
+
+    <Callout variant="important">
+      The Flutter agent monitors Android and iOS apps. When you compile your app for Flutter web, the agent's methods compile but do nothing, so no data is reported. To monitor a Flutter web app, see [Flutter web integration](/docs/browser/browser-integrations/flutter-web-integration).
+    </Callout>
   </Step>
 
   <Step>
@@ -68,7 +73,7 @@ If you need to install the agent manually, follow these steps:
 
     ```yaml
     dependencies:
-      newrelic_mobile: 0.0.1
+      newrelic_mobile: ^1.3.2
     ```
   </Step>
 
@@ -91,6 +96,10 @@ If you need to install the agent manually, follow these steps:
     In your Flutter project, open `main.dart` and add the following code:
 
     ```dart
+    import 'dart:io';
+    
+    import 'package:newrelic_mobile/config.dart';
+    import 'package:newrelic_mobile/loglevel.dart';
     import 'package:newrelic_mobile/newrelic_mobile.dart';
     
     var appToken = "";
@@ -102,13 +111,12 @@ If you need to install the agent manually, follow these steps:
     
     Config config = Config(
       accessToken: appToken,
-      //Android Specific
-      // Optional: Enable or disable collection of event data.
+      // Optional: (Android only) Enable or disable collection of event data.
       analyticsEventEnabled: true,
       // Optional: Enable or disable reporting successful HTTP requests to the MobileRequest event type.
-      networkErrorRequestEnabled: true,
-      // Optional: Enable or disable reporting network and HTTP request errors to the MobileRequestError event type.
       networkRequestEnabled: true,
+      // Optional: Enable or disable reporting network and HTTP request errors to the MobileRequestError event type.
+      networkErrorRequestEnabled: true,
       // Optional: Enable or disable crash reporting.
       crashReportingEnabled: true,
       // Optional: Enable or disable interaction tracing. Trace instrumentation still occurs, but no traces are harvested. This will disable default and custom interactions.
@@ -117,22 +125,21 @@ If you need to install the agent manually, follow these steps:
       httpResponseBodyCaptureEnabled: true,
       // Optional: Enable or disable agent logging.
       loggingEnabled: true,
-      // iOS specific
-      // Optional: Enable or disable automatic instrumentation of WebViews
+      // Optional: Set the agent log level. The default is LogLevel.WARN.
+      logLevel: LogLevel.WARN,
+      // Optional: (iOS only) Enable or disable automatic instrumentation of WebViews.
       webViewInstrumentation: true,
-      //Optional: Enable or disable Print Statements as Analytics Events
-      printStatementAsEventsEnabled : true,
-      // Optional: Enable or disable automatic instrumentation of HTTP Request
-      httpInstrumentationEnabled:true,
-      // Optional: Enable or disable reporting data using different endpoints for US government clients
+      // Optional: Enable or disable forwarding print() output to New Relic as logs. Applies only when you launch the app with NewrelicMobile.instance.start().
+      printStatementAsEventsEnabled: true,
+      // Optional: Enable or disable automatic instrumentation of HTTP requests.
+      httpInstrumentationEnabled: true,
+      // Optional: Enable or disable reporting data using different endpoints for US government clients.
       fedRampEnabled: false,
       // Optional: Enable or disable offline data storage when no internet connection is available.
       offlineStorageEnabled: true,
-      // iOS Specific
-      // Optional: Enable or disable background reporting functionality.
+      // Optional: Enable or disable background reporting functionality. Read by both the Android and iOS agents.
       backgroundReportingEnabled: false,
-      // iOS Specific
-      // Optional: Enable or disable to use our new, more stable, event system for iOS agent.
+      // Optional: (iOS only) Enable or disable the new, more stable event system for the iOS agent.
       newEventSystemEnabled: false,
       // Optional: Enable or disable distributed tracing.
       distributedTracingEnabled: true,
@@ -147,7 +154,7 @@ If you need to install the agent manually, follow these steps:
     }
     ```
 
-    Make sure you paste your application token(s) into `appToken = ""` in the code above. If you deployed your hybrid app to both iOS and Android platforms, you'll need to add two separate tokens: one for iOS and one for Android.
+    Make sure you paste your application token(s) into `appToken = ""` in the code above. If you deployed your app to both iOS and Android platforms, you'll need to add two separate tokens: one for iOS and one for Android.
   </Step>
 
   <Step>
@@ -166,7 +173,7 @@ If you need to install the agent manually, follow these steps:
             id "dev.flutter.flutter-plugin-loader" version "1.0.0"
             id "com.android.application" version "7.4.2" apply false
             id "org.jetbrains.kotlin.android" version "1.7.10" apply false
-            id "com.newrelic.agent.android" version "7.5.1" apply false // <-- include this
+            id "com.newrelic.agent.android" version "7.8.3" apply false // <-- include this
         }
         ```
 
@@ -192,7 +199,7 @@ If you need to install the agent manually, follow these steps:
           }
           dependencies {
             ...
-            classpath "com.newrelic.agent.android:agent-gradle-plugin:7.5.1"
+            classpath "com.newrelic.agent.android:agent-gradle-plugin:7.8.3"
           }
         }
         ```
@@ -279,12 +286,12 @@ The following customizations are available for the Flutter agent.
         * [Record custom attributes](/docs/mobile-monitoring/new-relic-mobile/mobile-sdk/create-attribute)
         * [Increment session attribute count](/docs/mobile-monitoring/new-relic-mobile/mobile-sdk/increment-session-attribute-count)
         * [Remove an attribute](/docs/mobile-monitoring/new-relic-mobile/mobile-sdk/remove-attribute)
-        * [Remove all attributes](/docs/mobile-monitoring/new-relic-mobile/mobile-sdk/remove-all-attributes)
         * [Record custom events](/docs/mobile-monitoring/new-relic-mobile/mobile-sdk/record-custom-events)
         * [Set the maximum size of an event pool](/docs/mobile-monitoring/new-relic-mobile/mobile-sdk/set-max-event-pool-size)
         * [Set maximum time the agent stores events in memory](/docs/mobile-monitoring/new-relic-mobile/mobile-sdk/set-max-event-buffer-time)
         * [Get a current session's ID](/docs/mobile-monitoring/new-relic-mobile/mobile-sdk/current-session-id)
         * [Set a custom user ID to associate with events and attributes](/docs/mobile-monitoring/new-relic-mobile/mobile-sdk/set-custom-user-id)
+        * [Set the maximum offline storage size](/docs/mobile-monitoring/new-relic-mobile/mobile-sdk/set-max-offline-storage#flutter)
 
           For more about which would be the best method to use and why, see [Report mobile monitoring custom events and attributes](/docs/data-apis/custom-data/custom-events/report-mobile-monitoring-custom-events-attributes/).
       </td>
@@ -299,6 +306,46 @@ The following customizations are available for the Flutter agent.
         [Track HTTP requests](/docs/mobile-monitoring/new-relic-mobile/mobile-sdk/network-request-success)
 
         [Track failing HTTP requests](/docs/mobile-monitoring/new-relic-mobile/mobile-sdk/network-request-failures)
+      </td>
+    </tr>
+
+    <tr>
+      <td>
+        Track screen navigation.
+      </td>
+
+      <td>
+        [Track screen navigation](#flutter-navigation)
+      </td>
+    </tr>
+
+    <tr>
+      <td>
+        Capture custom HTTP headers on network requests.
+      </td>
+
+      <td>
+        [Add tracked headers](/docs/mobile-monitoring/new-relic-mobile/mobile-sdk/add-tracked-headers)
+      </td>
+    </tr>
+
+    <tr>
+      <td>
+        Forward logs to New Relic.
+      </td>
+
+      <td>
+        [Mobile logs](/docs/mobile-monitoring/mobile-monitoring-ui/mobile-logs)
+      </td>
+    </tr>
+
+    <tr>
+      <td>
+        Test crash reporting.
+      </td>
+
+      <td>
+        [Test crash reporting](/docs/mobile-monitoring/new-relic-mobile/mobile-sdk/test-crash-reporting)
       </td>
     </tr>
 
