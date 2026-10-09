@@ -351,7 +351,11 @@ NewRelicCapacitorPlugin.logDebug(options: { message: string}) => void
 NewRelicCapacitorPlugin.logAll(options: { error: string; attributes: object; }): void
 
 NewRelicCapacitorPlugin.logAttributes(options: { attributes: object; }): void
+
+NewRelicCapacitorPlugin.log(options: { level: NREnums.LogLevel; message: string; }): void
 ```
+
+For `log`, `level` is one of the `NREnums.LogLevel` values: `ERROR`, `WARNING`, `INFO`, `VERBOSE`, `DEBUG`, or `AUDIT`. For `logAll`, the `error` value is recorded as the log `message`, together with the attributes that you pass.
 
 
 ### Example [#example]
@@ -370,6 +374,11 @@ NewRelicCapacitorPlugin.logDebug({message:"Debugging session started"});
 NewRelicCapacitorPlugin.logAll({
   error: "UnexpectedError",
   attributes: { "errorCode": "500", "errorMessage": "Internal Server Error" ,level:"WARN"}
+});
+
+NewRelicCapacitorPlugin.log({
+  level: NREnums.LogLevel.INFO,
+  message: "Checkout started"
 });
 
 NewRelicCapacitorPlugin.logAttributes({attributes:{

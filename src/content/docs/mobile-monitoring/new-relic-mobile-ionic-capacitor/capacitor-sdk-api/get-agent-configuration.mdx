@@ -1,0 +1,49 @@
+---
+title: Get the agent configuration
+type: apiDoc
+shortDescription: 'Retrieve the agent configuration that the Capacitor plugin is using.'
+tags:
+  - Mobile monitoring
+  - New Relic Mobile Capacitor
+  - Mobile SDK API
+  - Custom instrumentation
+metaDescription: Capacitor agent API used to read the configuration that the plugin applied when the agent started.
+freshnessValidatedDate: 2026-10-09
+---
+
+## Syntax [#syntax]
+
+```typescript
+getAgentConfiguration(options?: {}) => Promise<AgentConfiguration>
+```
+
+## Description [#description]
+
+Returns the agent configuration that the Capacitor plugin holds. The values are the settings that the plugin applied when you called `start`. On Android, they also include any changes you made with the [runtime feature toggles](/docs/mobile-monitoring/new-relic-mobile-ionic-capacitor/capacitor-sdk-api/toggle-agent-features). The plugin caches these values, so the result doesn't reflect the live state of the native agent. For the available settings, see [Configure mobile monitoring settings](/docs/mobile-monitoring/new-relic-mobile/mobile-sdk/configure-settings#capacitor-configurations).
+
+The agent itself uses this method to check `sendConsoleEvents` and `distributedTracingEnabled`.
+
+## Parameters [#parameters]
+
+This method takes an optional empty options object (`{}`).
+
+## Return values [#return-values]
+
+Returns a promise that resolves to an `AgentConfiguration` object. Each platform returns a subset of the properties:
+
+* Android doesn't return `webViewInstrumentation`, `loggingEnabled`, `backgroundReportingEnabled`, or `newEventSystemEnabled`. On Android, the object is empty until you call `start`.
+* iOS doesn't return `analyticsEventEnabled`, `backgroundReportingEnabled`, or `newEventSystemEnabled`.
+
+Treat every property as optional when you read it.
+
+## Example [#example]
+
+```typescript
+import { NewRelicCapacitorPlugin, AgentConfiguration } from '@newrelic/newrelic-capacitor-plugin';
+
+const agentConfig: AgentConfiguration = await NewRelicCapacitorPlugin.getAgentConfiguration();
+
+if (agentConfig.sendConsoleEvents) {
+  console.log('Console output is forwarded to New Relic');
+}
+```

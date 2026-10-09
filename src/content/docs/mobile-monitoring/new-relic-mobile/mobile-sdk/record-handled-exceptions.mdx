@@ -26,6 +26,10 @@ freshnessValidatedDate: 2023-07-20
       iOS
     </TabsBarItem>
 
+    <TabsBarItem id="capacitor">
+      Capacitor
+    </TabsBarItem>
+
     <TabsBarItem id="maui">
       .NET MAUI
     </TabsBarItem>
@@ -276,6 +280,40 @@ NSException* exception = [NSException exceptionWithName:@"MyException"
 NSDictionary* dictionary = @{@"int" : @1, @"Test Group" : @"A | B"};
 
 [NewRelic recordHandledException:exception withAttributes:dictionary];
+```
+    </TabsPageItem>
+
+    <TabsPageItem id="capacitor">
+      ## Syntax [#syntax]
+
+```typescript
+recordError(options: {
+  name: string;
+  message: string;
+  stack: string;
+  isFatal: boolean;
+  attributes?: object;
+}) => void
+```
+
+      ## Description [#description]
+
+      In the Capacitor agent, JavaScript and TypeScript errors are recorded as handled exceptions by `recordError`. The errors appear in the **Handled exceptions** tab and as `MobileHandledException` events. For parameter details, see [Record errors](/docs/mobile-monitoring/new-relic-mobile/mobile-sdk/record-errors).
+
+      ## Example [#example]
+
+```typescript
+try {
+  throw new Error('Example error message');
+} catch (e: any) {
+  NewRelicCapacitorPlugin.recordError({
+    name: e.name,
+    message: e.message,
+    stack: e.stack,
+    isFatal: false,
+    attributes: { screen: 'checkout' },
+  });
+}
 ```
     </TabsPageItem>
 

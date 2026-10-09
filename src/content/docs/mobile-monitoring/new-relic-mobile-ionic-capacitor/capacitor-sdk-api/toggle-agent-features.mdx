@@ -1,0 +1,142 @@
+---
+title: Enable or disable agent features at runtime
+type: apiDoc
+shortDescription: 'Turn Capacitor agent data collection features on or off while the app is running.'
+tags:
+  - Mobile monitoring
+  - New Relic Mobile Capacitor
+  - Mobile SDK API
+  - Custom instrumentation
+metaDescription: Capacitor agent APIs used to enable or disable analytics events, network request events, network error events, and HTTP response body capture at runtime.
+freshnessValidatedDate: 2026-10-09
+---
+
+## Syntax [#syntax]
+
+```typescript
+analyticsEventEnabled(options: { enabled: boolean }) => void
+
+networkRequestEnabled(options: { enabled: boolean }) => void
+
+networkErrorRequestEnabled(options: { enabled: boolean }) => void
+
+httpResponseBodyCaptureEnabled(options: { enabled: boolean }) => void
+```
+
+## Description [#description]
+
+Use these methods to turn features on or off after the agent starts. Each method has a matching setting that you can also set when you call `start`. For more information, see [Configure mobile monitoring settings](/docs/mobile-monitoring/new-relic-mobile/mobile-sdk/configure-settings#capacitor-configurations).
+
+<table>
+  <thead>
+    <tr>
+      <th>
+        Method
+      </th>
+
+      <th>
+        What it controls
+      </th>
+    </tr>
+  </thead>
+
+  <tbody>
+    <tr>
+      <td>
+        `analyticsEventEnabled`
+      </td>
+
+      <td>
+        Collection of event data. Android only. On iOS, this method does nothing.
+      </td>
+    </tr>
+
+    <tr>
+      <td>
+        `networkRequestEnabled`
+      </td>
+
+      <td>
+        Reporting of successful HTTP requests to the `MobileRequest` event type.
+      </td>
+    </tr>
+
+    <tr>
+      <td>
+        `networkErrorRequestEnabled`
+      </td>
+
+      <td>
+        Reporting of network and HTTP request errors to the `MobileRequestError` event type.
+      </td>
+    </tr>
+
+    <tr>
+      <td>
+        `httpResponseBodyCaptureEnabled`
+      </td>
+
+      <td>
+        Capture of HTTP response bodies for HTTP error traces and `MobileRequestError` events.
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+## Parameters [#parameters]
+
+<table>
+  <thead>
+    <tr>
+      <th width={200}>
+        Parameter
+      </th>
+
+      <th width={200}>
+        Type
+      </th>
+
+      <th>
+        Description
+      </th>
+    </tr>
+  </thead>
+
+  <tbody>
+    <tr>
+      <td>
+        `enabled`
+      </td>
+
+      <td>
+        `boolean`
+      </td>
+
+      <td>
+        Required. `true` to enable the feature, or `false` to disable it. Pass it in a single `options` object.
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+## Return values [#return-values]
+
+These methods do not return a value (`void`).
+
+## Example [#example]
+
+```typescript
+import { NewRelicCapacitorPlugin } from '@newrelic/newrelic-capacitor-plugin';
+
+// Stop reporting successful HTTP requests
+NewRelicCapacitorPlugin.networkRequestEnabled({ enabled: false });
+
+// Stop capturing HTTP response bodies
+NewRelicCapacitorPlugin.httpResponseBodyCaptureEnabled({ enabled: false });
+
+// Resume reporting network errors
+NewRelicCapacitorPlugin.networkErrorRequestEnabled({ enabled: true });
+
+// Android only
+NewRelicCapacitorPlugin.analyticsEventEnabled({ enabled: false });
+```

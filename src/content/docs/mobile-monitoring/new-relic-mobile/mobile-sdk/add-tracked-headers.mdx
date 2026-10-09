@@ -288,6 +288,28 @@ addHTTPHeadersTrackingFor(options: { headers: string[] }) => void
 ```ts
 NewRelicCapacitorPlugin.addHTTPHeadersTrackingFor({headers:["Car","Music"]});
 ```
+
+      ## Get the list of tracked headers [#get-tracked-headers]
+
+      Use `getHTTPHeadersTrackingFor` to retrieve the header fields that are currently tracked.
+
+      ### Syntax [#get-syntax]
+
+```typescript
+getHTTPHeadersTrackingFor() => Promise<HttpHeadersTracking>
+```
+
+      ### Return values [#get-return-values]
+
+      Returns a promise that resolves to an object with a `headersList` property. The value of `headersList` is a `string` that contains a JSON-encoded array of header names. Use `JSON.parse` to convert it to a `string[]`.
+
+      ### Example [#get-example]
+
+```ts
+const { headersList } = await NewRelicCapacitorPlugin.getHTTPHeadersTrackingFor();
+const trackedHeaders: string[] = JSON.parse(headersList);
+console.log(trackedHeaders);
+```
     </TabsPageItem>
 
     <TabsPageItem id="cordova">
