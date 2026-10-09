@@ -340,7 +340,7 @@ Automatic instrumentation is one of the Android agent's more convenient features
 
 ### (Android) Additional SDK methods and annotations [#android-additional-methods]
 
-These methods and annotations are available in the Android agent. Methods marked as builder methods are called on the object returned by `NewRelic.withApplicationToken()`, before `start()`.
+These methods and annotations are available in the Android agent.
 
 <table>
   <thead>
@@ -356,44 +356,13 @@ These methods and annotations are available in the Android agent. Methods marked
   </thead>
 
   <tbody>
-    <tr>
-      <td>
-        Check whether the agent is running.
-      </td>
-
-      <td>
-        [Check if the agent is started](/docs/mobile-monitoring/new-relic-mobile/mobile-sdk/is-agent-started)
-      </td>
-    </tr>
 
     <tr>
       <td>
-        Override the device ID that the agent reports (builder method).
+        Send distributed tracing headers with the HTTP requests you record.
       </td>
 
       <td>
-        [Set device ID](/docs/mobile-monitoring/new-relic-mobile/mobile-sdk/set-device-id)
-      </td>
-    </tr>
-
-    <tr>
-      <td>
-        Report the application framework and framework version (builder method).
-      </td>
-
-      <td>
-        [Set application framework](/docs/mobile-monitoring/new-relic-mobile/mobile-sdk/set-application-framework)
-      </td>
-    </tr>
-
-    <tr>
-      <td>
-        Be notified when the agent creates distributed traces and spans (builder method).
-      </td>
-
-      <td>
-        [Set a distributed trace listener](/docs/mobile-monitoring/new-relic-mobile/mobile-sdk/distributed-trace-listener)
-
         [Track HTTP requests with distributed tracing headers](/docs/mobile-monitoring/new-relic-mobile/mobile-sdk/network-request-success#distributed-trace)
       </td>
     </tr>
@@ -415,16 +384,6 @@ These methods and annotations are available in the Android agent. Methods marked
 
       <td>
         [Set max offline storage size](/docs/mobile-monitoring/new-relic-mobile/mobile-sdk/set-max-offline-storage)
-      </td>
-    </tr>
-
-    <tr>
-      <td>
-        Be notified when events are added, evicted, or flushed.
-      </td>
-
-      <td>
-        [Set an event listener](/docs/mobile-monitoring/new-relic-mobile/mobile-sdk/set-event-listener)
       </td>
     </tr>
 
