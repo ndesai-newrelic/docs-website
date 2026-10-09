@@ -425,7 +425,7 @@ setAttribute(attributeName: string, value: boolean | number | string): void;
             </td>
 
             <td>
-              `bool`
+              `boolean | number | string`
             </td>
 
             <td>
@@ -438,7 +438,7 @@ setAttribute(attributeName: string, value: boolean | number | string): void;
       ## Example [#example]
 
 ```js
-NewRelic.setAttribute(Name: "CordovaAttribute", value: "123"): void;
+NewRelic.setAttribute("CordovaAttribute", "123");
 ```
     </TabsPageItem>
 

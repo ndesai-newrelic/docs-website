@@ -606,7 +606,7 @@ recordMetric(name: string, category: string, value?: number, countUnit?: string,
             </td>
 
             <td>
-              Required. The value of the metric.
+              Optional. The value of the metric. Must be a positive number. If you omit it, the metric is recorded with only a name and category. Required if you set `countUnit` and `valueUnit`.
             </td>
           </tr>
 
@@ -620,7 +620,7 @@ recordMetric(name: string, category: string, value?: number, countUnit?: string,
             </td>
 
             <td>
-              Required. The unit of measurement for the count.
+              Optional, but if you set it you must also set `value` and `valueUnit`. The unit of measurement for the metric count.
             </td>
           </tr>
 
@@ -634,7 +634,7 @@ recordMetric(name: string, category: string, value?: number, countUnit?: string,
             </td>
 
             <td>
-              Required. The unit of measurement for the count.
+              Optional, but if you set it you must also set `value` and `countUnit`. The unit of measurement for the metric value.
             </td>
           </tr>
         </tbody>

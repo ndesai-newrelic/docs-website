@@ -297,7 +297,7 @@ setMaxEventBufferTime(maxBufferTimeInSeconds: number): void;
 
       ## Description [#description]
 
-      Sets the event harvest cycle length. Default is 60 seconds (1 minute). Minimum value can not be less than 60 seconds. Maximum value should not be greater than 600 seconds.
+      Sets the event harvest cycle length. Default is 60 seconds (1 minute). The minimum value is 60 seconds. On iOS, the maximum value is 600 seconds (10 minutes). On Android, the agent clamps the value to 60 seconds.
 
       ## Parameters [#parameters]
 

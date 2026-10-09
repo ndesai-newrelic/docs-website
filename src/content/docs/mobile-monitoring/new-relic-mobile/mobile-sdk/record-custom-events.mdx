@@ -452,7 +452,7 @@ NewRelicCapacitorPlugin.recordCustomEvent({ eventType: "mobileClothes", eventNam
       ## Syntax [#syntax]
 
 ```typescript
-recordCustomEvent(eventType: string, eventName?: string, attributes?: {[key: string]: boolean | number | string}): void;
+recordCustomEvent(eventType: string, eventName: string, attributes: {[key: string]: boolean | number | string}): void;
 ```
 
       ## Description [#description]
@@ -495,7 +495,7 @@ recordCustomEvent(eventType: string, eventName?: string, attributes?: {[key: str
 
           <tr>
             <td>
-              `eventName?`
+              `eventName`
             </td>
 
             <td>
@@ -503,21 +503,21 @@ recordCustomEvent(eventType: string, eventName?: string, attributes?: {[key: str
             </td>
 
             <td>
-              Optional. Use this parameter to name the event. Using this parameter is equivalent to creating a `name` parameter.
+              Use this parameter to name the event. Using this parameter is equivalent to creating a `name` parameter. The argument is positional, so pass an empty string (`""`) if you don't want to name the event.
             </td>
           </tr>
 
           <tr>
             <td>
-              `attributes?`
+              `attributes`
             </td>
 
             <td>
-              `dictionary`
+              `object`
             </td>
 
             <td>
-              Optional. A map that includes a list of attributes that further designate subcategories to the `eventType`.
+              Required. A map that includes a list of attributes that further designate subcategories to the `eventType`. If you have no attributes to record, pass an empty object (`{}`). If this argument is missing or isn't an object, the plugin logs an error to the console and doesn't record the event.
             </td>
           </tr>
         </tbody>
@@ -525,7 +525,7 @@ recordCustomEvent(eventType: string, eventName?: string, attributes?: {[key: str
 
       ## Return values [#return-values]
 
-      Returns `true` if the event is recorded successfully, or `false` if not.
+      This method doesn't return a value.
 
       ## Example [#example]
 

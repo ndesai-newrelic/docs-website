@@ -397,8 +397,7 @@ noticeNetworkFailure(url: string, httpMethod: string, startTime: number, endTime
             </td>
 
             <td>
-              Optional. The start time of the request in milliseconds since the epoch.
-              `startTime` and `endTime` can be used as an alternative to `timer`.
+              Required. The start time of the request in milliseconds since the epoch.
             </td>
           </tr>
 
@@ -412,8 +411,7 @@ noticeNetworkFailure(url: string, httpMethod: string, startTime: number, endTime
             </td>
 
             <td>
-              Optional. The end time of the request in milliseconds since the epoch.
-              `startTime` and `endTime` can be used as an alternative to `timer`.
+              Required. The end time of the request in milliseconds since the epoch.
             </td>
           </tr>
 
@@ -427,7 +425,7 @@ noticeNetworkFailure(url: string, httpMethod: string, startTime: number, endTime
             </td>
 
             <td>
-              Optional. In most cases, place this call inside exception handlers, such as catch blocks. Supported failures are: `Unknown`, `BadURL`, `TimedOut`, `CannotConnectToHost`, `DNSLookupFailed`, `BadServerResponse`, `SecureConnectionFailed`.
+              Required. The name of the failure. In most cases, place this call inside exception handlers, such as catch blocks. If the value isn't one of the supported failures, the plugin logs an error to the console and doesn't record the failure. Supported failures are: `Unknown`, `BadURL`, `TimedOut`, `CannotConnectToHost`, `DNSLookupFailed`, `BadServerResponse`, `SecureConnectionFailed`.
             </td>
           </tr>
         </tbody>

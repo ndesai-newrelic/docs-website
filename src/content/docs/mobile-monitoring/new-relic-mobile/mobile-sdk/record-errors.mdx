@@ -231,12 +231,64 @@ try {
       ## Syntax [#syntax]
 
 ```typescript
-recordError(err: Error) : void;
+recordError(err: Error | string, attributes?: Map<string, boolean | number | string> | {[key: string]: boolean | number | string}): void;
 ```
 
       ## Description [#description]
 
-      Records JavaScript errors for Cordova. Make sure you add this method to the error handler of the framework that you are using.
+      Records JavaScript errors for Cordova as handled exceptions. Make sure you add this method to the error handler of the framework that you are using.
+
+      The examples on this page import `NewRelic` from the Ionic wrapper package `@awesome-cordova-plugins/newrelic`. In a plain Cordova app, the plugin exposes a global `NewRelic` object, so you can call `NewRelic.recordError(...)` without an import.
+
+      ## Parameters [#parameters]
+
+      <table>
+        <thead>
+          <tr>
+            <th width={200}>
+              Parameter
+            </th>
+
+            <th width={200}>
+              Type
+            </th>
+
+            <th>
+              Description
+            </th>
+          </tr>
+        </thead>
+
+        <tbody>
+          <tr>
+            <td>
+              `err`
+            </td>
+
+            <td>
+              `Error | string`
+            </td>
+
+            <td>
+              Required. The error to record. If you pass a string, the plugin wraps it in an `Error`.
+            </td>
+          </tr>
+
+          <tr>
+            <td>
+              `attributes?`
+            </td>
+
+            <td>
+              `Map` or `object`
+            </td>
+
+            <td>
+              Optional. Attributes (boolean, number, or string values) that are added to the handled exception event.
+            </td>
+          </tr>
+        </tbody>
+      </table>
 
       ## Examples [#examples]
 
@@ -353,7 +405,7 @@ Vue.config.errorHandler = (err, vm, info) => {
     NewRelic.recordBreadcrumb("Vue Error", { 'componentName': vm.$options.name, 'lifecycleHook': lifecycleHookInfo })
 
     // Record the JS error to New Relic
-    NewRelic.recordError(error);
+    NewRelic.recordError(err);
 }
 ```
     </TabsPageItem>

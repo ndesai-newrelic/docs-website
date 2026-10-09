@@ -351,7 +351,7 @@ NewRelicCapacitorPlugin.recordBreadcrumb({ name: "shoe", eventAttributes: {"shoe
       ## Syntax [#syntax]
 
 ```typescript
-recordBreadcrumb(eventName: string, attributes?: {[key: string]: boolean | number | string}): void;
+recordBreadcrumb(eventName: string, attributes: {[key: string]: boolean | number | string}): void;
 ```
 
       ## Description [#description]
@@ -396,7 +396,7 @@ recordBreadcrumb(eventName: string, attributes?: {[key: string]: boolean | numbe
 
           <tr>
             <td>
-              `Attributes`
+              `attributes`
             </td>
 
             <td>
@@ -404,7 +404,7 @@ recordBreadcrumb(eventName: string, attributes?: {[key: string]: boolean | numbe
             </td>
 
             <td>
-              Optional. A map that includes a list of attributes of the breadcrumb event. Create attributes for any event descriptors you think will be useful.
+              Required. A map that includes a list of attributes of the breadcrumb event. Create attributes for any event descriptors you think will be useful. If you have no attributes to record, pass an empty object (`{}`). If this argument is missing or isn't an object, the plugin logs an error to the console and doesn't record the breadcrumb.
             </td>
           </tr>
         </tbody>
@@ -412,7 +412,7 @@ recordBreadcrumb(eventName: string, attributes?: {[key: string]: boolean | numbe
 
       ## Return values [#return-values]
 
-      Returns `true` if the event is recorded successfully, or `false` if not.
+      This method doesn't return a value.
 
       ## Example [#example]
 

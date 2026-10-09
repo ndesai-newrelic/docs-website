@@ -698,12 +698,12 @@ NewRelicCapacitorPlugin.noticeHttpTransaction({
       ## Syntax [#syntax]
 
 ```typescript
-noticeHttpTransaction(url: string, method: string, status: number, startTime: number, endTime: number, bytesSent: number, bytesReceived: number, body?: string)
+noticeHttpTransaction(url: string, method: string, status: number, startTime: number, endTime: number, bytesSent: number, bytesReceived: number, body?: string, params?: {[key: string]: string}, traceAttributes?: {[key: string]: string}): void;
 ```
 
       ## Description [#description]
 
-      The New Relic Cordova plugin automatically collects HTTP transactions, but if you want to manually record HTTP transactions, use this method to do so.
+      The New Relic Cordova plugin automatically instruments `XMLHttpRequest` and `fetch` requests, so you don't need to call this method for them. Use it to manually record HTTP transactions made through other means.
 
       ## Parameters [#parameters]
 
@@ -777,8 +777,7 @@ noticeHttpTransaction(url: string, method: string, status: number, startTime: nu
             </td>
 
             <td>
-              Optional. The start time of the request in milliseconds since the epoch.
-              `startTime` and `endTime` can be used as an alternative to `timer`.
+              Required. The start time of the request in milliseconds since the epoch.
             </td>
           </tr>
 
@@ -792,8 +791,7 @@ noticeHttpTransaction(url: string, method: string, status: number, startTime: nu
             </td>
 
             <td>
-              Optional. The end time of the request in milliseconds since the epoch.
-              `startTime` and `endTime` can be used as an alternative to `timer`.
+              Required. The end time of the request in milliseconds since the epoch.
             </td>
           </tr>
 
@@ -836,6 +834,34 @@ noticeHttpTransaction(url: string, method: string, status: number, startTime: nu
 
             <td>
               Optional. The response body of the HTTP response.
+            </td>
+          </tr>
+
+          <tr>
+            <td>
+              `params?`
+            </td>
+
+            <td>
+              `object`
+            </td>
+
+            <td>
+              Optional. Values of the [tracked HTTP headers](/docs/mobile-monitoring/new-relic-mobile/mobile-sdk/add-tracked-headers) for this request, as header name and value pairs.
+            </td>
+          </tr>
+
+          <tr>
+            <td>
+              `traceAttributes?`
+            </td>
+
+            <td>
+              `object`
+            </td>
+
+            <td>
+              Optional. The distributed tracing attributes for this request, such as the object returned by `generateDistributedTracingHeaders()`.
             </td>
           </tr>
         </tbody>

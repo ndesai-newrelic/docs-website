@@ -296,7 +296,7 @@ NewRelicCapacitorPlugin.addHTTPHeadersTrackingFor({headers:["Car","Music"]});
       ### Javascript [#javascript]
 
 ```js
-NewRelic.addHTTPHeadersTrackingFor(headers)
+NewRelic.addHTTPHeadersTrackingFor(headers: string[]): void;
 ```
 
       ## Description [#description]
@@ -325,7 +325,7 @@ NewRelic.addHTTPHeadersTrackingFor(headers)
         <tbody>
           <tr>
             <td>
-              `$headers`
+              `headers`
             </td>
 
             <td>
@@ -341,7 +341,7 @@ NewRelic.addHTTPHeadersTrackingFor(headers)
 
       ## Return values [#return-values]
 
-      Returns `true` if added successfully, or `false` if not.
+      This method doesn't return a value.
 
       ## Examples [#examples]
 
@@ -350,8 +350,7 @@ NewRelic.addHTTPHeadersTrackingFor(headers)
       ### Javascript [#javascript]
 
 ```js
-NewRelic.addHTTPHeadersTrackingFor(["Car"]);
-
+NewRelic.addHTTPHeadersTrackingFor(["Accept-Language", "X-Request-ID"]);
 ```
     </TabsPageItem>
 

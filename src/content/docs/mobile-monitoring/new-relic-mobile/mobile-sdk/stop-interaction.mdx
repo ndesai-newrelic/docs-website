@@ -286,7 +286,7 @@ const badApiLoad = async () => {
       ## Syntax [#syntax]
 
 ```typescript
-endInteraction(id: InteractionId): void;
+endInteraction(interactionId: string): void;
 ```
 
       ## Description [#description]
@@ -315,11 +315,11 @@ endInteraction(id: InteractionId): void;
         <tbody>
           <tr>
             <td>
-              `id`
+              `interactionId`
             </td>
 
             <td>
-              `InteractionId`
+              `string`
             </td>
 
             <td>
@@ -347,6 +347,7 @@ const badApiLoad = async () => {
       NewRelic.endInteraction(interactionId);
       console.error(error);
     });
+};
 ```
 
     </TabsPageItem>
