@@ -1,0 +1,504 @@
+---
+title: Manually instrument HTTP requests with distributed tracing (Android)
+type: apiDoc
+shortDescription: 'Record HTTP requests from any Android HTTP client and connect them to distributed traces.'
+tags:
+  - Mobile monitoring
+  - Mobile SDK API
+  - Custom instrumentation
+metaDescription: Learn how to manually instrument HTTP requests in an Android app, with distributed tracing headers, for HTTP clients that the New Relic Android agent doesn't instrument automatically.
+freshnessValidatedDate: never
+---
+
+The New Relic Android agent automatically records HTTP requests made with the clients it instruments, and adds distributed tracing headers to them. If your app makes requests with a client the agent doesn't instrument, you can instrument those requests yourself with the agent's SDK methods. This guide shows how to record a request, send distributed tracing headers with it, and report failures, using several HTTP clients as examples.
+
+## When you need manual instrumentation [#when]
+
+The Gradle plugin rewrites calls to the following APIs at build time. The agent records requests made through them, and adds distributed tracing headers, without any code changes:
+
+* `HttpURLConnection` (calls to `URL.openConnection()`)
+* OkHttp 2, and OkHttp 3 and 4 (calls to `OkHttpClient.newCall()` and `OkUrlFactory`)
+* Apache HTTP client `execute()` calls
+* Retrofit 1.x clients (`RestAdapter.Builder.setClient()`)
+
+For the supported client versions, see [Android agent compatibility and requirements](/docs/mobile-monitoring/new-relic-mobile-android/get-started/new-relic-android-compatibility-requirements).
+
+You need manual instrumentation when requests don't pass through one of these instrumented call sites. For example:
+
+* You use an HTTP client that the agent has no instrumentation rules for. The agent's rules contain no dedicated entries for clients such as Ktor or Cronet, so if you don't see their requests in New Relic, instrument them manually.
+* Requests are made from native (NDK/JNI) code or from a library that does its own networking, because the agent rewrites only JVM bytecode call sites.
+* The code that makes the request is excluded from instrumentation, for example by `excludePackageInstrumentation` or `excludeVariantInstrumentation` in the [Gradle plugin](/docs/mobile-monitoring/new-relic-mobile-android/install-configure/configure-new-relic-gradle-plugin).
+
+<Callout variant="important">
+  Don't manually instrument a request that the agent already instruments. The agent would record the request twice. For example, if you add the OkHttp interceptor in this guide to a client whose `newCall()` calls the agent already instruments, you get duplicate events.
+</Callout>
+
+## Manual instrumentation flow [#flow]
+
+For every request, follow these steps:
+
+1. **Record the start time** in milliseconds since the epoch with `System.currentTimeMillis()`. Don't use `System.nanoTime()`. The agent calculates the duration as `endTimeMs - startTimeMs` and reports it in seconds.
+2. **Create a trace context** by calling `NewRelic.noticeDistributedTrace(null)`. It returns a `TraceContext` (in `com.newrelic.agent.android.distributedtracing`). The argument is an optional `Map<String, String>` of values that identify the request; pass `null` if you have none.
+3. **Add the trace headers to the outgoing request.** Call `traceContext.getHeaders()` to get a set of `TraceHeader` objects, and add each `getHeaderName()` and `getHeaderValue()` pair to the request. The headers are `traceparent` and `tracestate`, the W3C standard headers. The agent no longer sends the legacy `newrelic` header.
+4. **Execute the request.**
+5. **Record the result.**
+   * On a response, call `NewRelic.noticeHttpTransaction(...)` with the 11-argument overload that accepts `traceAttributes`, and pass `traceContext.asTraceAttributes()`. The attributes (`id`, `guid`, and `trace.id`) are added to the `MobileRequest` or `MobileRequestError` event, which links the event to the trace.
+   * On an exception, call `NewRelic.noticeNetworkFailure(...)` with the overload that accepts `traceAttributes`, and pass `traceContext.asTraceAttributes()`.
+
+For the full list of parameters, see [Track HTTP requests](/docs/mobile-monitoring/new-relic-mobile/mobile-sdk/network-request-success) and [Track failing HTTP requests](/docs/mobile-monitoring/new-relic-mobile/mobile-sdk/network-request-failures).
+
+### Signatures used in this guide [#signatures]
+
+```java
+TraceContext traceContext = NewRelic.noticeDistributedTrace(Map<String, String> requestAttributes);
+
+NewRelic.noticeHttpTransaction(String url, String httpMethod, int statusCode,
+    long startTimeMs, long endTimeMs, long bytesSent, long bytesReceived,
+    String responseBody, Map<String, String> params, String appData,
+    Map<String, Object> traceAttributes);
+
+NewRelic.noticeNetworkFailure(String url, String httpMethod, long startTimeMs, long endTimeMs,
+    NetworkFailure failure, String message, Map<String, Object> traceAttributes);
+```
+
+```kotlin
+val traceContext: TraceContext = NewRelic.noticeDistributedTrace(requestAttributes: Map<String, String>?)
+
+NewRelic.noticeHttpTransaction(url: String, httpMethod: String, statusCode: Int,
+    startTimeMs: Long, endTimeMs: Long, bytesSent: Long, bytesReceived: Long,
+    responseBody: String?, params: Map<String, String>?, appData: String?,
+    traceAttributes: Map<String, Any>?)
+
+NewRelic.noticeNetworkFailure(url: String, httpMethod: String, startTimeMs: Long, endTimeMs: Long,
+    failure: NetworkFailure, message: String?, traceAttributes: Map<String, Any>?)
+```
+
+### Requirements and validation rules [#validation]
+
+Call the SDK methods after you start the agent. The agent enforces these rules:
+
+* `noticeHttpTransaction` throws an `IllegalArgumentException` if the URL is null, empty, or malformed, or if the HTTP method is null or empty.
+* If `endTimeMs` is earlier than `startTimeMs`, `noticeHttpTransaction` and `noticeNetworkFailure` log an error and don't record the request. If the `HandledExceptions` feature flag is enabled, they also record a handled exception.
+* `statusCode` is an `int`. `startTimeMs`, `endTimeMs`, `bytesSent`, and `bytesReceived` are `long` values.
+* The agent records a request as a `MobileRequest` event when the status code is between 1 and 399. A status code of 400 or higher is recorded as a `MobileRequestError` event. A request with a status code of 0 or less, and no network failure, isn't recorded.
+* Byte counts: pass `0` when a size is unknown. Don't pass a negative number, such as the `-1` that OkHttp and `HttpURLConnection` return for an unknown content length. The agent's own instrumentation ignores unknown sizes in the same way.
+* `noticeNetworkFailure` has two kinds of overload. The overloads that take a `NetworkFailure` value, and optionally a message and `traceAttributes`, accept trace attributes. The overload that takes an `Exception` doesn't accept trace attributes, so convert the exception yourself with `NetworkFailure.exceptionToNetworkFailure(e)` and pass `e.getMessage()` as the message, as the examples do.
+* Trace headers are built with account and application identifiers that the agent receives from New Relic, and the automatic instrumentation adds headers only when the `DistributedTracing` feature flag is enabled and that account information is available. The manual methods don't check this, so make sure the agent is started, and keep the `DistributedTracing` feature flag enabled (it is by default).
+
+## HttpURLConnection [#httpurlconnection]
+
+This example sends a `GET` request, adds the trace headers, counts the bytes it reads, and reports either the response or the failure. Use this pattern when the request isn't made through an `HttpURLConnection` call site that the agent instruments.
+
+### Java [#httpurlconnection-java]
+
+```java
+import com.newrelic.agent.android.NewRelic;
+import com.newrelic.agent.android.distributedtracing.TraceContext;
+import com.newrelic.agent.android.distributedtracing.TraceHeader;
+import com.newrelic.agent.android.util.NetworkFailure;
+
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.HttpURLConnection;
+import java.net.URL;
+
+public int get(String urlString) throws IOException {
+    final String method = "GET";
+    final long startTimeMs = System.currentTimeMillis();
+    final TraceContext traceContext = NewRelic.noticeDistributedTrace(null);
+
+    HttpURLConnection connection = null;
+    try {
+        connection = (HttpURLConnection) new URL(urlString).openConnection();
+        connection.setRequestMethod(method);
+
+        // add the traceparent and tracestate headers
+        for (TraceHeader header : traceContext.getHeaders()) {
+            connection.setRequestProperty(header.getHeaderName(), header.getHeaderValue());
+        }
+
+        final int statusCode = connection.getResponseCode();
+
+        // read the body and count the bytes received
+        long bytesReceived = 0;
+        final InputStream stream = statusCode >= 400
+                ? connection.getErrorStream()
+                : connection.getInputStream();
+        if (stream != null) {
+            try (InputStream in = stream) {
+                final byte[] buffer = new byte[8192];
+                int read;
+                while ((read = in.read(buffer)) != -1) {
+                    bytesReceived += read;
+                }
+            }
+        }
+
+        NewRelic.noticeHttpTransaction(urlString, method, statusCode,
+                startTimeMs, System.currentTimeMillis(),
+                0,               // bytesSent: a GET request has no body
+                bytesReceived,
+                null, null, null,
+                traceContext.asTraceAttributes());
+
+        return statusCode;
+    } catch (IOException e) {
+        NewRelic.noticeNetworkFailure(urlString, method,
+                startTimeMs, System.currentTimeMillis(),
+                NetworkFailure.exceptionToNetworkFailure(e), e.getMessage(),
+                traceContext.asTraceAttributes());
+        throw e;
+    } finally {
+        if (connection != null) {
+            connection.disconnect();
+        }
+    }
+}
+```
+
+### Kotlin [#httpurlconnection-kotlin]
+
+```kotlin
+import com.newrelic.agent.android.NewRelic
+import com.newrelic.agent.android.util.NetworkFailure
+import java.io.IOException
+import java.net.HttpURLConnection
+import java.net.URL
+
+@Throws(IOException::class)
+fun get(urlString: String): Int {
+    val method = "GET"
+    val startTimeMs = System.currentTimeMillis()
+    val traceContext = NewRelic.noticeDistributedTrace(null)
+
+    var connection: HttpURLConnection? = null
+    try {
+        connection = URL(urlString).openConnection() as HttpURLConnection
+        connection.requestMethod = method
+
+        // add the traceparent and tracestate headers
+        for (header in traceContext.headers) {
+            connection.setRequestProperty(header.headerName, header.headerValue)
+        }
+
+        val statusCode = connection.responseCode
+
+        // read the body and count the bytes received
+        val stream = if (statusCode >= 400) connection.errorStream else connection.inputStream
+        val bytesReceived = stream?.use { it.readBytes().size.toLong() } ?: 0L
+
+        NewRelic.noticeHttpTransaction(
+            urlString, method, statusCode,
+            startTimeMs, System.currentTimeMillis(),
+            0L,              // bytesSent: a GET request has no body
+            bytesReceived,
+            null, null, null,
+            traceContext.asTraceAttributes()
+        )
+
+        return statusCode
+    } catch (e: IOException) {
+        NewRelic.noticeNetworkFailure(
+            urlString, method,
+            startTimeMs, System.currentTimeMillis(),
+            NetworkFailure.exceptionToNetworkFailure(e), e.message,
+            traceContext.asTraceAttributes()
+        )
+        throw e
+    } finally {
+        connection?.disconnect()
+    }
+}
+```
+
+## OkHttp interceptor [#okhttp]
+
+An OkHttp interceptor is a good place to instrument every request a client makes. Use it for OkHttp clients whose calls the agent doesn't instrument. Because the interceptor sees the final request, it can read the request and response sizes directly.
+
+### Java [#okhttp-java]
+
+```java
+import com.newrelic.agent.android.NewRelic;
+import com.newrelic.agent.android.distributedtracing.TraceContext;
+import com.newrelic.agent.android.distributedtracing.TraceHeader;
+import com.newrelic.agent.android.util.NetworkFailure;
+
+import java.io.IOException;
+
+import okhttp3.Interceptor;
+import okhttp3.Request;
+import okhttp3.Response;
+
+public class NewRelicTracingInterceptor implements Interceptor {
+    @Override
+    public Response intercept(Chain chain) throws IOException {
+        final long startTimeMs = System.currentTimeMillis();
+        final TraceContext traceContext = NewRelic.noticeDistributedTrace(null);
+
+        // add the traceparent and tracestate headers
+        final Request.Builder builder = chain.request().newBuilder();
+        for (TraceHeader header : traceContext.getHeaders()) {
+            builder.header(header.getHeaderName(), header.getHeaderValue());
+        }
+        final Request request = builder.build();
+
+        final String url = request.url().toString();
+        final String method = request.method();
+        final long bytesSent = request.body() == null ? 0 : Math.max(request.body().contentLength(), 0);
+
+        final Response response;
+        try {
+            response = chain.proceed(request);
+        } catch (IOException e) {
+            NewRelic.noticeNetworkFailure(url, method,
+                    startTimeMs, System.currentTimeMillis(),
+                    NetworkFailure.exceptionToNetworkFailure(e), e.getMessage(),
+                    traceContext.asTraceAttributes());
+            throw e;
+        }
+
+        // contentLength() is -1 when the length is unknown
+        final long bytesReceived = response.body() == null ? 0 : Math.max(response.body().contentLength(), 0);
+
+        NewRelic.noticeHttpTransaction(url, method, response.code(),
+                startTimeMs, System.currentTimeMillis(),
+                bytesSent, bytesReceived,
+                null, null, null,
+                traceContext.asTraceAttributes());
+
+        return response;
+    }
+}
+```
+
+Add the interceptor when you build the client:
+
+```java
+OkHttpClient client = new OkHttpClient.Builder()
+        .addInterceptor(new NewRelicTracingInterceptor())
+        .build();
+```
+
+### Kotlin [#okhttp-kotlin]
+
+```kotlin
+import com.newrelic.agent.android.NewRelic
+import com.newrelic.agent.android.util.NetworkFailure
+import okhttp3.Interceptor
+import okhttp3.Response
+import java.io.IOException
+
+class NewRelicTracingInterceptor : Interceptor {
+    override fun intercept(chain: Interceptor.Chain): Response {
+        val startTimeMs = System.currentTimeMillis()
+        val traceContext = NewRelic.noticeDistributedTrace(null)
+
+        // add the traceparent and tracestate headers
+        val builder = chain.request().newBuilder()
+        for (header in traceContext.headers) {
+            builder.header(header.headerName, header.headerValue)
+        }
+        val request = builder.build()
+
+        val url = request.url.toString()
+        val method = request.method
+        val bytesSent = maxOf(request.body?.contentLength() ?: 0L, 0L)
+
+        val response = try {
+            chain.proceed(request)
+        } catch (e: IOException) {
+            NewRelic.noticeNetworkFailure(
+                url, method,
+                startTimeMs, System.currentTimeMillis(),
+                NetworkFailure.exceptionToNetworkFailure(e), e.message,
+                traceContext.asTraceAttributes()
+            )
+            throw e
+        }
+
+        // contentLength() is -1 when the length is unknown
+        val bytesReceived = maxOf(response.body?.contentLength() ?: 0L, 0L)
+
+        NewRelic.noticeHttpTransaction(
+            url, method, response.code,
+            startTimeMs, System.currentTimeMillis(),
+            bytesSent, bytesReceived,
+            null, null, null,
+            traceContext.asTraceAttributes()
+        )
+
+        return response
+    }
+}
+```
+
+Add the interceptor when you build the client:
+
+```kotlin
+val client = OkHttpClient.Builder()
+    .addInterceptor(NewRelicTracingInterceptor())
+    .build()
+```
+
+The Kotlin example uses the OkHttp 4 property syntax (`request.url`, `response.code`). With OkHttp 3, use the Java-style method calls (`request.url()`, `response.code()`, `response.body()`).
+
+### Retrofit [#retrofit]
+
+Retrofit 2 makes its requests through OkHttp, so you instrument it by adding the same interceptor to the `OkHttpClient` that you pass to Retrofit. Do this only if the agent doesn't already instrument that client.
+
+```java
+Retrofit retrofit = new Retrofit.Builder()
+        .baseUrl("https://api.example.com/")
+        .client(new OkHttpClient.Builder()
+                .addInterceptor(new NewRelicTracingInterceptor())
+                .build())
+        .build();
+```
+
+```kotlin
+val retrofit = Retrofit.Builder()
+    .baseUrl("https://api.example.com/")
+    .client(
+        OkHttpClient.Builder()
+            .addInterceptor(NewRelicTracingInterceptor())
+            .build()
+    )
+    .build()
+```
+
+## Any other HTTP client [#generic]
+
+For a client that isn't covered above, wrap the call in a small helper that follows the same flow. Your client code supplies two things: a way to add a header to the request, and a function that runs the request and returns the status code and the byte counts.
+
+### Java [#generic-java]
+
+```java
+import com.newrelic.agent.android.NewRelic;
+import com.newrelic.agent.android.distributedtracing.TraceContext;
+import com.newrelic.agent.android.distributedtracing.TraceHeader;
+import com.newrelic.agent.android.util.NetworkFailure;
+
+public class TracedHttp {
+    public interface HeaderSetter {
+        void set(String name, String value);
+    }
+
+    public interface HttpCall<T> {
+        Outcome<T> execute() throws Exception;
+    }
+
+    public static class Outcome<T> {
+        final T result;
+        final int statusCode;
+        final long bytesSent;
+        final long bytesReceived;
+
+        public Outcome(T result, int statusCode, long bytesSent, long bytesReceived) {
+            this.result = result;
+            this.statusCode = statusCode;
+            this.bytesSent = bytesSent;
+            this.bytesReceived = bytesReceived;
+        }
+    }
+
+    public static <T> T instrument(String url, String method, HeaderSetter headers, HttpCall<T> call)
+            throws Exception {
+        final long startTimeMs = System.currentTimeMillis();
+        final TraceContext traceContext = NewRelic.noticeDistributedTrace(null);
+
+        for (TraceHeader header : traceContext.getHeaders()) {
+            headers.set(header.getHeaderName(), header.getHeaderValue());
+        }
+
+        final Outcome<T> outcome;
+        try {
+            outcome = call.execute();
+        } catch (Exception e) {
+            NewRelic.noticeNetworkFailure(url, method,
+                    startTimeMs, System.currentTimeMillis(),
+                    NetworkFailure.exceptionToNetworkFailure(e), e.getMessage(),
+                    traceContext.asTraceAttributes());
+            throw e;
+        }
+
+        NewRelic.noticeHttpTransaction(url, method, outcome.statusCode,
+                startTimeMs, System.currentTimeMillis(),
+                Math.max(outcome.bytesSent, 0), Math.max(outcome.bytesReceived, 0),
+                null, null, null,
+                traceContext.asTraceAttributes());
+
+        return outcome.result;
+    }
+}
+```
+
+### Kotlin [#generic-kotlin]
+
+```kotlin
+import com.newrelic.agent.android.NewRelic
+import com.newrelic.agent.android.util.NetworkFailure
+
+class Outcome<T>(
+    val result: T,
+    val statusCode: Int,
+    val bytesSent: Long = 0L,
+    val bytesReceived: Long = 0L
+)
+
+fun <T> instrument(
+    url: String,
+    method: String,
+    addHeader: (name: String, value: String) -> Unit,
+    execute: () -> Outcome<T>
+): T {
+    val startTimeMs = System.currentTimeMillis()
+    val traceContext = NewRelic.noticeDistributedTrace(null)
+
+    for (header in traceContext.headers) {
+        addHeader(header.headerName, header.headerValue)
+    }
+
+    val outcome = try {
+        execute()
+    } catch (e: Exception) {
+        NewRelic.noticeNetworkFailure(
+            url, method,
+            startTimeMs, System.currentTimeMillis(),
+            NetworkFailure.exceptionToNetworkFailure(e), e.message,
+            traceContext.asTraceAttributes()
+        )
+        throw e
+    }
+
+    NewRelic.noticeHttpTransaction(
+        url, method, outcome.statusCode,
+        startTimeMs, System.currentTimeMillis(),
+        maxOf(outcome.bytesSent, 0L), maxOf(outcome.bytesReceived, 0L),
+        null, null, null,
+        traceContext.asTraceAttributes()
+    )
+
+    return outcome.result
+}
+```
+
+For example, with a hypothetical `MyClient`, call the helper like this:
+
+```kotlin
+val body = instrument(
+    url = "https://api.example.com/items",
+    method = "GET",
+    addHeader = { name, value -> request.addHeader(name, value) }
+) {
+    val response = myClient.execute(request)
+    Outcome(response.body, response.statusCode, bytesReceived = response.contentLength)
+}
+```
+
+## Verify your instrumentation [#verify]
+
+After you run your app and make a few requests:
+
+* Query the `MobileRequest` and `MobileRequestError` event types to find the requests you recorded. Events from `noticeHttpTransaction` and `noticeNetworkFailure` carry the trace attributes you passed.
+* Mobile spans appear in any New Relic distributed tracing UI where those spans are part of a trace. For tips on finding and querying them, see [New Relic Android mobile monitoring with distributed tracing](/docs/mobile-monitoring/new-relic-mobile-android/get-started/new-relic-android-and-dt) and [Understand and use the distributed tracing UI](/docs/distributed-tracing/ui-data/understand-use-distributed-tracing-ui).
+* If you don't see data, make sure the `NetworkRequests` and `NetworkErrorRequests` feature flags are enabled (they are by default). For distributed tracing, you also need `AnalyticsEvents` enabled. See [Configure mobile monitoring settings](/docs/mobile-monitoring/new-relic-mobile/mobile-sdk/configure-settings).
