@@ -229,7 +229,7 @@ setMaxEventBufferTime(options: { maxBufferTimeInSeconds: number; }) => void
 
       ## Description [#description]
 
-      Sets the event harvest cycle length. The default is 60 seconds (1 minute). On iOS, the maximum value is 600 seconds. On Android, values below 60 seconds are clamped to 60 seconds.
+      Sets the event harvest cycle length. The default is 60 seconds (1 minute). On iOS, the minimum value is 60 seconds and the maximum value is 600 seconds. On Android, the minimum and maximum value are both 60 seconds, so values outside that range are set to 60 seconds.
 
       ## Parameters [#parameters]
 
