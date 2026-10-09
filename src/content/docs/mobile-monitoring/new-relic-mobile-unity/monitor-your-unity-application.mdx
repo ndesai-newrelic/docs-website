@@ -87,11 +87,13 @@ If you need to install the agent manually, follow these steps:
     2. Add the token to your Unity project:
 
        1. Open your Unity IDE.
-       2. Go to <DNT>**Tools > New Relic > Getting Started**</DNT> to open the editor window.
+       2. Go to <DNT>**Tools > NewRelic**</DNT> to open the **NewRelic Configuration** window.
        3. Paste the appropriate application token into the corresponding field for each platform your app supports:
 
           * Android: Paste the Android token into the "Android App Token" field.
           * iOS: Paste the iOS token into the "iOS App Token" field.
+
+       4. Click <DNT>**Add Token**</DNT>. This adds a GameObject named `NewRelic` with the `NewRelicAgent` component to your scene and sets the tokens on it. To adjust the agent's settings, see [Configure mobile monitoring settings](/docs/mobile-monitoring/new-relic-mobile/mobile-sdk/configure-settings/#unity).
 
        If your app runs on both Android and iOS, provide separate tokens for each platform. Do not use the same token for both.
 

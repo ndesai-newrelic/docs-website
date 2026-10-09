@@ -2527,15 +2527,23 @@ backgroundReportingEnabled: true
     </TabsPageItem>
 
     <TabsPageItem id="unity">
-      New Relic offers default settings for mobile app monitoring in Unity. You can easily adjust these settings within the Unity editor to fit your specific needs.
+      New Relic offers default settings for mobile app monitoring in Unity. You configure them in the Unity editor, on the `NewRelicAgent` component that you add to a GameObject in your project. The agent starts automatically when that component starts, using the options you set in the Inspector. There is no code-based start call.
 
-      To configure these settings:
+      <Callout variant="important">
+        The Unity agent runs only in Android and iOS builds. When you run your game in the Unity Editor or on any other platform, the agent is disabled and calls to the `NewRelicAgent` API have no effect.
+      </Callout>
+
+      ## Add the agent and set your application tokens [#unity-tokens]
 
       1. Launch the Unity Editor and open your Unity project.
 
-      2. From the menu bar, select **Tools > New Relic > Getting Started > New Relic Configuration**.
+      2. From the menu bar, select **Tools > NewRelic**. The **NewRelic Configuration** window opens.
 
-      3. The left-hand **Inspector** window displays a list of default settings. Simply check the box next to a setting to enable it, or uncheck the box to disable it.
+      3. Enter your application token for each platform your app supports in the **Android App Token** and **iOS App Token** fields, then click **Add Token**. This creates a GameObject named `NewRelic` with the `NewRelicAgent` component attached and sets the tokens on it.
+
+         You can also add the `NewRelicAgent` component yourself: select a GameObject in the first scene your app loads, click **Add Component**, and enter the tokens in the **Inspector**.
+
+      4. Select the `NewRelic` GameObject. The **Inspector** window displays the options listed in the table below. Check the box next to an option to enable it, or uncheck the box to disable it.
 
          <img
            title="Unity editor"
@@ -2543,7 +2551,345 @@ backgroundReportingEnabled: true
            src="/images/mobile_screenshot-crop_Unity-editor-UI.webp"
          />
 
-      4. Click **Add component**.
+      The `NewRelic` GameObject is kept across scene loads, and the agent keeps only one instance if it finds more than one.
+
+      ## Inspector options [#unity-options]
+
+      Inspector labels show these option names with spaces added between words. The options marked "iOS builds only" exist only when your active build target is iOS, so they appear in the Inspector only after you switch to the iOS platform. The options marked "iOS at startup" are currently applied only when the agent starts on iOS.
+
+      <table>
+        <thead>
+          <tr>
+            <th style={{ width: "250px" }}>
+              Option
+            </th>
+
+            <th>
+              Description
+            </th>
+
+            <th style={{ width: "150px" }}>
+              Default
+            </th>
+
+            <th style={{ width: "150px" }}>
+              Platforms
+            </th>
+          </tr>
+        </thead>
+
+        <tbody>
+          <tr>
+            <td>
+              `iOSApplicationToken`
+            </td>
+
+            <td>
+              The application token for your iOS app. Use a different token for each platform.
+            </td>
+
+            <td>
+              `<NewRelicAppToken>` (placeholder)
+            </td>
+
+            <td>
+              iOS
+            </td>
+          </tr>
+
+          <tr>
+            <td>
+              `androidApplicationToken`
+            </td>
+
+            <td>
+              The application token for your Android app. Use a different token for each platform.
+            </td>
+
+            <td>
+              `<NewRelicAppToken>` (placeholder)
+            </td>
+
+            <td>
+              Android
+            </td>
+          </tr>
+
+          <tr>
+            <td>
+              `applicationVersion`
+            </td>
+
+            <td>
+              Overrides the application version that New Relic reports. When empty, the agent reports the version set in Unity.
+            </td>
+
+            <td>
+              Empty
+            </td>
+
+            <td>
+              Android and iOS
+            </td>
+          </tr>
+
+          <tr>
+            <td>
+              `applicationBuild`
+            </td>
+
+            <td>
+              Overrides the application build number that New Relic reports. When empty, the agent reports the build set in Unity.
+            </td>
+
+            <td>
+              Empty
+            </td>
+
+            <td>
+              Android and iOS
+            </td>
+          </tr>
+
+          <tr>
+            <td>
+              `logLevel`
+            </td>
+
+            <td>
+              The amount of detail in the New Relic agent's own internal logging. Values are `NONE`, `ERROR`, `WARNING`, `INFO`, `VERBOSE`, and `DEBUG`. On Android, `NONE` turns agent logging off.
+            </td>
+
+            <td>
+              `WARNING`
+            </td>
+
+            <td>
+              Android and iOS
+            </td>
+          </tr>
+
+          <tr>
+            <td>
+              `crashReporting`
+            </td>
+
+            <td>
+              Enable or disable crash reporting.
+            </td>
+
+            <td>
+              `true`
+            </td>
+
+            <td>
+              Android and iOS
+            </td>
+          </tr>
+
+          <tr>
+            <td>
+              `offlineStorageEnabled`
+            </td>
+
+            <td>
+              Enable or disable storing data on the device when there is no internet connection, so it can be sent later. To change the storage limit, see [Set the maximum offline storage size](/docs/mobile-monitoring/new-relic-mobile/mobile-sdk/set-max-offline-storage).
+            </td>
+
+            <td>
+              `true`
+            </td>
+
+            <td>
+              Android and iOS
+            </td>
+          </tr>
+
+          <tr>
+            <td>
+              `backgroundReportingEnabled`
+            </td>
+
+            <td>
+              Enable or disable reporting of data captured while the app is in the background. See [Background reporting](#unity-background-reporting) for iOS prerequisites.
+            </td>
+
+            <td>
+              `false`
+            </td>
+
+            <td>
+              Android and iOS
+            </td>
+          </tr>
+
+          <tr>
+            <td>
+              `usingSSL`
+            </td>
+
+            <td>
+              Enable or disable SSL for data the agent sends to New Relic. Currently applied at agent startup on iOS only.
+            </td>
+
+            <td>
+              `true`
+            </td>
+
+            <td>
+              iOS at startup
+            </td>
+          </tr>
+
+          <tr>
+            <td>
+              `httpResponseBodyCapture`
+            </td>
+
+            <td>
+              Enable or disable capture of a portion of HTTP response bodies to help debug HTTP errors. Currently applied at agent startup on iOS only.
+            </td>
+
+            <td>
+              `true`
+            </td>
+
+            <td>
+              iOS at startup
+            </td>
+          </tr>
+
+          <tr>
+            <td>
+              `analyticsEvents`
+            </td>
+
+            <td>
+              Enable or disable event collection, which also lets you record custom events. Currently applied at agent startup on iOS only.
+            </td>
+
+            <td>
+              `true`
+            </td>
+
+            <td>
+              iOS at startup
+            </td>
+          </tr>
+
+          <tr>
+            <td>
+              `interactionTracing`
+            </td>
+
+            <td>
+              Enable or disable interaction tracing.
+            </td>
+
+            <td>
+              `true`
+            </td>
+
+            <td>
+              iOS builds only
+            </td>
+          </tr>
+
+          <tr>
+            <td>
+              `swiftInteractionTracing`
+            </td>
+
+            <td>
+              Enable or disable interaction tracing for Swift. Enabling this feature may cause your Swift application to crash.
+            </td>
+
+            <td>
+              `false`
+            </td>
+
+            <td>
+              iOS builds only
+            </td>
+          </tr>
+
+          <tr>
+            <td>
+              `URLSessionInstrumentation`
+            </td>
+
+            <td>
+              Enable or disable network instrumentation for `NSURLSession`.
+            </td>
+
+            <td>
+              `true`
+            </td>
+
+            <td>
+              iOS builds only
+            </td>
+          </tr>
+
+          <tr>
+            <td>
+              `experimentalNetworkingInstrumentation`
+            </td>
+
+            <td>
+              Enable or disable experimental networking instrumentation.
+            </td>
+
+            <td>
+              `false`
+            </td>
+
+            <td>
+              iOS builds only
+            </td>
+          </tr>
+
+          <tr>
+            <td>
+              `newEventSystemEnabled`
+            </td>
+
+            <td>
+              Enable or disable the newer, more stable event system in the iOS agent.
+            </td>
+
+            <td>
+              `true`
+            </td>
+
+            <td>
+              iOS builds only
+            </td>
+          </tr>
+        </tbody>
+      </table>
+
+      ## Background reporting [#unity-background-reporting]
+
+      Background reporting is disabled by default. To enable it, check **backgroundReportingEnabled** in the Inspector.
+
+      Prerequisites in your iOS app project to use background instrumentation:
+
+      * Add the key `Permitted background task scheduler identifiers` with an array including an item containing your app's bundle ID.
+
+      * Enable **Background Fetch** and **Background Processing** in the **Background Modes** section of the Xcode project capabilities.
+
+      Note: iOS only guarantees that iOS will harvest in the background once per twenty-four hour period.
+
+      ## Application version and build number [#unity-version-build]
+
+      By default, New Relic reports the version and build number that Unity sets for your app. To override them, set **applicationVersion** and **applicationBuild** in the Inspector. You can also call [`SetApplicationVersion`](/docs/mobile-monitoring/new-relic-mobile/mobile-sdk/set-application-version) and [`SetApplicationBuild`](/docs/mobile-monitoring/new-relic-mobile/mobile-sdk/set-application-build-number) from code.
+
+      ## Other Unity settings [#unity-other-settings]
+
+      These settings are not options in the Unity Inspector:
+
+      * [Maximum event pool size](/docs/mobile-monitoring/new-relic-mobile/mobile-sdk/set-max-event-pool-size), [event buffer time](/docs/mobile-monitoring/new-relic-mobile/mobile-sdk/set-max-event-buffer-time), and [offline storage size](/docs/mobile-monitoring/new-relic-mobile/mobile-sdk/set-max-offline-storage) are set by calling methods on `NewRelicAgent`.
     </TabsPageItem>
 
     <TabsPageItem id="unreal">
