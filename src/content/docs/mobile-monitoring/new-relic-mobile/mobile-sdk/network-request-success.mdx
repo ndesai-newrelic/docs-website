@@ -718,6 +718,24 @@ NewRelicCapacitorPlugin.noticeHttpTransaction({
   body: "fake http response body 200",
 });
 ```
+
+      The following example adds distributed tracing information with `traceAttributes`. For more information, see [Generate distributed tracing headers](/docs/mobile-monitoring/new-relic-mobile-ionic-capacitor/capacitor-sdk-api/generate-distributed-tracing-headers).
+
+```typescript
+const traceAttributes = await NewRelicCapacitorPlugin.generateDistributedTracingHeaders();
+
+NewRelicCapacitorPlugin.noticeHttpTransaction({
+  url: "https://fakewebsite.com",
+  method: "GET",
+  status: 200,
+  startTime: Date.now() - 250,
+  endTime: Date.now(),
+  bytesSent: 10,
+  bytesReceived: 2500,
+  body: "fake http response body 200",
+  traceAttributes,
+});
+```
     </TabsPageItem>
 
     <TabsPageItem id="cordova">

@@ -289,6 +289,16 @@ addHTTPHeadersTrackingFor(options: { headers: string[] }) => void
 NewRelicCapacitorPlugin.addHTTPHeadersTrackingFor({headers:["Car","Music"]});
 ```
 
+      After you add the header names, a `fetch` request that includes those headers records their values as attributes on the resulting `MobileRequest` event:
+
+```ts
+NewRelicCapacitorPlugin.addHTTPHeadersTrackingFor({ headers: ["X-Request-Source"] });
+
+fetch("https://example.com/api/orders", {
+  headers: { "X-Request-Source": "mobile-app" },
+});
+```
+
       ## Get the list of tracked headers [#get-tracked-headers]
 
       Use `getHTTPHeadersTrackingFor` to retrieve the header fields that are currently tracked.

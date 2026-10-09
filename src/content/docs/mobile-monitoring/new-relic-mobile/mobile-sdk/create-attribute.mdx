@@ -372,6 +372,13 @@ setAttribute(options: { name: string; value: string; }) => void
 ```typescript
 NewRelicCapacitorPlugin.setAttribute({ name: "CapacitorAttribute", value: "123" });
 ```
+
+      Attribute values must be strings. Convert other types before you set them, or use `incrementAttribute` for numeric counters:
+
+```typescript
+NewRelicCapacitorPlugin.setAttribute({ name: "isPremiumUser", value: String(true) });
+NewRelicCapacitorPlugin.incrementAttribute({ name: "itemsInCart", value: 1 });
+```
     </TabsPageItem>
 
     <TabsPageItem id="cordova">
