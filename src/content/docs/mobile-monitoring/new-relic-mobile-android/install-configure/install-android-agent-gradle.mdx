@@ -77,11 +77,11 @@ Before you install, review the [Android agent compatibility and requirements](/d
       ```groovy
       plugins {
         // for binary Gradle plugins that need to be resolved
-        id("com.newrelic.agent.android") version "7.8.3" apply false
+        id("com.newrelic.agent.android") version "AGENT_VERSION" apply false
       }
       ```
 
-      These examples use Android agent version 7.8.3. We strongly recommend you use the [latest version](/docs/release-notes/mobile-release-notes/android-release-notes/), so replace `7.8.3` if a newer version is available.
+      Make sure to replace `AGENT_VERSION` with your agent version number. We strongly recommend you use the [latest version](/docs/release-notes/mobile-release-notes/android-release-notes/). 
 
       2. Apply the plugin explicitly to the app-level build file (and any sub-modules intended for instrumentation) using the following syntax:
 
@@ -113,7 +113,7 @@ Before you install, review the [Android agent compatibility and requirements](/d
 
         // not required if plugin classpath in resolutionStrategy{} below
         dependencies {
-          classpath "com.newrelic.agent.android:agent-gradle-plugin:7.8.3"
+          classpath "com.newrelic.agent.android:agent-gradle-plugin:AGENT_VERSION"
         }
       }
       ```
@@ -129,7 +129,7 @@ Before you install, review the [Android agent compatibility and requirements](/d
           eachPlugin {
             // not required if using `classpath dependency` above
             if (requested.id.id.startsWith("newrelic") || requested.id.id.startsWith("com.newrelic.agent.android")) {
-              useModule("com.newrelic.agent.android:agent-gradle-plugin:7.8.3")
+              useModule("com.newrelic.agent.android:agent-gradle-plugin:${AGENT_VERSION}")
             }
           }
         }
@@ -139,7 +139,7 @@ Before you install, review the [Android agent compatibility and requirements](/d
       }
       ```
 
-      These examples use Android agent version 7.8.3. We strongly recommend you use the [latest version](/docs/release-notes/mobile-release-notes/android-release-notes/), so replace `7.8.3` if a newer version is available.
+      Make sure to replace `AGENT_VERSION` with your agent version number. We strongly recommend you use the [latest version](/docs/release-notes/mobile-release-notes/android-release-notes/).
 
       3. Apply the plugin to the app-level build file, as well as any other sub-module to be instrumented:
 

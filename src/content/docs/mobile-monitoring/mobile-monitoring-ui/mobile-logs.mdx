@@ -114,7 +114,7 @@ Keep in mind that when you use the logging APIs, you should only use the debug l
 ### Requirements [#requirements]
 
 * Android agent v7.4.0 or higher.
-* The `LogReporting` feature flag is enabled (the default). See [Configure mobile monitoring settings](/docs/mobile-monitoring/new-relic-mobile/mobile-sdk/configure-settings#logging).
+* Mobile logs are turned on for your app in the New Relic UI. Log reporting is managed by remote configuration, so you don't need to enable a feature flag in your code.
 
 The `LogLevel` enum is in the `com.newrelic.agent.android.logging` package. It is separate from the `AgentLog` constants that control the agent's own log output.
 
