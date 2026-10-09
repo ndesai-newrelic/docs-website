@@ -166,16 +166,16 @@ do {
       ## Syntax [#syntax]
 
 ```typescript
-recordError(options: { name: string; message: string; stack: string; isFatal: boolean; }) => void
+recordError(options: { name: string; message: string; stack: string; isFatal: boolean; attributes?: object; }) => void
 ```
 
       ## Description [#description]
 
-      Records JavaScript/TypeScript errors for Ionic Capacitor. Make sure to add this method to your framework's global error handler.
+      Records JavaScript/TypeScript errors for Ionic Capacitor as handled exceptions. The plugin already listens for uncaught `window` `error` events and `unhandledrejection` events and reports them for you. Call `recordError` to report errors that you catch yourself, or from your framework's global error handler (for example, Angular's `ErrorHandler`).
 
       ## Parameters [#parameters]
 
-      ### Objective-c
+      Pass these properties in a single `options` object.
 
       <table>
         <thead>
@@ -197,15 +197,71 @@ recordError(options: { name: string; message: string; stack: string; isFatal: bo
         <tbody>
           <tr>
             <td>
-              `options`
+              `name`
             </td>
 
             <td>
-              `{ name: string; message: string; stack: string; isFatal: boolean; }`
+              `string`
             </td>
 
             <td>
-              Required. An object that contains the error details.
+              Required. The name of the error, such as `e.name`.
+            </td>
+          </tr>
+
+          <tr>
+            <td>
+              `message`
+            </td>
+
+            <td>
+              `string`
+            </td>
+
+            <td>
+              Required. The error message.
+            </td>
+          </tr>
+
+          <tr>
+            <td>
+              `stack`
+            </td>
+
+            <td>
+              `string`
+            </td>
+
+            <td>
+              Required. The error stack trace, such as `e.stack`.
+            </td>
+          </tr>
+
+          <tr>
+            <td>
+              `isFatal`
+            </td>
+
+            <td>
+              `boolean`
+            </td>
+
+            <td>
+              Required. Whether the error is fatal. Sent with the error as an attribute.
+            </td>
+          </tr>
+
+          <tr>
+            <td>
+              `attributes`
+            </td>
+
+            <td>
+              `object`
+            </td>
+
+            <td>
+              Optional. A map of custom attributes to attach to the error.
             </td>
           </tr>
         </tbody>

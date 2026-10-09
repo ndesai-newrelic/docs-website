@@ -330,7 +330,7 @@ recordBreadcrumb(options: { name: string; eventAttributes: object; }) => void
             </td>
 
             <td>
-              Optional. A map that includes a list of attributes of the breadcrumb event. Create attributes for any event descriptors you think will be useful.
+              Required by the TypeScript definition. A map that includes a list of attributes of the breadcrumb event. Pass an empty object (`{}`) if you have no attributes. Create attributes for any event descriptors you think will be useful.
             </td>
           </tr>
         </tbody>
@@ -338,7 +338,7 @@ recordBreadcrumb(options: { name: string; eventAttributes: object; }) => void
 
       ## Return values [#return-values]
 
-      Returns `true` if the event is recorded successfully, or `false` if not.
+      This method does not return a value (`void`).
 
       ## Example [#example]
 

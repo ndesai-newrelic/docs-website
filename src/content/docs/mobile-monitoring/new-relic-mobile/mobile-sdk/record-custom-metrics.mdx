@@ -405,9 +405,9 @@ recordMetric(options: { name: string; category: string; value?: number; countUni
 
       ## Description [#description]
 
-      Records custom metrics (arbitrary numerical data), where `countUnit` is the measurement unit of the metric count and `valueUnit` is the measurement unit for the metric value. If you use `countUnit` or `valueUnit`, then you must set all three: `value`, `countUnit`, and `valueUnit`.
+      Records custom metrics (arbitrary numerical data), where `countUnit` is the measurement unit of the metric count and `valueUnit` is the measurement unit for the metric value. `value`, `countUnit`, and `valueUnit` are optional. If you use `countUnit` or `valueUnit`, then you must set all three: `value`, `countUnit`, and `valueUnit`.
 
-      Supported measurements for `countUnit` and `valueUnit` are:
+      Supported measurements for `countUnit` and `valueUnit` are the values of `NREnums.MetricUnit`:
 
       * `PERCENT`
       * `BYTES`
@@ -473,7 +473,7 @@ recordMetric(options: { name: string; category: string; value?: number; countUni
             </td>
 
             <td>
-              Required. The value of the metric.
+              Optional. The value of the metric. Required if you set `countUnit` and `valueUnit`.
             </td>
           </tr>
 
@@ -483,11 +483,11 @@ recordMetric(options: { name: string; category: string; value?: number; countUni
             </td>
 
             <td>
-              `string`
+              `NREnums.MetricUnit`
             </td>
 
             <td>
-              Required. The unit of measurement for the count.
+              Optional. The unit of measurement for the count. Must be set together with `valueUnit` and `value`.
             </td>
           </tr>
 
@@ -497,11 +497,11 @@ recordMetric(options: { name: string; category: string; value?: number; countUni
             </td>
 
             <td>
-              `string`
+              `NREnums.MetricUnit`
             </td>
 
             <td>
-              Required. The unit of measurement for the count.
+              Optional. The unit of measurement for the value. Must be set together with `countUnit` and `value`.
             </td>
           </tr>
         </tbody>

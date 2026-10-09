@@ -533,14 +533,14 @@ noticeHttpTransaction(options: {
   bytesSent: number,
   bytesReceived: number,
   body: string,
+  traceAttributes?: object,
+  params?: object,
 }) => void;
-
-
 ```
 
       ## Description [#description]
 
-      Manually records HTTP transactions, with an option to also send a response body.
+      Manually records HTTP transactions, with an option to also send a response body. The Capacitor plugin automatically instruments `fetch` and `XMLHttpRequest` calls, so use this method for requests made through other means.
 
       ## Parameters [#parameters]
 
@@ -614,8 +614,7 @@ noticeHttpTransaction(options: {
             </td>
 
             <td>
-              Optional. The start time of the request in milliseconds since the epoch.
-              `startTime` and `endTime` can be used as an alternative to `timer`.
+              Required. The start time of the request in milliseconds since the epoch.
             </td>
           </tr>
 
@@ -629,8 +628,7 @@ noticeHttpTransaction(options: {
             </td>
 
             <td>
-              Optional. The end time of the request in milliseconds since the epoch.
-              `startTime` and `endTime` can be used as an alternative to `timer`.
+              Required. The end time of the request in milliseconds since the epoch.
             </td>
           </tr>
 
@@ -672,7 +670,35 @@ noticeHttpTransaction(options: {
             </td>
 
             <td>
-              Optional. The response body of the HTTP response.
+              Required by the TypeScript definition. The response body of the HTTP response. Pass an empty string if you do not want to send a body.
+            </td>
+          </tr>
+
+          <tr>
+            <td>
+              `traceAttributes`
+            </td>
+
+            <td>
+              `object`
+            </td>
+
+            <td>
+              Optional. A map of distributed tracing header values to associate with the request, such as the headers returned by [`generateDistributedTracingHeaders`](/docs/mobile-monitoring/new-relic-mobile/mobile-sdk/generate-distributed-tracing-headers).
+            </td>
+          </tr>
+
+          <tr>
+            <td>
+              `params`
+            </td>
+
+            <td>
+              `object`
+            </td>
+
+            <td>
+              Optional. A map of additional parameters to attach to the request, such as the values of [tracked HTTP headers](/docs/mobile-monitoring/new-relic-mobile/mobile-sdk/add-tracked-headers). Android only; the iOS plugin ignores this parameter.
             </td>
           </tr>
         </tbody>

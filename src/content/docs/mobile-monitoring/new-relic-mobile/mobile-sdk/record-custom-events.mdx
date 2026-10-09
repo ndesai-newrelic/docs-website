@@ -403,7 +403,7 @@ recordCustomEvent(options: { eventType: string; eventName: string; attributes: o
             </td>
 
             <td>
-              Required. The type of event. Do not use `$eventType` to name your custom events; use a custom attribute or the optional `name` parameter.
+              Required. The type of event. Do not use `$eventType` to name your custom events; use a custom attribute or the `eventName` parameter.
             </td>
           </tr>
 
@@ -417,7 +417,7 @@ recordCustomEvent(options: { eventType: string; eventName: string; attributes: o
             </td>
 
             <td>
-              Optional. Use this parameter to name the event. Using this parameter is equivalent to creating a `name` parameter.
+              Required by the TypeScript definition. Use this parameter to name the event. Using this parameter is equivalent to creating a `name` attribute. Pass an empty string if you do not want to name the event.
             </td>
           </tr>
 
@@ -431,7 +431,7 @@ recordCustomEvent(options: { eventType: string; eventName: string; attributes: o
             </td>
 
             <td>
-              Optional. A map that includes a list of attributes that further designate subcategories to the `eventType`.
+              Required by the TypeScript definition. A map that includes a list of attributes that further designate subcategories to the `eventType`. Pass an empty object (`{}`) if you have no attributes.
             </td>
           </tr>
         </tbody>
@@ -439,7 +439,7 @@ recordCustomEvent(options: { eventType: string; eventName: string; attributes: o
 
       ## Return values [#return-values]
 
-      Returns `true` if the event is recorded successfully, or `false` if not.
+      This method does not return a value (`void`).
 
       ## Example [#example]
 

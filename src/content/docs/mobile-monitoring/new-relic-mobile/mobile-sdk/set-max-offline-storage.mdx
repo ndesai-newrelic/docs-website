@@ -214,13 +214,13 @@ let poolSizeSet = NewRelic.setMaxOfflineStorageSize(1000)
 offlineStorageEnabled: false
   ```
 
-        For details on adding feature flags, see [Configure mobile monitoring settings](/docs/mobile-monitoring/new-relic-mobile/mobile-sdk/configure-settings/#capacitor).
+        For details on adding feature flags, see [Configure mobile monitoring settings](/docs/mobile-monitoring/new-relic-mobile/mobile-sdk/configure-settings/#capacitor-configurations).
       </Callout>
 
       ## Syntax [#syntax]
 
 ```typescript
-setMaxOfflineStorageSize(options: { megabytes: number; }) => void
+setMaxOfflineStorageSize(options: { megaBytes: number; }) => void
 ```
 
       ## Parameters [#parameters]
@@ -245,7 +245,7 @@ setMaxOfflineStorageSize(options: { megabytes: number; }) => void
         <tbody>
           <tr>
             <td>
-              `megabytes`
+              `megaBytes`
             </td>
 
             <td>

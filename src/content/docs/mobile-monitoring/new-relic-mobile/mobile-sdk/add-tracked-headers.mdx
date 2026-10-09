@@ -231,7 +231,7 @@ URLSession.shared.dataTask(with: request)
       ### Typescript [#typescript]
 
 ```js
-NewRelic.addHTTPHeadersTrackingFor((options:{headers: string[]}))
+addHTTPHeadersTrackingFor(options: { headers: string[] }) => void
 ```
 
       ## Description [#description]
@@ -261,7 +261,7 @@ NewRelic.addHTTPHeadersTrackingFor((options:{headers: string[]}))
         <tbody>
           <tr>
             <td>
-              `$headers`
+              `headers`
             </td>
 
             <td>
@@ -269,7 +269,7 @@ NewRelic.addHTTPHeadersTrackingFor((options:{headers: string[]}))
             </td>
 
             <td>
-              Required. The HTTP header fields to be added.
+              Required. The HTTP header fields to be added, passed in the `headers` property of the options object.
             </td>
           </tr>
         </tbody>
@@ -277,7 +277,7 @@ NewRelic.addHTTPHeadersTrackingFor((options:{headers: string[]}))
 
       ## Return values [#return-values]
 
-      Returns `true` if added successfully, or `false` if not.
+      This method does not return a value (`void`).
 
       ## Examples [#examples]
 
