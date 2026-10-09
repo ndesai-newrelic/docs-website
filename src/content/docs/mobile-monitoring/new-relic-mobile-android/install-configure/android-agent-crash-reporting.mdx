@@ -10,7 +10,7 @@ redirects:
 freshnessValidatedDate: never
 ---
 
-By default, <InlinePopover type="mobile"/> enables crash reporting for your mobile applications to help track and diagnose crashes. When an Android application crashes, the agent uploads a crash report to the New Relic [collector](/docs/accounts-partnerships/education/getting-started-new-relic/glossary#collector). The crash details will then be processed and de-obfuscated automatically if you are using ProGuard or DexGuard.
+By default, <InlinePopover type="mobile"/> enables crash reporting (the `CrashReporting` feature flag) for your mobile applications to help track and diagnose crashes. When an Android application crashes, the agent uploads a crash report to the New Relic [collector](/docs/accounts-partnerships/education/getting-started-new-relic/glossary#collector). The crash details will then be processed and de-obfuscated automatically if you are using ProGuard or DexGuard.
 
 You can view detailed information about crashes in the [<DNT>**Crash analysis**</DNT> UI](/docs/mobile-monitoring/mobile-monitoring-ui/crashes/crash-analysis-group-filter-your-crashes), or receive crash notifications by [email](/docs/mobile-monitoring/mobile-monitoring-ui/crashes/receive-crash-notifications-email). You can also [integrate with ticketing systems](/docs/mobile-monitoring/mobile-monitoring-ui/crashes/file-tickets-mobile-app-crashes) for further investigation.
 
@@ -124,19 +124,19 @@ Crash reporting for Android is designed to work with other crash reporting frame
 * If another handler is already registered, debug logs will include:
 
   ```
-  Installing New Relic crash handler and chaining previous exception handler.
+  Installing New Relic crash handler and chaining to <previousHandlerClassName>.
   ```
 
 Every time New Relic catches an exception, it is [logged to `DEBUG` level](/docs/mobile-monitoring/new-relic-mobile-android/api-guides/android-agent-configuration-feature-flags#logging). For example:
 
 ```
-A crash has been detected in <className>.
+A crash has been detected in <className> and will be reported ASAP.
 ```
 
 If New Relic catches an exception but crash reporting has been disabled for any reason, this message is logged:
 
 ```
-A crash has been detected but crash reporting is disabled.
+A crash has been detected but crash reporting is disabled!
 ```
 
 If you don't see crash reports, check the debug logs for messages like this.
