@@ -7,7 +7,7 @@ tags:
     - Get started
 metaDescription: "New Relic's Unity agent for Android and iOS: Features, compatibility, requirements, installation, and upgrade procedures."
 isTutorial: true
-freshnessValidatedDate: 2024-08-26
+freshnessValidatedDate: 2026-10-09
 ---
 
 Our New Relic Unity agent monitors your Unity mobile app and provides deep insights into your app's performance, errors, and user experience. Once you install and configure the Unity agent, you'll be able to:
@@ -49,11 +49,96 @@ If you need to install the agent manually, follow these steps:
 
     Before you install the Unity agent, make sure your Unity app meets these version requirements:
 
+    * Unity 2019.1 or higher
     * For Android-native apps:
       * Android API 24 or higher
+      * Android Gradle Plugin (AGP) 7 or higher
       * See [Android-native requirements](/docs/mobile-monitoring/new-relic-mobile-android/get-started/new-relic-android-compatibility-requirements)
     * For iOS-native apps:
+      * iOS 15 or higher for Unity agent version 1.4.14 and higher (Unity agent versions 1.4.11 through 1.4.13 require iOS 16 or higher, and versions before 1.4.11 require iOS 10 or higher)
       * See [iOS-native requirements](/docs/mobile-monitoring/new-relic-mobile-ios/get-started/new-relic-ios-compatibility-requirements)
+
+    The Unity agent package also installs the `com.unity.modules.unitywebrequest` and `com.unity.nuget.mono-cecil` Unity packages as dependencies.
+
+    The Unity agent wraps the New Relic native Android and iOS agents. The following table shows the native agent versions that recent Unity agent versions include:
+
+    <table>
+      <thead>
+        <tr>
+          <th>
+            Unity agent version
+          </th>
+
+          <th>
+            Android agent version
+          </th>
+
+          <th>
+            iOS agent version
+          </th>
+        </tr>
+      </thead>
+
+      <tbody>
+        <tr>
+          <td>
+            1.7.2
+          </td>
+
+          <td>
+            7.8.3
+          </td>
+
+          <td>
+            7.7.7
+          </td>
+        </tr>
+
+        <tr>
+          <td>
+            1.7.0
+          </td>
+
+          <td>
+            7.8.2
+          </td>
+
+          <td>
+            7.7.6
+          </td>
+        </tr>
+
+        <tr>
+          <td>
+            1.6.4
+          </td>
+
+          <td>
+            7.8.1
+          </td>
+
+          <td>
+            7.7.6
+          </td>
+        </tr>
+
+        <tr>
+          <td>
+            1.6.3
+          </td>
+
+          <td>
+            7.8.0
+          </td>
+
+          <td>
+            7.7.5
+          </td>
+        </tr>
+      </tbody>
+    </table>
+
+    For details on every release, see the [Unity agent release notes](/docs/release-notes/mobile-release-notes/unity-release-notes/).
   </Step>
 
   <Step>
@@ -125,7 +210,7 @@ If you need to install the agent manually, follow these steps:
        }
        ```
 
-    2. In your `baseProjectTemplate.gradle` file (usually located in your Unit project's Android folder), add the New Relic `classpath` at the project level:
+    2. In your `baseProjectTemplate.gradle` file (usually located in your Unity project's Android folder), add the New Relic `classpath` at the project level:
 
        ```groovy
        dependencies {
@@ -138,28 +223,12 @@ If you need to install the agent manually, follow these steps:
          // To specify a custom Gradle version in Unity, go to "Preferences > External Tools",
          // uncheck "Gradle Installed with Unity (recommended)",
          // and specify a path to a custom Gradle version.
-         classpath 'com.newrelic.agent.android:agent-gradle-plugin:7.2.0'
+         classpath 'com.newrelic.agent.android:agent-gradle-plugin:7.8.3'
          BUILD_SCRIPT_DEPS
        }
        ```
 
-       If you're using an older Unity version that requires Gradle 7.0 or lower, you'll need to use a specific classpath dependency to ensure compatibility:
-
-       ```groovy
-       dependencies {
-         // If you are changing the Android Gradle Plugin version,
-         // make sure it is compatible with the Gradle version preinstalled with Unity.
-         // See which Gradle version is preinstalled with Unity here:
-         //    https://docs.unity3d.com/Manual/android-gradle-overview.html
-         // See official Gradle and Android Gradle Plugin compatibility table here:
-         //    https://developer.android.com/studio/releases/gradle-plugin#updating-gradle
-         // To specify a custom Gradle version in Unity, go to "Preferences > External Tools",
-         // uncheck "Gradle Installed with Unity (recommended)",
-         // and specify a path to a custom Gradle version.
-         classpath 'com.newrelic.agent.android:agent-gradle-plugin:6.11.0'
-         BUILD_SCRIPT_DEPS
-       }
-       ```
+       This plugin version supports AGP 7 and higher, so you can use the same `classpath` dependency with older Unity versions.
 
     If your project is using plugin DSL, make the following changes (and skip step 3):
 
@@ -168,7 +237,7 @@ If you need to install the agent manually, follow these steps:
         plugins {
             id "com.android.application"
             id "kotlin-android"
-            id "com.newrelic.agent.android" version "7.5.1"  //<-- include this
+            id "com.newrelic.agent.android" version "7.8.3"  //<-- include this
         }
         ```
 
@@ -177,6 +246,16 @@ If you need to install the agent manually, follow these steps:
        ```groovy
        apply plugin: "com.android.application"
        apply plugin: 'newrelic' // <-- add this
+       ```
+
+    4. In the same `launcherTemplate.gradle` file, add the New Relic native Android agent dependencies to the `dependencies` block. These versions match Unity agent version 1.7.2:
+
+       ```groovy
+       dependencies {
+           implementation project(':unityLibrary')
+           implementation 'com.newrelic.agent.android:agent-ndk:1.1.5'
+           implementation 'com.newrelic.agent.android:android-agent:7.8.3'
+       }
        ```
   </Step>
 
@@ -199,12 +278,16 @@ If you need to install the agent manually, follow these steps:
       style={{ maxWidth: '70%' }}
     />
 
+    <Callout variant="important">
+      Unity agent version 1.7.0 and higher resolves the iOS agent through CocoaPods only. Unity agent versions 1.6.0 through 1.6.4 also declared the iOS agent as a Swift Package, which can cause iOS apps to crash on launch with `Library not loaded: @rpath/NewRelic.framework/NewRelic`. If you use one of those versions and can't upgrade, clear the <DNT>**Swift Package Manager Enabled**</DNT> setting in the iOS Resolver settings and rebuild.
+    </Callout>
+
     4. If you're not using the Podfile for iOS dependency management, follow these steps:
 
        1. Download and unzip the New Relic XCFramework SDK (iOS agent). You can get the latest iOS agent from our [iOS agent release notes](/docs/release-notes/mobile-release-notes/ios-release-notes).
        2. Add the New Relic XCFramework to your Xcode project:
           1. Unzip the SDK download.
-          2. From your Finder, drag the `NewRelicAgent.xcframework` folder into your Xcode project, placing it onto your Targets Frameworks pane.
+          2. From your Finder, drag the `NewRelic.xcframework` folder into your Xcode project, placing it onto your Targets Frameworks pane.
           3. Under the <DNT>**Embed**</DNT> column, click <DNT>**Embed & Sign**</DNT>.
 
     And you're done! You should start seeing data in New Relic within 5 minutes.
@@ -282,6 +365,8 @@ The following customizations are available for the Unity agent.
         [Start interactions](/docs/mobile-monitoring/new-relic-mobile/mobile-sdk/start-interaction)
 
         [Stop interactions](/docs/mobile-monitoring/new-relic-mobile/mobile-sdk/stop-interaction)
+
+        [Trace methods within an interaction](/docs/mobile-monitoring/new-relic-mobile/mobile-sdk/start-interaction#unity-trace-methods)
       </td>
     </tr>
 
@@ -322,6 +407,7 @@ The following customizations are available for the Unity agent.
         * [Set maximum time the agent stores events in memory](/docs/mobile-monitoring/new-relic-mobile/mobile-sdk/set-max-event-buffer-time)
         * [Get a current session's ID](/docs/mobile-monitoring/new-relic-mobile/mobile-sdk/current-session-id)
         * [Set a custom user ID to associate with events and attributes](/docs/mobile-monitoring/new-relic-mobile/mobile-sdk/set-custom-user-id)
+        * [Set the maximum offline storage size](/docs/mobile-monitoring/new-relic-mobile/mobile-sdk/set-max-offline-storage)
 
         To determine which method to use, see [Report mobile monitoring custom events and attributes](/docs/data-apis/custom-data/custom-events/report-mobile-monitoring-custom-events-attributes/).
       </td>
@@ -336,16 +422,34 @@ The following customizations are available for the Unity agent.
         [Track HTTP requests](/docs/mobile-monitoring/new-relic-mobile/mobile-sdk/network-request-success)
 
         [Track failing HTTP requests](/docs/mobile-monitoring/new-relic-mobile/mobile-sdk/network-request-failures)
+
+        [Get distributed tracing headers](/docs/mobile-monitoring/new-relic-mobile/mobile-sdk/network-request-success#unity-distributed-tracing)
+
+        [Instrument HttpClient requests](/docs/mobile-monitoring/new-relic-mobile/mobile-sdk/network-request-success#unity-httpclient)
+
+        [Instrument UnityWebRequest requests](/docs/mobile-monitoring/new-relic-mobile/mobile-sdk/network-request-success#unity-unitywebrequest)
       </td>
     </tr>
 
     <tr>
       <td>
-        Shut down the agent.
+        Override the application version and build number.
       </td>
 
       <td>
-        [Shut down the agent](/docs/mobile-monitoring/new-relic-mobile/mobile-sdk/shut-down-agent)
+        [Set the application version](/docs/mobile-monitoring/new-relic-mobile/mobile-sdk/set-application-version)
+
+        [Set the application build number](/docs/mobile-monitoring/new-relic-mobile/mobile-sdk/set-application-build-number)
+      </td>
+    </tr>
+
+    <tr>
+      <td>
+        Send logs to New Relic.
+      </td>
+
+      <td>
+        [Mobile logs](/docs/mobile-monitoring/mobile-monitoring-ui/mobile-logs)
       </td>
     </tr>
 
