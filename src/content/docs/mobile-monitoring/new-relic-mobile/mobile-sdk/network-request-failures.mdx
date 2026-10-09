@@ -259,7 +259,7 @@ NewRelic.noticeNetworkFailure(for: URL, httpMethod: String, startTime: Double, e
 
       You can identify the duration of the request in one of two ways: pass an `NRTimer`, or pass the `startTime` and `endTime` of the request.
 
-      The overloads that take `traceHeaders` (agent version 7.7.8 and higher) report the failure against a distributed trace that you own. Pass the dictionary returned by [`generateDistributedTracingContext`](/docs/mobile-monitoring/new-relic-mobile/mobile-sdk/generate-distributed-tracing-headers-ios) so that the resulting `MobileRequestError` event is reported against that trace instead of one that the agent generates. Cross-platform agents that both make and report the request use these overloads. Native instrumentation does not need them.
+      The overloads that take `traceHeaders` (agent version 7.7.8 and higher) report the failure against a distributed trace that you own. Pass the distributed trace context dictionary (`generateDistributedTracingContext`) so that the resulting `MobileRequestError` event is reported against that trace instead of one that the agent generates. Cross-platform agents that both make and report the request use these overloads. Native instrumentation does not need them.
 
       ## Parameters [#parameters]
 
