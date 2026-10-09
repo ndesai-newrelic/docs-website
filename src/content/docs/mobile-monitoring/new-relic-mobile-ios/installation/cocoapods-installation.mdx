@@ -184,14 +184,18 @@ These procedures to configure your iOS/tvOS app with CocoaPods and Swift also ap
 
 ## (Optional) Change the logging level [#logging]
 
-By default, the iOS agent logs at the `info` level. you can change the log level to collect more or less data. There are six supported log levels:
+By default, the iOS agent logs at the `error` and `warning` levels. You can change the log level to collect more or less data. There are eight supported log levels:
 
 * `none`
 * `error`
 * `warning`
 * `info`
 * `verbose`
+* `audit`
+* `debug`
 * `ALL`
+
+When you set a single level, such as `info`, the agent also logs all higher-priority levels. For more options, such as writing the agent log to a file, see [Configure agent logging with NRLogger](/docs/mobile-monitoring/new-relic-mobile-ios/configuration/ios-remote-logging#nrlogger).
 
 <Callout variant="important">
   Only increase the log level to `verbose` or higher for debugging, not for release builds.

@@ -14,7 +14,7 @@ This doc walks you through how to update your watchOS project so you can monitor
 
 ## Requirements [#watchos-reqs]
 
-Before adding the `WatchAppDelegate`, first install the [New Relic agent](/docs/mobile-monitoring/new-relic-mobile-ios/installation/spm-installation).
+Before adding the `WatchAppDelegate`, first install the [New Relic agent](/docs/mobile-monitoring/new-relic-mobile-ios/installation/spm-installation). As of agent version 7.7.8, the agent supports watchOS 10.0 or higher.
 
 <Callout variant="important">
   To ensure proper instrumentation, you must configure and start the agent as the first step in `applicationDidFinishLaunching()` and then run the agent on the main thread. Starting the call later, on a background thread or asynchronously, can cause unexpected or unstable behavior.
