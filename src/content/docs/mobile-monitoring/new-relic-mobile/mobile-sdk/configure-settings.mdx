@@ -2539,6 +2539,112 @@ newEventSystemEnabled: true
           </tr>
         </tbody>
       </table>
+
+      ## Change settings at runtime [#react-native-runtime]
+
+      After the agent starts, you can turn the following settings on or off with these methods. They use the same names as the startup options of the same name.
+
+```typescript
+NewRelic.analyticsEventEnabled(enabled: boolean): void;
+NewRelic.networkRequestEnabled(enabled: boolean): void;
+NewRelic.networkErrorRequestEnabled(enabled: boolean): void;
+NewRelic.httpResponseBodyCaptureEnabled(enabled: boolean): void;
+```
+
+      <table>
+        <thead>
+          <tr>
+            <th>
+              Method
+            </th>
+
+            <th>
+              Description
+            </th>
+          </tr>
+        </thead>
+
+        <tbody>
+          <tr>
+            <td>
+              `analyticsEventEnabled(enabled)`
+            </td>
+
+            <td>
+              (Android only) Enable or disable collection of event data. On iOS, this method has no effect.
+            </td>
+          </tr>
+
+          <tr>
+            <td>
+              `networkRequestEnabled(enabled)`
+            </td>
+
+            <td>
+              Enable or disable reporting successful HTTP requests to the `MobileRequest` event type.
+            </td>
+          </tr>
+
+          <tr>
+            <td>
+              `networkErrorRequestEnabled(enabled)`
+            </td>
+
+            <td>
+              Enable or disable reporting network and HTTP request errors to the `MobileRequestError` event type.
+            </td>
+          </tr>
+
+          <tr>
+            <td>
+              `httpResponseBodyCaptureEnabled(enabled)`
+            </td>
+
+            <td>
+              Enable or disable capture of HTTP response bodies for HTTP error traces, and `MobileRequestError` events.
+            </td>
+          </tr>
+        </tbody>
+      </table>
+
+      Here's an example in JavaScript:
+
+```javascript
+import NewRelic from 'newrelic-react-native-agent';
+
+NewRelic.networkRequestEnabled(false);
+NewRelic.networkErrorRequestEnabled(true);
+NewRelic.httpResponseBodyCaptureEnabled(false);
+
+// Android only. This call has no effect on iOS.
+NewRelic.analyticsEventEnabled(true);
+```
+
+      And the same example in TypeScript:
+
+```typescript
+import NewRelic from 'newrelic-react-native-agent';
+
+const captureNetworkRequests: boolean = false;
+
+NewRelic.networkRequestEnabled(captureNetworkRequests);
+NewRelic.networkErrorRequestEnabled(true);
+NewRelic.httpResponseBodyCaptureEnabled(false);
+```
+
+      ## Check whether the agent has started [#react-native-is-agent-started]
+
+```typescript
+NewRelic.isAgentStarted(): boolean;
+```
+
+      Returns `true` after you call `NewRelic.startAgent()`, and `false` before it, or after you [shut down the agent](/docs/mobile-monitoring/new-relic-mobile/mobile-sdk/shut-down-agent/#react).
+
+```javascript
+if (!NewRelic.isAgentStarted()) {
+  NewRelic.startAgent(appToken, agentConfiguration);
+}
+```
     </TabsPageItem>
 
     <TabsPageItem id="unity">

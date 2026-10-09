@@ -360,6 +360,8 @@ The following customizations are available for the React Native agent.
         [Start interactions](/docs/mobile-monitoring/new-relic-mobile/mobile-sdk/start-interaction)
 
         [Stop interactions](/docs/mobile-monitoring/new-relic-mobile/mobile-sdk/stop-interaction)
+
+        [Name an interaction (Android only)](/docs/mobile-monitoring/new-relic-mobile/mobile-sdk/name-interaction/#react)
       </td>
     </tr>
 
@@ -419,6 +421,58 @@ The following customizations are available for the React Native agent.
 
     <tr>
       <td>
+        Set the JavaScript bundle version used to symbolicate JavaScript errors.
+      </td>
+
+      <td>
+        [Set application version (`setJSAppVersion`)](/docs/mobile-monitoring/new-relic-mobile/mobile-sdk/set-application-version/#react)
+      </td>
+    </tr>
+
+    <tr>
+      <td>
+        Send logs from your app.
+      </td>
+
+      <td>
+        [Mobile logs](/docs/mobile-monitoring/mobile-monitoring-ui/mobile-logs)
+      </td>
+    </tr>
+
+    <tr>
+      <td>
+        Add HTTP headers to network request events.
+      </td>
+
+      <td>
+        [Add tracked headers](/docs/mobile-monitoring/new-relic-mobile/mobile-sdk/add-tracked-headers)
+      </td>
+    </tr>
+
+    <tr>
+      <td>
+        Set the maximum size of offline storage.
+      </td>
+
+      <td>
+        [Set max offline storage size](/docs/mobile-monitoring/new-relic-mobile/mobile-sdk/set-max-offline-storage)
+      </td>
+    </tr>
+
+    <tr>
+      <td>
+        Start or pause session replay recording.
+      </td>
+
+      <td>
+        [Record replay](/docs/mobile-monitoring/new-relic-mobile/mobile-sdk/record-replay)
+
+        [Pause replay](/docs/mobile-monitoring/new-relic-mobile/mobile-sdk/pause-replay)
+      </td>
+    </tr>
+
+    <tr>
+      <td>
         Shut down the agent.
       </td>
 
@@ -433,7 +487,9 @@ The following customizations are available for the React Native agent.
       </td>
 
       <td>
-        [Enable/disable monitoring features](/docs/mobile-monitoring/new-relic-mobile/mobile-sdk/configure-settings)
+        [Enable/disable monitoring features](/docs/mobile-monitoring/new-relic-mobile/mobile-sdk/configure-settings/#react)
+
+        [Change settings at runtime and check whether the agent has started](/docs/mobile-monitoring/new-relic-mobile/mobile-sdk/configure-settings/#react-native-runtime)
       </td>
     </tr>
 
@@ -448,6 +504,15 @@ The following customizations are available for the React Native agent.
     </tr>
   </tbody>
 </table>
+
+## Data the agent collects automatically [#automatic-instrumentation]
+
+When you call `NewRelic.startAgent()`, the React Native agent also does the following without any additional instrumentation:
+
+* **Captures JavaScript errors.** It installs a global JavaScript error handler and an unhandled promise rejection tracker, and records the errors they catch. Both call the handler or tracker that was installed before them. See [Errors captured automatically](/docs/mobile-monitoring/new-relic-mobile/mobile-sdk/record-errors/#react-automatic).
+* **Forwards console output as logs.** It wraps `console.log`, `console.warn`, `console.error`, and `console.debug`, and sends their output as log events. See [Console logs captured automatically](/docs/mobile-monitoring/mobile-monitoring-ui/mobile-logs/#react-console-logs).
+* **Adds session attributes.** It sets the `ReactNativeAgentVersion` attribute to the React Native agent version, the `JSEngine` attribute to `Hermes` or `JavaScriptCore`, and, through the native agent, the `React Native Version` attribute. You can use them to filter your data in NRQL.
+* **Turns on verbose agent logging in JavaScript.** The React Native agent's own JavaScript log output is always verbose. The `logLevel` setting controls the native agent's logging.
 
 ## Troubleshoot JavaScript errors [#javascript-errors]
 

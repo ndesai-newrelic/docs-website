@@ -29,6 +29,10 @@ freshnessValidatedDate: 2023-07-21
     <TabsBarItem id="ios">
       iOS
     </TabsBarItem>
+
+    <TabsBarItem id="react">
+      React Native
+    </TabsBarItem>
   </TabsBar>
 
   <TabsPages>
@@ -169,6 +173,85 @@ NewRelic.setApplicationVersion:(NSString*)versionString;
 
 ```swift
 NewRelic.setApplicationVersion("1.2.3")
+```
+    </TabsPageItem>
+
+    <TabsPageItem id="react">
+      ## Syntax [#react-syntax]
+
+```typescript
+setJSAppVersion(version: string): void;
+```
+
+      ## Description [#react-description]
+
+      The React Native agent doesn't have a method to override the native app version that the Android and iOS agents report. Instead, use `setJSAppVersion()` to set the version of your JavaScript bundle. The agent adds this value to your session as the `JSBundleId` attribute and attaches it to every JavaScript error that it reports as a [`MobileJSError` event](/attribute-dictionary/?event=MobileJSError).
+
+      The value you pass is the bundle ID that New Relic uses to match JavaScript errors to the [source map](/docs/mobile-monitoring/new-relic-monitoring-react-native/react-native-agent-js-error-reporting#retrieve-bundle-id) that symbolicates their stack traces. The `jsBundleId` of the source map you upload must be the same string.
+
+      Call `setJSAppVersion()` right after `NewRelic.startAgent()`, at the start of your app. If you haven't called it when a JavaScript error is recorded, the agent logs an error and sends the error without a `JSBundleId`. If the value isn't a string, the agent logs an error and ignores it.
+
+      ## Parameters [#react-parameters]
+
+      <table>
+        <thead>
+          <tr>
+            <th width={200}>
+              Parameter
+            </th>
+
+            <th width={200}>
+              Type
+            </th>
+
+            <th>
+              Description
+            </th>
+          </tr>
+        </thead>
+
+        <tbody>
+          <tr>
+            <td>
+              `version`
+            </td>
+
+            <td>
+              `string`
+            </td>
+
+            <td>
+              Required. The version, or other unique identifier, of your JavaScript bundle.
+            </td>
+          </tr>
+        </tbody>
+      </table>
+
+      ## Return values [#react-return-values]
+
+      This method doesn't return a value (`void`).
+
+      ## Examples [#react-examples]
+
+      JavaScript:
+
+```javascript
+import NewRelic from 'newrelic-react-native-agent';
+import { version } from './package.json';
+
+NewRelic.startAgent(appToken, agentConfiguration);
+NewRelic.setJSAppVersion(version);
+```
+
+      TypeScript:
+
+```typescript
+import NewRelic from 'newrelic-react-native-agent';
+
+const jsBundleVersion: string = '1.0.5';
+
+NewRelic.startAgent(appToken, agentConfiguration);
+NewRelic.setJSAppVersion(jsBundleVersion);
 ```
     </TabsPageItem>
   </TabsPages>

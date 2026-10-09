@@ -30,6 +30,10 @@ freshnessValidatedDate: 2023-07-20
       .NET MAUI
     </TabsBarItem>
 
+    <TabsBarItem id="react">
+      React Native
+    </TabsBarItem>
+
     <TabsBarItem id="unity">
       Unity
     </TabsBarItem>
@@ -338,6 +342,30 @@ RecordException(System.Exception exception) : void;
     } catch (Exception ex) {
       CrossNewRelic.Current.RecordException(ex);
     }
+```
+    </TabsPageItem>
+
+    <TabsPageItem id="react">
+      ## Syntax [#react-syntax]
+
+```typescript
+recordError(e: string | Error, isFatal?: boolean, attributes?: object): Promise<void>;
+```
+
+      ## Description [#react-description]
+
+      In React Native, use `recordError()` to record a handled JavaScript exception. The React Native agent reports it as a [`MobileJSError` event](/attribute-dictionary/?event=MobileJSError), not a `MobileHandledException` event, in agent version 1.9.0 and higher. For parameters, requirements, and more examples, see [Record errors](/docs/mobile-monitoring/new-relic-mobile/mobile-sdk/record-errors/#react).
+
+      ## Example [#react-example]
+
+```javascript
+import NewRelic from 'newrelic-react-native-agent';
+
+try {
+  someCodeThatThrowsAnError();
+} catch (e) {
+  NewRelic.recordError(e, false, { screen: 'Checkout' });
+}
 ```
     </TabsPageItem>
 

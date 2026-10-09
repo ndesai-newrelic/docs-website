@@ -473,7 +473,7 @@ Inline masking overrides are applied in your code by tagging the component you w
     </TabsPageItem>
 
     <TabsPageItem id="reactnative">
-      Use the `<NewRelicMask>` and `<NewRelicUnmask>` components to mask or unmask views or components.
+      Use the `<NewRelicMask>` and `<NewRelicUnmask>` components to mask or unmask views or components, and the `<NewRelicBlock>` component to block them. For the difference between masking and blocking, see [Difference between Masking and Blocking](#masking-vs-blocking).
 
       Example:
 
@@ -489,7 +489,21 @@ Inline masking overrides are applied in your code by tagging the component you w
           <Text>Non-sensitive information</Text>
         </NewRelicUnmask>
       </View>
+
+      <View>
+        <NewRelicBlock>
+          <CustomPinView />
+        </NewRelicBlock>
+      </View>
       ```
+
+      Import the components from the React Native agent package:
+
+      ```jsx
+      import { NewRelicMask, NewRelicUnmask, NewRelicBlock } from 'newrelic-react-native-agent';
+      ```
+
+      `<NewRelicBlock>` requires React Native agent version 1.8.1 or higher. Views you wrap in it are hidden completely in the replay.
     </TabsPageItem>
   </TabsPages>
 </Tabs>

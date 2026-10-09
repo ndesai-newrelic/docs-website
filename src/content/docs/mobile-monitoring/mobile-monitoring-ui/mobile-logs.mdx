@@ -610,6 +610,19 @@ NewRelic.logAll(new Error("This is an exception"), attributes);
 NewRelic.logAttributes({ ...attributes, level: NewRelic.LogLevel.INFO });
 ```
 
+### Console logs captured automatically [#react-console-logs]
+
+After you call `NewRelic.startAgent()`, the React Native agent wraps `console.log`, `console.warn`, `console.error`, and `console.debug`. Each call is still printed to the console as usual, and the agent also sends it as a log with the following level and message prefix. The rest of the message is the JSON-serialized arguments you passed to the console method.
+
+| Console method | Log level | Message prefix |
+| --- | --- | --- |
+| `console.log` | `INFO` | `[CONSOLE][LOG]` |
+| `console.warn` | `WARN` | `[CONSOLE][WARN]` |
+| `console.error` | `ERROR` | `[CONSOLE][ERROR]` |
+| `console.debug` | `DEBUG` | `[CONSOLE][DEBUG]` |
+
+Other console methods, such as `console.info`, aren't captured. There is no `startAgent()` option to turn off console capture in the React Native agent.
+
 </TabsPageItem>
 
  <TabsPageItem id="xamarin">

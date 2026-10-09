@@ -385,13 +385,13 @@ try {
       ## Syntax [#react-syntax]
 
 ```javascript
-recordError(e: string|Error, isFatal?: boolean, attributes?: object): void;
+recordError(e: string | Error, isFatal?: boolean, attributes?: object): Promise<void>;
 ```
 
       ## Requirements [#react-requirements]
 
-      * [New Relic React Native agent](/docs/mobile-monitoring/new-relic-mobile-react-native/get-started/introduction-new-relic-react-native) installed and configured.
-      * Call `NewRelic.setJSAppVersion()` at the start of your application so JavaScript errors can be captured.
+      * [New Relic React Native agent](/docs/mobile-monitoring/new-relic-monitoring-react-native/monitor-your-react-native-application) installed and configured.
+      * Call [`NewRelic.setJSAppVersion()`](/docs/mobile-monitoring/new-relic-mobile/mobile-sdk/set-application-version/#react) right after `NewRelic.startAgent()`. If you don't, the agent logs an error and still sends the error, but without a `JSBundleId`, so New Relic can't symbolicate its stack trace.
       * Recording errors as `MobileJSError` events, the `isFatal` argument, and the `attributes` argument require React Native agent version 1.9.0 or higher. Earlier versions record these errors as `MobileHandledException` events.
 
       ## Description [#react-description]
@@ -481,13 +481,13 @@ try {
 
       ### Record an error from a promise rejection
 
-      Promises make it easy to overlook asynchronous errors. This example reports a rejected promise to New Relic so it isn't missed:
+      Promises make it easy to overlook asynchronous errors. This example catches a rejected promise and reports it to New Relic so it isn't missed:
 
 ```javascript
 fetch('https://api.example.com/data')
   .then(response => response.json())
   .catch(error => {
-    // Report the unhandled rejection to New Relic
+    // Report the rejection to New Relic
     NewRelic.recordError(error);
   });
 ```
@@ -516,6 +516,32 @@ try {
   NewRelic.recordError(e, false, { screen: 'Checkout', 'Test Group': 'A | B' });
 }
 ```
+
+      ### Record an error with TypeScript
+
+      The `e` argument is typed as `string | Error`, so convert unknown caught values before you record them:
+
+```typescript
+import NewRelic from 'newrelic-react-native-agent';
+
+try {
+  riskyOperation();
+} catch (e: unknown) {
+  const error = e instanceof Error ? e : String(e);
+  NewRelic.recordError(error, false, { screen: 'Checkout', retryCount: 2 });
+}
+```
+
+      If you pass a value that is neither an `Error` nor a string, the agent logs a warning and doesn't record it.
+
+      ## Errors captured automatically [#react-automatic]
+
+      After you call `NewRelic.startAgent()`, the React Native agent also records the following errors without any additional instrumentation, unless you set [`jsErrorReportingEnabled`](/docs/mobile-monitoring/new-relic-mobile/mobile-sdk/configure-settings/#react) to `false`:
+
+      * **Uncaught JavaScript errors:** The agent installs a global error handler (`ErrorUtils`) that records the error, marking it fatal or not as reported by React Native, and then calls the handler that was installed before it.
+      * **Unhandled promise rejections:** The agent installs an unhandled promise rejection tracker that records the rejection reason as an error and then calls the previous tracker. If the rejection has no error object, the agent records a `MobileBreadcrumb` event named `Possible Unhandled Promise Rejection` that includes the rejection `id`.
+
+      You don't need to call `recordError()` for these. To make their stack traces readable, [upload your source maps](/docs/mobile-monitoring/new-relic-monitoring-react-native/react-native-agent-js-error-reporting).
     </TabsPageItem>
 
     <TabsPageItem id="unreal">

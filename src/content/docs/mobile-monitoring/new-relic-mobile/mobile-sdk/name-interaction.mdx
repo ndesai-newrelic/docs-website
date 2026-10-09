@@ -29,6 +29,10 @@ freshnessValidatedDate: 2023-07-20
     <TabsBarItem id="ios">
       iOS
     </TabsBarItem>
+
+    <TabsBarItem id="react">
+      React Native
+    </TabsBarItem>
   </TabsBar>
 
   <TabsPages>
@@ -195,6 +199,84 @@ NewRelic.setInteractionName("Display MyCustomInteraction")
 @objc func customNewRelicInteractionName() -> String {
     return "CustomInteractionNameViewController"
 }
+```
+    </TabsPageItem>
+
+    <TabsPageItem id="react">
+      ## Syntax [#react-syntax]
+
+```typescript
+setInteractionName(name: string): void;
+```
+
+      ## Description [#react-description]
+
+      Set a new name for an interaction that is already being tracked by New Relic.
+
+      <Callout variant="important">
+        This method works on Android only. On iOS, the React Native agent logs an informational message that the iOS agent doesn't support this method, and doesn't rename the interaction.
+      </Callout>
+
+      To create a new interaction, see [`startInteraction()`](/docs/mobile-monitoring/new-relic-mobile/mobile-sdk/start-interaction/#react).
+
+      ## Parameters [#react-parameters]
+
+      <table>
+        <thead>
+          <tr>
+            <th width={200}>
+              Parameter
+            </th>
+
+            <th width={200}>
+              Type
+            </th>
+
+            <th>
+              Description
+            </th>
+          </tr>
+        </thead>
+
+        <tbody>
+          <tr>
+            <td>
+              `name`
+            </td>
+
+            <td>
+              `string`
+            </td>
+
+            <td>
+              Required. The name you want to give to the interaction.
+            </td>
+          </tr>
+        </tbody>
+      </table>
+
+      ## Return values [#react-return-values]
+
+      This method doesn't return a value (`void`).
+
+      ## Examples [#react-examples]
+
+      JavaScript:
+
+```javascript
+import NewRelic from 'newrelic-react-native-agent';
+
+NewRelic.setInteractionName('Display MyCustomInteraction');
+```
+
+      TypeScript:
+
+```typescript
+import NewRelic from 'newrelic-react-native-agent';
+
+const interactionName: string = 'Display MyCustomInteraction';
+
+NewRelic.setInteractionName(interactionName);
 ```
     </TabsPageItem>
   </TabsPages>
