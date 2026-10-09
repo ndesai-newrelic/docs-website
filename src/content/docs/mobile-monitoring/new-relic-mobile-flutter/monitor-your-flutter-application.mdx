@@ -359,6 +359,15 @@ final router = GoRouter(
 
 When `httpInstrumentationEnabled` is `true` (the default), `startAgent()` sets `HttpOverrides.global` to a `NewRelicHttpOverrides` instance. It wraps every `dart:io` `HttpClient` in a `NewRelicHttpClient`, which automatically records `MobileRequest` and `MobileRequestError` events and, when `distributedTracingEnabled` is `true`, adds distributed tracing headers to the requests.
 
+Because the agent instruments `dart:io` `HttpClient`, requests made with libraries built on it, such as `package:http` and `dio`, are recorded without any extra code:
+
+```dart
+import 'package:http/http.dart' as http;
+
+// Recorded automatically as a MobileRequest event once the agent has started.
+final response = await http.get(Uri.parse('https://example.com/searchpage'));
+```
+
 ### Chain with your own HttpOverrides [#flutter-http-overrides]
 
 `NewRelicHttpOverrides` wraps the `HttpOverrides` that are current when the agent starts. If your app uses its own `HttpOverrides` (for example, to set timeouts or to pin certificates), assign them to `HttpOverrides.global` before you start the agent, so the agent can chain with them:

@@ -501,6 +501,12 @@ void logAttributes(Map<String, dynamic>? attributes)
 // LogLevel values: ERROR, WARN, INFO, VERBOSE, DEBUG
 ```
 
+### Notes [#flutter-notes]
+
+* `log()` and the level-specific methods drop empty messages.
+* `logAttributes()` drops empty maps.
+* Don't pass `null` for `attributes` in `logAll()` or `logAttributes()`, even though the parameter type is nullable. Pass an empty map or a populated map.
+
 ### Example [#example]
 
 

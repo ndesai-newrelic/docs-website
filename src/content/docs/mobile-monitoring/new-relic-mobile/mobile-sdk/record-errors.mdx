@@ -466,6 +466,38 @@ try {
   );
 }
 ```
+
+      ### Mark an error as fatal [#flutter-fatal-example]
+
+      Use `isFatal` to flag an error that your app can't recover from:
+
+```dart
+try {
+  await initializeCriticalService();
+} catch (e, stackTrace) {
+  NewrelicMobile.instance.recordError(
+    e,
+    stackTrace,
+    attributes: {'service': 'payments'},
+    isFatal: true,
+  );
+}
+```
+
+      ### Record uncaught errors automatically [#flutter-uncaught-example]
+
+      When you start the agent with `NewrelicMobile.instance.start()`, the agent assigns `NewrelicMobile.onError` to `FlutterError.onError` and runs your app in a guarded zone, so uncaught Flutter framework errors are recorded with `isFatal: true` and uncaught asynchronous errors are recorded with `recordError`. If you start the agent with `startAgent()`, set up the same handlers yourself:
+
+```dart
+runZonedGuarded(() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  FlutterError.onError = NewrelicMobile.onError;
+  await NewrelicMobile.instance.startAgent(config);
+  runApp(const MyApp());
+}, (Object error, StackTrace stackTrace) {
+  NewrelicMobile.instance.recordError(error, stackTrace);
+});
+```
     </TabsPageItem>
 
     <TabsPageItem id="react">
