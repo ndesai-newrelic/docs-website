@@ -399,7 +399,15 @@ NewRelic.logError(message: string): void;
 NewRelic.log(level: string, message: string): void;
 
 NewRelic.logAttributes(attributes: {[key: string]: boolean | number | string}): void;
+
+NewRelic.logAll(err: Error | string, attributes?: {[key: string]: boolean | number | string}): void;
 ```
+
+The `level` argument of `NewRelic.log` is one of `ERROR`, `WARNING`, `INFO`, `VERBOSE`, `DEBUG`, or `AUDIT`.
+
+`NewRelic.logAll` records a single log message that combines an error and a set of attributes. The log message comes from the `message` of the `Error` (or from the string you pass).
+
+The Cordova agent also forwards JavaScript `console.log`, `console.warn`, `console.error`, `console.debug`, and `console.assert` output to New Relic as log messages. To turn this off, set the [`CONSOLE_LOGS_ENABLED`](/docs/mobile-monitoring/new-relic-mobile/mobile-sdk/configure-settings/#cordova-configurations) variable to `false` when you add the plugin. Logs are only reported if <DNT>**Mobile Logs**</DNT> is turned on for your app.
 
 
 ### Example [#example]
@@ -425,6 +433,16 @@ NewRelic.logAttributes({
   "message":"this is test",
   "level":"INFO"
 });
+
+try {
+  JSON.parse("not valid json");
+} catch (err) {
+  // Log the error message together with extra attributes
+  NewRelic.logAll(err, {
+    "screen": "checkout",
+    "retryCount": 2
+  });
+}
 ```
 
         </TabsPageItem>

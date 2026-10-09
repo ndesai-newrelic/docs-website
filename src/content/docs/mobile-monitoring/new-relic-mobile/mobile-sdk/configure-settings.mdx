@@ -1738,6 +1738,7 @@ BACKGROUND_REPORTING_ENABLED = "true"
 
       Some settings aren't `--variable` options. You change them while the app is running by calling these methods on the `NewRelic` object:
 
+      * `NewRelic.analyticsEventEnabled(enabled)` (Android only): Enable or disable collection of analytics event data. This method does nothing on iOS.
       * `NewRelic.networkRequestEnabled(enabled)`: Enable or disable reporting successful HTTP requests to the `MobileRequest` event type.
       * `NewRelic.networkErrorRequestEnabled(enabled)`: Enable or disable reporting network and HTTP request errors to the `MobileRequestError` event type.
       * `NewRelic.httpRequestBodyCaptureEnabled(enabled)`: Enable or disable capture of HTTP response bodies for HTTP error traces and `MobileRequestError` events.
@@ -1745,6 +1746,7 @@ BACKGROUND_REPORTING_ENABLED = "true"
       Each method takes a boolean:
 
 ```js
+NewRelic.analyticsEventEnabled(true); // Android only
 NewRelic.networkRequestEnabled(false);
 NewRelic.networkErrorRequestEnabled(true);
 NewRelic.httpRequestBodyCaptureEnabled(true);

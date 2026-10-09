@@ -872,6 +872,47 @@ noticeHttpTransaction(url: string, method: string, status: number, startTime: nu
 ```js
 NewRelic.noticeHttpTransaction('https://fakewebsiteurl.com', 'GET', 200, Date.now(), Date.now(), 0, 100000, 'fake request body');
 ```
+
+      ## Generate distributed tracing headers [#generate-dt-headers]
+
+      The plugin adds `traceparent` and `tracestate` distributed tracing headers to `XMLHttpRequest` and `fetch` requests automatically. If you make requests with another transport, call `generateDistributedTracingHeaders()` to get the headers, add them to your request, and then pass the result as the `traceAttributes` argument of `noticeHttpTransaction`.
+
+```typescript
+NewRelic.generateDistributedTracingHeaders(): Promise<{[key: string]: string}>;
+```
+
+      The returned promise resolves to an object that includes the `traceparent` and `tracestate` headers, and additional trace attributes such as `account.id`, `application.id`, and `trust.account.key`.
+
+```js
+const recordOrdersRequest = async () => {
+  const url = "https://example.com/api/orders";
+  const startTime = Date.now();
+  const traceAttributes = await NewRelic.generateDistributedTracingHeaders();
+
+  // Send the request with your own transport, adding the trace headers
+  const { status, bytesSent, bytesReceived } = await myTransport.get(url, {
+    traceparent: traceAttributes.traceparent,
+    tracestate: traceAttributes.tracestate,
+  });
+
+  NewRelic.noticeHttpTransaction(
+    url,
+    "GET",
+    status,
+    startTime,
+    Date.now(),
+    bytesSent,
+    bytesReceived,
+    "",
+    {},
+    traceAttributes
+  );
+};
+```
+
+      <Callout variant="tip">
+        The plugin also exposes `noticeDistributedTrace()`, but in plugin version 7.1.12 it returns headers only on iOS. On Android it does nothing and never calls its callbacks. Use `generateDistributedTracingHeaders()` instead.
+      </Callout>
     </TabsPageItem>
 
     <TabsPageItem id="maui">

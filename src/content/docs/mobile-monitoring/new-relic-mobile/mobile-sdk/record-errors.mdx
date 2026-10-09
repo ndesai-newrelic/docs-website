@@ -236,7 +236,7 @@ recordError(err: Error | string, attributes?: Map<string, boolean | number | str
 
       ## Description [#description]
 
-      Records JavaScript errors for Cordova as handled exceptions. Make sure you add this method to the error handler of the framework that you are using.
+      Records JavaScript errors for Cordova as handled exceptions. This is the Cordova equivalent of [Record handled exception](/docs/mobile-monitoring/new-relic-mobile/mobile-sdk/record-handled-exceptions). Make sure you add this method to the error handler of the framework that you are using.
 
       The examples on this page import `NewRelic` from the Ionic wrapper package `@awesome-cordova-plugins/newrelic`. In a plain Cordova app, the plugin exposes a global `NewRelic` object, so you can call `NewRelic.recordError(...)` without an import.
 

@@ -352,6 +352,22 @@ NewRelic.addHTTPHeadersTrackingFor(headers: string[]): void;
 ```js
 NewRelic.addHTTPHeadersTrackingFor(["Accept-Language", "X-Request-ID"]);
 ```
+
+      ## Get the tracked headers [#get-tracked-headers]
+
+      To see which HTTP header fields are currently tracked, call `getHTTPHeadersTrackingFor()`. It returns a promise that resolves to an object with a `headersList` property. `headersList` is a JSON string of the header names, so parse it before you use it.
+
+```typescript
+NewRelic.getHTTPHeadersTrackingFor(): Promise<{ headersList: string }>;
+```
+
+```js
+const logTrackedHeaders = async () => {
+  const { headersList } = await NewRelic.getHTTPHeadersTrackingFor();
+  const headers = JSON.parse(headersList);
+  console.log(headers); // for example: ["Accept-Language", "X-Request-ID"]
+};
+```
     </TabsPageItem>
 
     <TabsPageItem id="maui">
