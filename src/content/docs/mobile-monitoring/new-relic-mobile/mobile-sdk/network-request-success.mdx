@@ -684,7 +684,7 @@ noticeHttpTransaction(options: {
             </td>
 
             <td>
-              Optional. A map of distributed tracing header values to associate with the request, such as the headers returned by [`generateDistributedTracingHeaders`](/docs/mobile-monitoring/new-relic-mobile-ionic-capacitor/capacitor-sdk-api/generate-distributed-tracing-headers).
+              Optional. A map of distributed tracing header values to associate with the request, such as the headers returned by `generateDistributedTracingHeaders`.
             </td>
           </tr>
 
@@ -719,7 +719,7 @@ NewRelicCapacitorPlugin.noticeHttpTransaction({
 });
 ```
 
-      The following example adds distributed tracing information with `traceAttributes`. For more information, see [Generate distributed tracing headers](/docs/mobile-monitoring/new-relic-mobile-ionic-capacitor/capacitor-sdk-api/generate-distributed-tracing-headers).
+      The following example adds distributed tracing information with `traceAttributes`.
 
 ```typescript
 const traceAttributes = await NewRelicCapacitorPlugin.generateDistributedTracingHeaders();
