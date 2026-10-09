@@ -1267,7 +1267,7 @@ For more information, see [iOS agent logging](/docs/mobile-monitoring/new-relic-
 
       If you make any changes to the default settings, make sure to add the feature flags just after calling `appToken`.
 
-      Here's a sample configuration:
+      Here's a sample configuration. The values shown are the defaults, except for `logLevel`, which defaults to `WARNING`. Every property is optional, so include only the ones you want to change. To use the default collector addresses, omit `collectorAddress` and `crashCollectorAddress`.
 
 ```typescript
 import { NewRelicCapacitorPlugin, NREnums, AgentConfiguration } from '@newrelic/newrelic-capacitor-plugin';
@@ -1282,20 +1282,21 @@ if(Capacitor.getPlatform() === 'ios') {
 }
 
 let agentConfig : AgentConfiguration = {
-  analyticsEventEnabled: false,
-  crashReportingEnabled: false,
-  interactionTracingEnabled: false,
-  networkRequestEnabled: false,
-  networkErrorRequestEnabled: false,
-  httpResponseBodyCaptureEnabled: false,
-  loggingEnabled: false,
+  analyticsEventEnabled: true,
+  crashReportingEnabled: true,
+  interactionTracingEnabled: true,
+  networkRequestEnabled: true,
+  networkErrorRequestEnabled: true,
+  httpResponseBodyCaptureEnabled: true,
+  loggingEnabled: true,
   logLevel: NREnums.LogLevel.INFO,
-  webViewInstrumentation: false,
-  collectorAddress: "",
-  crashCollectorAddress: "",
-  sendConsoleEvents: false,
+  webViewInstrumentation: true,
+  sendConsoleEvents: true,
   fedRampEnabled: false,
-  offlineStorageEnabled: false
+  offlineStorageEnabled: true,
+  backgroundReportingEnabled: false,
+  newEventSystemEnabled: true,
+  distributedTracingEnabled: true
 }
 
 NewRelicCapacitorPlugin.start({appKey:appToken, agentConfiguration:agentConfig})
@@ -1405,7 +1406,7 @@ loggingEnabled: true
             <td>
               Specifies the log level. Omit this field for the default log level.
 
-              Options include: `ERROR` (least verbose), `WARNING`, `INFO`, `VERBOSE`, `AUDIT` (most verbose).
+              Options include: `ERROR` (least verbose), `WARNING`, `INFO`, `VERBOSE`, `DEBUG`, `AUDIT`. Use the values of `NREnums.LogLevel`.
             </td>
 
             <td>
@@ -1434,7 +1435,7 @@ webViewInstrumentation: true
 
             <td>
 ```typescript
-collectorAddress: "crash-upload-delegate.domain.com"
+collectorAddress: "mobile-collector.example.com"
 ```
             </td>
           </tr>
@@ -1446,14 +1447,14 @@ collectorAddress: "crash-upload-delegate.domain.com"
 
             <td>
 ```typescript
-crashCollectorAddress: "crash-upload-delegate.domain.com"
+crashCollectorAddress: "mobile-crash.example.com"
 ```
             </td>
           </tr>
 
           <tr>
             <td>
-              Enable or disable sending JavaScript console logs to New Relic.
+              Enable or disable sending JavaScript console output to New Relic. When enabled (the default), calls to `console.log`, `console.info`, `console.warn`, `console.error`, and `console.debug` are forwarded as agent logs with a `[CONSOLE][LEVEL]` prefix.
             </td>
 
             <td>
@@ -1477,7 +1478,7 @@ fedRampEnabled: false
 
           <tr>
             <td>
-              Enable or disable offline data storage when no internet connection is available. To configure the amount of offline storage, see [Set max offline storage size](/docs/mobile-monitoring/new-relic-mobile/mobile-sdk/set-max-offline-storage/#capacitor).
+              Enable or disable offline data storage when no internet connection is available. To configure the amount of offline storage, see [Set max offline storage size](/docs/mobile-monitoring/new-relic-mobile/mobile-sdk/set-max-offline-storage).
             </td>
 
             <td>
@@ -1491,7 +1492,7 @@ offlineStorageEnabled: false
 
           <tr>
             <td>
-              Enable or disable background reporting when application goes to the background state.
+              (iOS) Enable or disable background reporting when application goes to the background state.
             </td>
 
             <td>
@@ -1510,8 +1511,46 @@ backgroundReportingEnabled: true
               Note: iOS only guarantees that iOS will harvest in the background once per twenty-four hour period.
             </td>
           </tr>
+
+          <tr>
+            <td>
+              Enable or disable the adding of distributed tracing headers to network requests, including the requests that the plugin instruments automatically. Available in plugin version 1.5.1 and higher.
+
+              Default value is `true`.
+
+              For more information on distributed tracing in mobile apps, see [browser and mobile trace reporting](/docs/distributed-tracing/concepts/how-new-relic-distributed-tracing-works#browser-spans).
+            </td>
+
+            <td>
+              Distributed tracing is enabled by default. To disable it, add the following feature flag:
+
+```typescript
+distributedTracingEnabled: false
+```
+            </td>
+          </tr>
+
+          <tr>
+            <td>
+              (iOS only) Enable or disable the new event system. Available in plugin version 1.4.1 and higher. Android ignores this setting.
+
+              Default value is `true`.
+            </td>
+
+            <td>
+              The new event system is enabled by default. To disable it, add the following feature flag:
+
+```typescript
+newEventSystemEnabled: false
+```
+            </td>
+          </tr>
         </tbody>
       </table>
+
+      <Callout variant="important">
+        The `AgentConfiguration` type also includes a `logReportingEnabled` property, but the plugin does not currently read it, so setting it has no effect. Mobile log settings are controlled in New Relic. For more information, see [Mobile logs](/docs/mobile-monitoring/mobile-monitoring-ui/mobile-logs).
+      </Callout>
     </TabsPageItem>
 
     <TabsPageItem id="cordova">
