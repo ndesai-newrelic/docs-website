@@ -153,7 +153,7 @@ NewRelic.shutdown();
       ## Syntax [#syntax]
 
 ```csharp
-Shutdown() : void
+CrossNewRelic.Current.Shutdown(): void
 ```
 
       ## Description [#description]
@@ -163,7 +163,7 @@ Shutdown() : void
       ## Example [#example]
 
 ```csharp
-CrossNewRelic.Current.Shutdown());
+CrossNewRelic.Current.Shutdown();
 ```
     </TabsPageItem>
 

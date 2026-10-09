@@ -355,12 +355,12 @@ const badApiLoad = async () => {
       ## Syntax [#syntax]
 
 ```csharp
-EndInteraction(string interactionId): void;
+CrossNewRelic.Current.EndInteraction(string interactionId): void;
 ```
 
       ## Description [#description]
 
-      This uses the string ID for the interaction you want to end. This string is returned when you use [`startInteraction()`](/docs/mobile-monitoring/new-relic-mobile/mobile-sdk/start-interaction).
+      This uses the string ID for the interaction you want to end. This string is returned when you use [`StartInteraction()`](/docs/mobile-monitoring/new-relic-mobile/mobile-sdk/start-interaction).
 
       ## Parameters [#parameters]
 
@@ -392,7 +392,7 @@ EndInteraction(string interactionId): void;
             </td>
 
             <td>
-              Required. The value returned by `startInteraction`.
+              Required. The value returned by `StartInteraction`.
               It is required to pass this string to manually complete the interaction trace.
             </td>
           </tr>

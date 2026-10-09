@@ -444,7 +444,7 @@ NewRelic.noticeNetworkFailure('https://fakewebsite.com', 'GET', Date.now(), Date
       ## Syntax [#syntax]
 
 ```csharp
-void NoticeNetworkFailure(string url, string httpMethod, long startTime, long endTime, NetworkFailure failure);
+CrossNewRelic.Current.NoticeNetworkFailure(string url, string httpMethod, long startTime, long endTime, NetworkFailure failure): void;
 ```
 
       ## Description [#description]
@@ -505,12 +505,11 @@ void NoticeNetworkFailure(string url, string httpMethod, long startTime, long en
             </td>
 
             <td>
-              `number`
+              `long`
             </td>
 
             <td>
-              Optional. The start time of the request in milliseconds since the epoch.
-              `startTime` and `endTime` can be used as an alternative to `timer`.
+              Required. The start time of the request in milliseconds since the epoch.
             </td>
           </tr>
 
@@ -520,12 +519,11 @@ void NoticeNetworkFailure(string url, string httpMethod, long startTime, long en
             </td>
 
             <td>
-              `number`
+              `long`
             </td>
 
             <td>
-              Optional. The end time of the request in milliseconds since the epoch.
-              `startTime` and `endTime` can be used as an alternative to `timer`.
+              Required. The end time of the request in milliseconds since the epoch.
             </td>
           </tr>
 
@@ -535,11 +533,11 @@ void NoticeNetworkFailure(string url, string httpMethod, long startTime, long en
             </td>
 
             <td>
-              `string`
+              `NetworkFailure`
             </td>
 
             <td>
-              Optional. In most cases, place this call inside exception handlers, such as catch blocks. Supported failures are: `Unknown`, `BadURL`, `TimedOut`, `CannotConnectToHost`, `DNSLookupFailed`, `BadServerResponse`, `SecureConnectionFailed`.
+              Required. The type of failure, as a `NetworkFailure` enum value. In most cases, place this call inside exception handlers, such as catch blocks. Supported values are: `NetworkFailure.Unknown`, `NetworkFailure.BadURL`, `NetworkFailure.TimedOut`, `NetworkFailure.CannotConnectToHost`, `NetworkFailure.DNSLookupFailed`, `NetworkFailure.BadServerResponse`, `NetworkFailure.SecureConnectionFailed`.
             </td>
           </tr>
         </tbody>

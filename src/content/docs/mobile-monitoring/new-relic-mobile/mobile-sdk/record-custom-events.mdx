@@ -538,14 +538,14 @@ NewRelic.recordCustomEvent("mobileClothes", "pants", {"pantsColor": "blue", "pan
       ## Syntax [#syntax]
 
 ```csharp
-RecordCustomEvent(string eventType, string eventName, Dictionary<string, object> attributes): bool;
+CrossNewRelic.Current.RecordCustomEvent(string eventType, string eventName, Dictionary<string, object> attributes): bool;
 ```
 
       ## Description [#description]
 
       Creates and records a [custom event](/docs/insights/new-relic-insights/adding-querying-data/custom-attributes-events-new-relic-mobile#What-are-events-in-New-Relic-Mobile), for use in NRQL.
 
-      In addition to any custom attributes you choose, the event will also have associated [session attributes](/docs/insights/explore-data/attributes/mobile-default-attributes-insights#mobile-list). Unlike with using [`setAttribute`](/docs/mobile-monitoring/new-relic-mobile/mobile-sdk/create-attribute/), adding attributes to a breadcrumb event adds them only to that event; they are not session attributes.
+      In addition to any custom attributes you choose, the event will also have associated [session attributes](/docs/insights/explore-data/attributes/mobile-default-attributes-insights#mobile-list). Unlike with using [`setAttribute`](/docs/mobile-monitoring/new-relic-mobile/mobile-sdk/create-attribute/), adding attributes to a custom event adds them only to that event; they are not session attributes.
 
       ## Parameters [#parameters]
 
@@ -577,7 +577,7 @@ RecordCustomEvent(string eventType, string eventName, Dictionary<string, object>
             </td>
 
             <td>
-              Required. The type of event. Do not use `$eventType` to name your custom events; use a custom attribute or the optional `name` parameter.
+              Required. The type of event. Do not use `eventType` to name your custom events; use a custom attribute or the `eventName` parameter.
             </td>
           </tr>
 
@@ -591,7 +591,7 @@ RecordCustomEvent(string eventType, string eventName, Dictionary<string, object>
             </td>
 
             <td>
-              Optional. Use this parameter to name the event. Using this parameter is equivalent to creating a `name` parameter.
+              Required. Use this parameter to name the event. Using this parameter is equivalent to creating a `name` attribute.
             </td>
           </tr>
 
@@ -605,7 +605,7 @@ RecordCustomEvent(string eventType, string eventName, Dictionary<string, object>
             </td>
 
             <td>
-              Optional. A dictionary of key-value pairs that can be used to provide additional information about the custom event.
+              Required. A dictionary of key-value pairs that can be used to provide additional information about the custom event. Pass an empty dictionary if you have no attributes.
             </td>
           </tr>
         </tbody>
@@ -617,12 +617,12 @@ RecordCustomEvent(string eventType, string eventName, Dictionary<string, object>
 
       ## Example [#example]
 
-```C#
+```csharp
 CrossNewRelic.Current.RecordCustomEvent("MAUICustomEvent", "MAUICustomEventCategory", new Dictionary<string, object>()
     {
-        {"BreadNumValue", 12.3 },
-        {"BreadStrValue", "MAUIBread" },
-        {"BreadBoolValue", true }
+        {"EventNumValue", 12.3 },
+        {"EventStrValue", "MAUIEvent" },
+        {"EventBoolValue", true }
     }
 );
 ```

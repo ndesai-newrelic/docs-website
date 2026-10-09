@@ -416,7 +416,7 @@ NewRelic.incrementAttribute('CordovaCustomAttrNumber', 5);
       ## Syntax [#syntax]
 
 ```csharp
-RecordCustomEvent(string eventType, string eventName, Dictionary<string, object> attributes): bool;
+CrossNewRelic.Current.IncrementAttribute(string name, float value = 1): bool;
 ```
 
       ## Description [#description]
@@ -463,7 +463,7 @@ RecordCustomEvent(string eventType, string eventName, Dictionary<string, object>
             </td>
 
             <td>
-              `number`
+              `float`
             </td>
 
             <td>
@@ -475,7 +475,7 @@ RecordCustomEvent(string eventType, string eventName, Dictionary<string, object>
 
       ## Return values [#return-values]
 
-      Returns `true` if the event is recorded successfully, or `false` if not.
+      Returns `true` if the attribute is incremented successfully, or `false` if not.
 
       ## Example [#example]
 
@@ -483,7 +483,7 @@ RecordCustomEvent(string eventType, string eventName, Dictionary<string, object>
 // Increment by 1
 CrossNewRelic.Current.IncrementAttribute("MAUINumAttr");
 // Increment by value
-CrossNewRelic.Current.IncrementAttribute("MAUINumAttr", 12.3);
+CrossNewRelic.Current.IncrementAttribute("MAUINumAttr", 12.3f);
 ```
     </TabsPageItem>
 

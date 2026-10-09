@@ -852,7 +852,7 @@ NewRelic.noticeHttpTransaction('https://fakewebsiteurl.com', 'GET', 200, Date.no
       ## Syntax [#syntax]
 
 ```csharp
-NoticeHttpTransaction(string url, string httpMethod, int statusCode, long startTime,long endTime, long bytesSent, long bytesReceived, string responseBody): void;
+CrossNewRelic.Current.NoticeHttpTransaction(string url, string httpMethod, int statusCode, long startTime, long endTime, long bytesSent, long bytesReceived, string responseBody): void;
 ```
 
       ## Description [#description]
@@ -895,7 +895,7 @@ NoticeHttpTransaction(string url, string httpMethod, int statusCode, long startT
 
           <tr>
             <td>
-              `httpmethod`
+              `httpMethod`
             </td>
 
             <td>
@@ -931,8 +931,7 @@ NoticeHttpTransaction(string url, string httpMethod, int statusCode, long startT
             </td>
 
             <td>
-              Optional. The start time of the request in milliseconds since the epoch.
-              `startTime` and `endTime` can be used as an alternative to `timer`.
+              Required. The start time of the request in milliseconds since the epoch.
             </td>
           </tr>
 
@@ -946,8 +945,7 @@ NoticeHttpTransaction(string url, string httpMethod, int statusCode, long startT
             </td>
 
             <td>
-              Optional. The end time of the request in milliseconds since the epoch.
-              `startTime` and `endTime` can be used as an alternative to `timer`.
+              Required. The end time of the request in milliseconds since the epoch.
             </td>
           </tr>
 
@@ -989,7 +987,7 @@ NoticeHttpTransaction(string url, string httpMethod, int statusCode, long startT
             </td>
 
             <td>
-              Optional. The response body of the HTTP response.
+              Required. The response body of the HTTP response. Pass an empty string if you have no body to send.
             </td>
           </tr>
         </tbody>

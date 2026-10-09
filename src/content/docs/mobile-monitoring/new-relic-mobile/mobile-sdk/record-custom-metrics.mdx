@@ -653,8 +653,9 @@ NewRelic.recordMetric('CordovaCustomMetricName', 'CordovaCustomMetricCategory', 
       ## Syntax [#syntax]
 
 ```csharp
-RecordMetric(string name, string category) : void;
-RecordMetric(string name, string category, double value) : void;
+CrossNewRelic.Current.RecordMetric(string name, string category): void;
+CrossNewRelic.Current.RecordMetric(string name, string category, double value): void;
+CrossNewRelic.Current.RecordMetric(string name, string category, double value, MetricUnit countUnit, MetricUnit valueUnit): void;
 ```
 
       ## Description [#description]
@@ -663,11 +664,11 @@ RecordMetric(string name, string category, double value) : void;
 
       Supported measurements for `countUnit` and `valueUnit` are:
 
-      * `PERCENT`
-      * `BYTES`
-      * `SECONDS`
-      * `BYTES_PER_SECOND`
-      * `OPERATIONS`
+      * `MetricUnit.PERCENT`
+      * `MetricUnit.BYTES`
+      * `MetricUnit.SECONDS`
+      * `MetricUnit.BYTES_PER_SECOND`
+      * `MetricUnit.OPERATIONS`
 
       ## Parameters [#parameters]
 
@@ -723,11 +724,11 @@ RecordMetric(string name, string category, double value) : void;
             </td>
 
             <td>
-              `number`
+              `double`
             </td>
 
             <td>
-              Required. The value of the metric.
+              Optional. The value of the metric. Required if you use `countUnit` and `valueUnit`.
             </td>
           </tr>
 
@@ -737,11 +738,11 @@ RecordMetric(string name, string category, double value) : void;
             </td>
 
             <td>
-              `string`
+              `MetricUnit`
             </td>
 
             <td>
-              Required. The unit of measurement for the count.
+              Optional. The unit of measurement for the count, as a `MetricUnit` enum value. Required if you use `valueUnit`.
             </td>
           </tr>
 
@@ -751,11 +752,11 @@ RecordMetric(string name, string category, double value) : void;
             </td>
 
             <td>
-              `string`
+              `MetricUnit`
             </td>
 
             <td>
-              Required. The unit of measurement for the count.
+              Optional. The unit of measurement for the value, as a `MetricUnit` enum value. Required if you use `countUnit`.
             </td>
           </tr>
         </tbody>

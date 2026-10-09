@@ -462,14 +462,14 @@ CrossNewRelic.Current.LogWarning("This is a warning message");
 
 CrossNewRelic.Current.LogDebug("This is a debug message");
 
-CrossNewRelic.Current.Log(LogLevel.Info, "This is an informational message");
+CrossNewRelic.Current.Log(LogLevel.INFO, "This is an informational message");
 
 CrossNewRelic.Current.LogAttributes(new Dictionary<string, object>()
     {
         { "level","info"},
-        { "BreadNumValue", 12.3 },
-        { "BreadStrValue", "MAUIBread" },
-        { "BreadBoolValue", true },
+        { "NumValue", 12.3 },
+        { "StrValue", "MAUILog" },
+        { "BoolValue", true },
         { "message", "This is a message with attributes" }
     }
 );

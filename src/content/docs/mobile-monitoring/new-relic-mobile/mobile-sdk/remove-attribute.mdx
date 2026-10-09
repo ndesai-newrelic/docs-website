@@ -323,7 +323,7 @@ NewRelic.removeAttribute({ name: "CordovaAttribute" }); void
       ## Syntax [#syntax]
 
 ```csharp
-RemoveAttribute(string name) : bool;
+CrossNewRelic.Current.RemoveAttribute(string name): bool;
 ```
 
       ## Description [#description]
@@ -356,7 +356,7 @@ RemoveAttribute(string name) : bool;
             </td>
 
             <td>
-              `bool`
+              `string`
             </td>
 
             <td>
@@ -365,6 +365,10 @@ RemoveAttribute(string name) : bool;
           </tr>
         </tbody>
       </table>
+
+      ## Return values [#return-values]
+
+      Returns `true` if the attribute is removed successfully, or `false` if not.
 
       ## Example [#example]
 

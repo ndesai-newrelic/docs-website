@@ -392,12 +392,16 @@ const badApiLoad = async () => {
       ## Syntax [#syntax]
 
 ```csharp
-StartInteraction(string interactionName): string;
+CrossNewRelic.Current.StartInteraction(string interactionName): string;
 ```
 
       ## Description [#description]
 
-      Track a method as an interaction.
+      Track a method as an interaction. Returns an interaction ID that you pass to [`EndInteraction`](/docs/mobile-monitoring/new-relic-mobile/mobile-sdk/stop-interaction) to end the interaction.
+
+      <Callout variant="tip">
+        The `interactionTracingEnabled` option of `AgentStartConfiguration` (default `false`) controls only the automatic default interactions. As of plugin version 1.1.15, leaving it disabled doesn't turn off custom interactions that you start with `StartInteraction`. For details, see [Configure mobile monitoring settings](/docs/mobile-monitoring/new-relic-mobile/mobile-sdk/configure-settings/#maui).
+      </Callout>
 
       ## Parameters [#parameters]
 
@@ -421,11 +425,11 @@ StartInteraction(string interactionName): string;
         <tbody>
           <tr>
             <td>
-              `options`
+              `interactionName`
             </td>
 
             <td>
-              `{ value: string; }`
+              `string`
             </td>
 
             <td>

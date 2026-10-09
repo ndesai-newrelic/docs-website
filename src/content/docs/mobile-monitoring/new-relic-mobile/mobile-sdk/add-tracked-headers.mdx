@@ -359,7 +359,7 @@ NewRelic.addHTTPHeadersTrackingFor(["Car"]);
       ## Syntax [#syntax]
 
 ```csharp
-NewRelic.addHTTPHeadersTrackingFor(List<String> headers)
+CrossNewRelic.Current.AddHTTPHeadersTrackingFor(List<string> headers): void;
 ```
 
       ## Description [#description]
@@ -388,7 +388,7 @@ NewRelic.addHTTPHeadersTrackingFor(List<String> headers)
         <tbody>
           <tr>
             <td>
-              `$headers`
+              `headers`
             </td>
 
             <td>
@@ -402,19 +402,12 @@ NewRelic.addHTTPHeadersTrackingFor(List<String> headers)
         </tbody>
       </table>
 
-      ## Return values [#return-values]
-
-      Returns `true` if added successfully, or `false` if not.
-
       ## Examples [#examples]
 
       Here's an example of adding some HTTP header fields:
 
 ```csharp
-List<string> headers = new List<string>();
-headers.Add("Car");
-headers.Add("Music");
-CrossNewRelic.Current.AddHTTPHeadersTrackingFor(headers);
+CrossNewRelic.Current.AddHTTPHeadersTrackingFor(new List<string> { "X-Request-Id", "X-Tenant-Id" });
 ```
     </TabsPageItem>
 
