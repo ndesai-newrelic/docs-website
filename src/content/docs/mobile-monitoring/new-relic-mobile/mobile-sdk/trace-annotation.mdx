@@ -1,0 +1,116 @@
+---
+title: Trace and skip methods with annotations
+type: apiDoc
+shortDescription: 'Use the @Trace and @SkipTrace annotations to control which methods the Android agent traces.'
+tags:
+  - Mobile monitoring
+  - Mobile SDK API
+  - Custom instrumentation
+metaDescription: Mobile app monitoring annotations used to trace or skip methods in an Android app.
+freshnessValidatedDate: never
+---
+
+## Syntax [#syntax]
+
+### Java [#java]
+
+```java
+@Trace(category = MetricCategory.NONE)
+void myMethod() { ... }
+
+@SkipTrace
+void myOtherMethod() { ... }
+```
+
+### Kotlin [#kotlin]
+
+```kotlin
+@Trace(category = MetricCategory.NONE)
+fun myMethod() { ... }
+
+@SkipTrace
+fun myOtherMethod() { ... }
+```
+
+Both annotations are in the `com.newrelic.agent.android.instrumentation` package and apply to methods.
+
+## Description [#description]
+
+The New Relic Gradle plugin instruments your app at build time. You can use annotations to control how the agent traces individual methods:
+
+* `@Trace` marks a method to be traced. The plugin instruments the method at build time, so each call is recorded as a segment of the interaction trace that is in progress.
+* `@SkipTrace` tells the plugin to skip a method during compile time instrumentation. Use it if automatic instrumentation interferes with the method being traced. A method with both annotations is not traced.
+
+For the list of methods the agent instruments automatically, see [Automatically instrumented methods](/docs/mobile-monitoring/new-relic-mobile/mobile-sdk/mobile-sdk-api-guide#method-list).
+
+## Parameters [#parameters]
+
+`@Trace` has this parameter:
+
+<table>
+  <thead>
+    <tr>
+      <th width={200}>
+        Parameter
+      </th>
+
+      <th width={200}>
+        Type
+      </th>
+
+      <th>
+        Description
+      </th>
+    </tr>
+  </thead>
+
+  <tbody>
+    <tr>
+      <td>
+        `category`
+      </td>
+
+      <td>
+        `MetricCategory`
+      </td>
+
+      <td>
+        Optional. The metric category to record the method's timing under. Valid values are `NONE`, `VIEW_LOADING`, `VIEW_LAYOUT`, `DATABASE`, `IMAGE`, `JSON`, and `NETWORK`. The default is `NONE`. The `MetricCategory` enum is in the `com.newrelic.agent.android.instrumentation` package.
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+`@SkipTrace` has no parameters.
+
+## Example [#example]
+
+### Java [#java-example]
+
+```java
+public class ContactsRepository {
+    @Trace(category = MetricCategory.DATABASE)
+    public List<Contact> loadContacts() {
+        return database.query("SELECT * FROM contacts");
+    }
+
+    @SkipTrace
+    public void onInternalCallback() {
+        // not traced by the agent
+    }
+}
+```
+
+### Kotlin [#kotlin-example]
+
+```kotlin
+class ContactsRepository {
+    @Trace(category = MetricCategory.DATABASE)
+    fun loadContacts(): List<Contact> = database.query("SELECT * FROM contacts")
+
+    @SkipTrace
+    fun onInternalCallback() {
+        // not traced by the agent
+    }
+}
+```

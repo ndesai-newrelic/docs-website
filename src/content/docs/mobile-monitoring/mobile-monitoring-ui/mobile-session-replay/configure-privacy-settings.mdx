@@ -418,7 +418,16 @@ Inline masking overrides are applied in your code by tagging the component you w
     <TabsPageItem id="android">
       **Jetpack Compose**
 
-      Use Modifier extensions to control masking and blocking behavior in Jetpack Compose.
+      Use Modifier extensions to control masking and blocking behavior in Jetpack Compose. The modifiers are members of the `NewRelicModifiers` object, so import them before you use them:
+
+      ```kotlin
+      import com.newrelic.agent.android.sessionReplay.compose.NewRelicModifiers.newRelicMask
+      import com.newrelic.agent.android.sessionReplay.compose.NewRelicModifiers.newRelicUnmask
+      import com.newrelic.agent.android.sessionReplay.compose.NewRelicModifiers.newRelicBlock
+      import com.newrelic.agent.android.sessionReplay.compose.NewRelicModifiers.newRelicPrivacy
+      ```
+
+      The `newRelicMask()` and `newRelicUnmask()` modifiers require Android agent v7.6.12 or higher. The `newRelicBlock()` modifier requires Android agent v7.7.2 or higher. The `newRelicPrivacy()` modifier requires Android agent v7.6.12 or higher.
 
       Example:
 
@@ -440,7 +449,15 @@ Inline masking overrides are applied in your code by tagging the component you w
           text = "Sensitive User information",
           modifier = Modifier.newRelicBlock()
       )
+
+      // Apply a privacy value directly: "nr-mask", "nr-unmask", "nr-block", or a custom tag
+      Text(
+          text = "Sensitive information",
+          modifier = Modifier.newRelicPrivacy("nr-mask")
+      )
       ```
+
+      Privacy modifiers apply to all child composables in a container. A child composable can override its parent's setting by applying its own privacy modifier.
 
       **XML layouts**
 
@@ -556,7 +573,16 @@ Local API method masking overrides are also applied in your code within the New 
     <TabsPageItem id="android">
       **Jetpack Compose**
 
-      Use Modifier extensions to control masking and blocking behavior in Jetpack Compose.
+      Use Modifier extensions to control masking and blocking behavior in Jetpack Compose. The modifiers are members of the `NewRelicModifiers` object, so import them before you use them:
+
+      ```kotlin
+      import com.newrelic.agent.android.sessionReplay.compose.NewRelicModifiers.newRelicMask
+      import com.newrelic.agent.android.sessionReplay.compose.NewRelicModifiers.newRelicUnmask
+      import com.newrelic.agent.android.sessionReplay.compose.NewRelicModifiers.newRelicBlock
+      import com.newrelic.agent.android.sessionReplay.compose.NewRelicModifiers.newRelicPrivacy
+      ```
+
+      The `newRelicMask()` and `newRelicUnmask()` modifiers require Android agent v7.6.12 or higher. The `newRelicBlock()` modifier requires Android agent v7.7.2 or higher. The `newRelicPrivacy()` modifier requires Android agent v7.6.12 or higher.
 
       Example:
 
@@ -578,7 +604,15 @@ Local API method masking overrides are also applied in your code within the New 
           text = "Sensitive User information",
           modifier = Modifier.newRelicBlock()
       )
+
+      // Apply a privacy value directly: "nr-mask", "nr-unmask", "nr-block", or a custom tag
+      Text(
+          text = "Sensitive information",
+          modifier = Modifier.newRelicPrivacy("nr-mask")
+      )
       ```
+
+      Privacy modifiers apply to all child composables in a container. A child composable can override its parent's setting by applying its own privacy modifier.
 
       **XML layouts**
 
@@ -589,6 +623,8 @@ Local API method masking overrides are also applied in your code within the New 
       - `addSessionReplayMaskViewTag`
       - `addSessionReplayUnmaskViewTag`
 
+      These methods require Android agent v7.6.8 or higher. Each method takes a `String` and returns a `boolean`.
+
       Example:
 
       ```java
@@ -597,6 +633,14 @@ Local API method masking overrides are also applied in your code within the New 
       NewRelic.addSessionReplayUnmaskViewClass("android.widget.Button");
       NewRelic.addSessionReplayMaskViewClass("android.widget.TextView");
       NewRelic.addSessionReplayMaskViewClass("com.yourpackagename.CustomView");
+      ```
+
+      ```kotlin
+      NewRelic.addSessionReplayMaskViewTag("login")
+      NewRelic.addSessionReplayUnmaskViewTag("editTextEmail")
+      NewRelic.addSessionReplayUnmaskViewClass("android.widget.Button")
+      NewRelic.addSessionReplayMaskViewClass("android.widget.TextView")
+      NewRelic.addSessionReplayMaskViewClass("com.yourpackagename.CustomView")
       ```
     </TabsPageItem>
   </TabsPages>

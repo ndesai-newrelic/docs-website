@@ -1,0 +1,116 @@
+---
+title: Set a distributed trace listener
+type: apiDoc
+shortDescription: 'Registers a listener that the agent calls when it creates distributed traces and spans.'
+tags:
+  - Mobile monitoring
+  - Mobile SDK API
+  - Custom instrumentation
+metaDescription: Mobile app monitoring API used to register a distributed trace listener on Android.
+freshnessValidatedDate: never
+---
+
+## Syntax [#syntax]
+
+`withDistributedTraceListener` is a builder method. Call it on the object returned by `withApplicationToken()`, before you call `start()`.
+
+### Java [#java]
+
+```java
+NewRelic.withApplicationToken(String appToken)
+    .withDistributedTraceListener(TraceListener listener)
+    .start(Context context);
+```
+
+### Kotlin [#kotlin]
+
+```kotlin
+NewRelic.withApplicationToken(appToken: String)
+    .withDistributedTraceListener(listener: TraceListener?)
+    .start(context: Context)
+```
+
+## Description [#description]
+
+Registers a `TraceListener` that the agent calls when it creates a new trace or span for a network request. Use it to read the trace and span IDs that the agent generates, for example to correlate them with your own logs.
+
+The `TraceListener` interface (`com.newrelic.agent.android.distributedtracing.TraceListener`) has two methods:
+
+* `onTraceCreated(Map<String, String> requestContext)`: Called when a new trace is created. The map includes the `trace.id`, and for requests that the agent instruments, the `url` and `httpMethod` of the request.
+* `onSpanCreated(Map<String, String> requestContext)`: Called when a new span is created. The map includes the `span.id` in addition to the trace values.
+
+If your listener throws an exception, the agent removes the listener and records the exception as a handled exception.
+
+This method has no effect if the `DistributedTracing` feature flag is disabled when you call it. The flag is enabled by default. For more about distributed tracing in mobile apps, see [Mobile monitoring and distributed tracing](/docs/mobile-monitoring/new-relic-mobile-android/get-started/new-relic-android-and-dt).
+
+## Parameters [#parameters]
+
+<table>
+  <thead>
+    <tr>
+      <th width={200}>
+        Parameter
+      </th>
+
+      <th width={200}>
+        Type
+      </th>
+
+      <th>
+        Description
+      </th>
+    </tr>
+  </thead>
+
+  <tbody>
+    <tr>
+      <td>
+        `listener`
+      </td>
+
+      <td>
+        `TraceListener`
+      </td>
+
+      <td>
+        Required. Your implementation of the `TraceListener` interface.
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+## Example [#example]
+
+### Java [#java-example]
+
+```java
+NewRelic.withApplicationToken("<YOUR_APP_TOKEN>")
+    .withDistributedTraceListener(new TraceListener() {
+        @Override
+        public void onTraceCreated(Map<String, String> requestContext) {
+            Log.d("MyApp", "Trace created: " + requestContext.get("trace.id"));
+        }
+
+        @Override
+        public void onSpanCreated(Map<String, String> requestContext) {
+            Log.d("MyApp", "Span created: " + requestContext.get("span.id"));
+        }
+    })
+    .start(this.getApplication());
+```
+
+### Kotlin [#kotlin-example]
+
+```kotlin
+NewRelic.withApplicationToken("<YOUR_APP_TOKEN>")
+    .withDistributedTraceListener(object : TraceListener {
+        override fun onTraceCreated(requestContext: MutableMap<String, String>) {
+            Log.d("MyApp", "Trace created: ${requestContext["trace.id"]}")
+        }
+
+        override fun onSpanCreated(requestContext: MutableMap<String, String>) {
+            Log.d("MyApp", "Span created: ${requestContext["span.id"]}")
+        }
+    })
+    .start(this.application)
+```

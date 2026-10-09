@@ -14,6 +14,10 @@ freshnessValidatedDate: 2023-07-26
 
 <Tabs>
   <TabsBar>
+    <TabsBarItem id="android">
+      Android
+    </TabsBarItem>
+
     <TabsBarItem id="ios">
       iOS
     </TabsBarItem>
@@ -40,6 +44,62 @@ freshnessValidatedDate: 2023-07-26
   </TabsBar>
 
   <TabsPages>
+    <TabsPageItem id="android">
+      ## Syntax [#syntax]
+
+      The Android agent doesn't have a `recordError` method. To record an error, use `recordHandledException`:
+
+      ### Java [#java]
+
+```java
+NewRelic.recordHandledException(Exception exception);
+NewRelic.recordHandledException(Exception exception, Map<String, Object> exceptionAttributes);
+NewRelic.recordHandledException(Throwable throwable);
+NewRelic.recordHandledException(Throwable throwable, Map<String, Object> attributes);
+```
+
+      ### Kotlin [#kotlin]
+
+```kotlin
+NewRelic.recordHandledException(exception: Exception): Boolean
+NewRelic.recordHandledException(exception: Exception, exceptionAttributes: Map<String, Any>?): Boolean
+NewRelic.recordHandledException(throwable: Throwable): Boolean
+NewRelic.recordHandledException(throwable: Throwable, attributes: Map<String, Any>?): Boolean
+```
+
+      ## Description [#description]
+
+      On Android, you record errors with `recordHandledException`. The call takes an exception or other throwable and an optional map of attributes that give context, then records a handled exception event. You can view event data in the <InlinePopover type="mobile"/> UI in places like the [<DNT>**Handled exceptions**</DNT> page](/docs/mobile-monitoring/mobile-monitoring-ui/crashes/handled-exceptions-analyze-trends-prevent-crashes) and the [<DNT>**Crash events**</DNT> trail](/docs/mobile-monitoring/mobile-monitoring-ui/crashes/mobile-crash-event-trail). You can also query this data with NRQL, and chart it in New Relic dashboards.
+
+      For the full parameter list, return values, and requirements, see [Record handled exceptions](/docs/mobile-monitoring/new-relic-mobile/mobile-sdk/record-handled-exceptions).
+
+      ## Example [#example]
+
+      Here's an example of recording an error with attributes:
+
+      ### Java [#java-example]
+
+```java
+try {
+  parseVersion(versionString);
+} catch (Exception e) {
+  Map<String, Object> attributes = new HashMap<>();
+  attributes.put("versionString", versionString);
+  NewRelic.recordHandledException(e, attributes);
+}
+```
+
+      ### Kotlin [#kotlin-example]
+
+```kotlin
+try {
+  parseVersion(versionString)
+} catch (e: Exception) {
+  NewRelic.recordHandledException(e, mapOf("versionString" to versionString))
+}
+```
+    </TabsPageItem>
+
     <TabsPageItem id="ios">
       ## Syntax [#syntax]
 

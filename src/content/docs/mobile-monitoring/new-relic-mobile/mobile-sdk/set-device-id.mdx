@@ -1,0 +1,87 @@
+---
+title: Set device ID
+type: apiDoc
+shortDescription: 'Overrides the device ID that the Android agent reports.'
+tags:
+  - Mobile monitoring
+  - Mobile SDK API
+  - Custom instrumentation
+metaDescription: Mobile app monitoring API used to override the device ID that the Android agent reports.
+freshnessValidatedDate: never
+---
+
+## Syntax [#syntax]
+
+`withDeviceID` is a builder method. Call it on the object returned by `withApplicationToken()`, before you call `start()`.
+
+### Java [#java]
+
+```java
+NewRelic.withApplicationToken(String appToken).withDeviceID(String deviceID).start(Context context);
+```
+
+### Kotlin [#kotlin]
+
+```kotlin
+NewRelic.withApplicationToken(appToken: String).withDeviceID(deviceID: String?).start(context: Context)
+```
+
+## Description [#description]
+
+By default, the Android agent generates a random, persistent identifier for each device. This method lets you override that value with your own device identifier.
+
+The agent trims whitespace from the value and truncates values longer than 40 characters. If you pass `null` or an empty string, the agent uses the device ID `0`.
+
+## Parameters [#parameters]
+
+<table>
+  <thead>
+    <tr>
+      <th width={200}>
+        Parameter
+      </th>
+
+      <th width={200}>
+        Type
+      </th>
+
+      <th>
+        Description
+      </th>
+    </tr>
+  </thead>
+
+  <tbody>
+    <tr>
+      <td>
+        `deviceID`
+      </td>
+
+      <td>
+        `String`
+      </td>
+
+      <td>
+        Required. A string that uniquely identifies the device. The maximum length is 40 characters.
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+## Example [#example]
+
+### Java [#java-example]
+
+```java
+NewRelic.withApplicationToken("<YOUR_APP_TOKEN>")
+    .withDeviceID("my-device-id")
+    .start(this.getApplication());
+```
+
+### Kotlin [#kotlin-example]
+
+```kotlin
+NewRelic.withApplicationToken("<YOUR_APP_TOKEN>")
+    .withDeviceID("my-device-id")
+    .start(this.application)
+```

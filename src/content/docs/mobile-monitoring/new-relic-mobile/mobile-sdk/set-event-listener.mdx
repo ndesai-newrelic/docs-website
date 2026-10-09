@@ -1,0 +1,140 @@
+---
+title: Set an event listener
+type: apiDoc
+shortDescription: 'Registers a callback for event buffer lifecycle notifications.'
+tags:
+  - Mobile monitoring
+  - Mobile SDK API
+  - Custom instrumentation
+metaDescription: Mobile app monitoring API used to register an event listener on Android.
+freshnessValidatedDate: never
+---
+
+## Syntax [#syntax]
+
+### Java [#java]
+
+```java
+NewRelic.setEventListener(EventListener eventListener);
+```
+
+### Kotlin [#kotlin]
+
+```kotlin
+NewRelic.setEventListener(eventListener: EventListener)
+```
+
+## Description [#description]
+
+Registers a callback interface that the agent invokes at key times in the lifecycle of its event buffer, such as when an event is added, evicted, or flushed. Use it to inspect, modify, or filter the events that the agent records.
+
+The `EventListener` interface is in the `com.newrelic.agent.android.analytics` package. Use the fully qualified name if your imports conflict with `java.util.EventListener`. The agent calls the listener methods on the thread that added the event.
+
+| Method | Called when |
+| --- | --- |
+| `boolean onEventAdded(AnalyticsEvent event)` | An event is about to be added to the buffer. You can change the event, as long as the change meets event and attribute requirements. Return `true` to add the event, or `false` to ignore it. |
+| `boolean onEventOverflow(AnalyticsEvent event)` | Adding the event would exceed the configured buffer size. Return `true` to ignore the event, or `false` to add it anyway. |
+| `boolean onEventEvicted(AnalyticsEvent event)` | An event is about to be removed from the buffer to satisfy size limits. Return `true` to evict the event, or `false` to keep it. |
+| `void onEventQueueSizeExceeded(int currentQueueSize)` | The event buffer has grown past the configured size. You can change the limit with [`setMaxEventPoolSize()`](/docs/mobile-monitoring/new-relic-mobile/mobile-sdk/set-max-event-pool-size). |
+| `void onEventQueueTimeExceeded(int maxBufferTimeInSec)` | The event buffer flush time has been exceeded. See [`setMaxEventBufferTime()`](/docs/mobile-monitoring/new-relic-mobile/mobile-sdk/set-max-event-buffer-time). |
+| `void onEventFlush()` | Immediately before queued events are transferred to a harvest payload. |
+| `void onStart(EventManager eventManager)` | The event manager has initialized and is ready for input. |
+| `void onShutdown()` | Immediately before the event manager shuts down. Don't submit new events after this call. |
+
+If Session Replay is enabled, the agent keeps its own Session Replay listener active and calls your listener alongside it.
+
+## Parameters [#parameters]
+
+<table>
+  <thead>
+    <tr>
+      <th width={200}>
+        Parameter
+      </th>
+
+      <th width={200}>
+        Type
+      </th>
+
+      <th>
+        Description
+      </th>
+    </tr>
+  </thead>
+
+  <tbody>
+    <tr>
+      <td>
+        `eventListener`
+      </td>
+
+      <td>
+        `EventListener`
+      </td>
+
+      <td>
+        Required. Your implementation of the `EventListener` interface.
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+## Example [#example]
+
+This example drops events of a specific custom event type and ignores all other notifications.
+
+### Java [#java-example]
+
+```java
+NewRelic.setEventListener(new EventListener() {
+    @Override
+    public boolean onEventAdded(AnalyticsEvent event) {
+        // don't record "DebugEvent" events
+        return !"DebugEvent".equals(event.getEventType());
+    }
+
+    @Override
+    public boolean onEventOverflow(AnalyticsEvent event) { return true; }
+
+    @Override
+    public boolean onEventEvicted(AnalyticsEvent event) { return true; }
+
+    @Override
+    public void onEventQueueSizeExceeded(int currentQueueSize) { }
+
+    @Override
+    public void onEventQueueTimeExceeded(int maxBufferTimeInSec) { }
+
+    @Override
+    public void onEventFlush() { }
+
+    @Override
+    public void onStart(EventManager eventManager) { }
+
+    @Override
+    public void onShutdown() { }
+});
+```
+
+### Kotlin [#kotlin-example]
+
+```kotlin
+NewRelic.setEventListener(object : EventListener {
+    // don't record "DebugEvent" events
+    override fun onEventAdded(event: AnalyticsEvent): Boolean = event.eventType != "DebugEvent"
+
+    override fun onEventOverflow(event: AnalyticsEvent): Boolean = true
+
+    override fun onEventEvicted(event: AnalyticsEvent): Boolean = true
+
+    override fun onEventQueueSizeExceeded(currentQueueSize: Int) {}
+
+    override fun onEventQueueTimeExceeded(maxBufferTimeInSec: Int) {}
+
+    override fun onEventFlush() {}
+
+    override fun onStart(eventManager: EventManager) {}
+
+    override fun onShutdown() {}
+})
+```

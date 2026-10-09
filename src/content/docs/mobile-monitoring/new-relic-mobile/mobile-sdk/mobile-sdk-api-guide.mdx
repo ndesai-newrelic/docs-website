@@ -207,7 +207,7 @@ The table below lists supported SDK methods to customize your mobile agent instr
 
 ### (Android) Automatically instrumented methods [#method-list]
 
-Automatic instrumentation is one of the Android agent's more convenient features. However, if it interferes with the method being traced, add `@SkipTrace` to the method, and the agent will skip it during compile time instrumentation.
+Automatic instrumentation is one of the Android agent's more convenient features. However, if it interferes with the method being traced, add `@SkipTrace` to the method, and the agent will skip it during compile time instrumentation. To trace a method that the agent doesn't instrument automatically, add `@Trace`. See [Trace and skip methods with annotations](/docs/mobile-monitoring/new-relic-mobile/mobile-sdk/trace-annotation).
 
 <table>
   <thead>
@@ -333,6 +333,150 @@ Automatic instrumentation is one of the Android agent's more convenient features
         * `i // info`
         * `v // verbose`
         * `e // error`
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+### (Android) Additional SDK methods and annotations [#android-additional-methods]
+
+These methods and annotations are available in the Android agent. Methods marked as builder methods are called on the object returned by `NewRelic.withApplicationToken()`, before `start()`.
+
+<table>
+  <thead>
+    <tr>
+      <th style={{ width: "300px" }}>
+        If you want to...
+      </th>
+
+      <th>
+        Use this method
+      </th>
+    </tr>
+  </thead>
+
+  <tbody>
+    <tr>
+      <td>
+        Check whether the agent is running.
+      </td>
+
+      <td>
+        [Check if the agent is started](/docs/mobile-monitoring/new-relic-mobile/mobile-sdk/is-agent-started)
+      </td>
+    </tr>
+
+    <tr>
+      <td>
+        Override the device ID that the agent reports (builder method).
+      </td>
+
+      <td>
+        [Set device ID](/docs/mobile-monitoring/new-relic-mobile/mobile-sdk/set-device-id)
+      </td>
+    </tr>
+
+    <tr>
+      <td>
+        Report the application framework and framework version (builder method).
+      </td>
+
+      <td>
+        [Set application framework](/docs/mobile-monitoring/new-relic-mobile/mobile-sdk/set-application-framework)
+      </td>
+    </tr>
+
+    <tr>
+      <td>
+        Be notified when the agent creates distributed traces and spans (builder method).
+      </td>
+
+      <td>
+        [Set a distributed trace listener](/docs/mobile-monitoring/new-relic-mobile/mobile-sdk/distributed-trace-listener)
+
+        [Track HTTP requests with distributed tracing headers](/docs/mobile-monitoring/new-relic-mobile/mobile-sdk/network-request-success#distributed-trace)
+      </td>
+    </tr>
+
+    <tr>
+      <td>
+        Capture additional HTTP request headers as attributes on network request events.
+      </td>
+
+      <td>
+        [Add tracked headers](/docs/mobile-monitoring/new-relic-mobile/mobile-sdk/add-tracked-headers)
+      </td>
+    </tr>
+
+    <tr>
+      <td>
+        Set the maximum size of offline storage.
+      </td>
+
+      <td>
+        [Set max offline storage size](/docs/mobile-monitoring/new-relic-mobile/mobile-sdk/set-max-offline-storage)
+      </td>
+    </tr>
+
+    <tr>
+      <td>
+        Be notified when events are added, evicted, or flushed.
+      </td>
+
+      <td>
+        [Set an event listener](/docs/mobile-monitoring/new-relic-mobile/mobile-sdk/set-event-listener)
+      </td>
+    </tr>
+
+    <tr>
+      <td>
+        Trace or skip individual methods at build time.
+      </td>
+
+      <td>
+        [Trace and skip methods with annotations](/docs/mobile-monitoring/new-relic-mobile/mobile-sdk/trace-annotation)
+      </td>
+    </tr>
+
+    <tr>
+      <td>
+        Create child method traces inside a custom interaction.
+      </td>
+
+      <td>
+        [Create child traces with custom interactions](/docs/mobile-monitoring/new-relic-mobile-android/install-configure/android-agent-custom-Interaction) (`startMethodTrace` and `endMethodTrace`)
+      </td>
+    </tr>
+
+    <tr>
+      <td>
+        Send logs to New Relic.
+      </td>
+
+      <td>
+        [Mobile logs](/docs/mobile-monitoring/mobile-monitoring-ui/mobile-logs) (`logInfo`, `logWarning`, `logDebug`, `logVerbose`, `logError`, `log`, `logThrowable`, `logAttributes`, `logAll`)
+      </td>
+    </tr>
+
+    <tr>
+      <td>
+        Start or pause Session Replay recording.
+      </td>
+
+      <td>
+        [Record replay](/docs/mobile-monitoring/new-relic-mobile/mobile-sdk/record-replay)
+
+        [Pause replay](/docs/mobile-monitoring/new-relic-mobile/mobile-sdk/pause-replay)
+      </td>
+    </tr>
+
+    <tr>
+      <td>
+        Mask, unmask, or block views in Session Replay.
+      </td>
+
+      <td>
+        [Configure Session Replay privacy settings](/docs/mobile-monitoring/mobile-monitoring-ui/mobile-session-replay/configure-privacy-settings) (`addSessionReplayMaskViewClass`, `addSessionReplayUnmaskViewClass`, `addSessionReplayMaskViewTag`, `addSessionReplayUnmaskViewTag`, and the Jetpack Compose `Modifier` extensions)
       </td>
     </tr>
   </tbody>
