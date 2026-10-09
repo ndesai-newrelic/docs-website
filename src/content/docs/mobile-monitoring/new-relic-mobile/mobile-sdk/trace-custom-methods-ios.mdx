@@ -1,0 +1,175 @@
+---
+title: Trace custom methods
+type: apiDoc
+shortDescription: Adds a custom method trace to the interaction trace that is currently running in your iOS app.
+tags:
+  - Mobile monitoring
+  - Mobile SDK API
+  - Custom instrumentation
+  - New Relic Mobile iOS
+  - iOS SDK API
+metaDescription: Mobile app monitoring API used to add custom method traces to the running interaction trace in your iOS app.
+freshnessValidatedDate: never
+---
+
+## Syntax [#syntax]
+
+### Objective-C [#objc]
+
+```objectivec
++ (void)startTracingMethod:(SEL)selector
+                    object:(id)object
+                     timer:(NRTimer *)timer
+                  category:(enum NRTraceType)category;
+
++ (void)endTracingMethodWithTimer:(NRTimer *)timer;
+```
+
+### Swift [#swift]
+
+```swift
+NewRelic.startTracingMethod(_ selector: Selector, object: Any, timer: NRTimer, category: NRTraceType)
+
+NewRelic.endTracingMethod(with timer: NRTimer)
+```
+
+## Description [#description]
+
+These methods add a new method trace to the interaction trace that is currently running. If no interaction trace is running, nothing happens.
+
+Call `startTracingMethod` at the beginning of the method you want to instrument, and call `endTracingMethod` at the end of that method. The `NRTimer` that you pass to `startTracingMethod` must stay in memory until you pass it to `endTracingMethod`. If you don't call `endTracingMethod`, the running interaction trace can time out.
+
+To start an interaction trace yourself, see [Start interactions](/docs/mobile-monitoring/new-relic-mobile/mobile-sdk/start-interaction).
+
+### Objective-C macros [#macros]
+
+In Objective-C, you can use macros that create the timer and make both calls for you. Use `NR_TRACE_METHOD_START` at the beginning of the method, and `NR_TRACE_METHOD_STOP` at the end. In code that doesn't use ARC, use `NR_NONARC_TRACE_METHOD_STOP`, which also releases the timer that `NR_TRACE_METHOD_START` created.
+
+The `NRTraceType` values that you can use as `category` are:
+
+* `NRTraceTypeNone`
+* `NRTraceTypeViewLoading`
+* `NRTraceTypeLayout`
+* `NRTraceTypeDatabase`
+* `NRTraceTypeImages`
+* `NRTraceTypeJson`
+* `NRTraceTypeNetwork`
+
+## Parameters [#parameters]
+
+<table>
+  <thead>
+    <tr>
+      <th width={200}>
+        Parameter
+      </th>
+
+      <th width={200}>
+        Type
+      </th>
+
+      <th>
+        Description
+      </th>
+    </tr>
+  </thead>
+
+  <tbody>
+    <tr>
+      <td>
+        `selector`
+      </td>
+
+      <td>
+        `SEL` / `Selector`
+      </td>
+
+      <td>
+        Required. The selector of the method you are tracing. The agent uses it to name the trace element.
+      </td>
+    </tr>
+
+    <tr>
+      <td>
+        `object`
+      </td>
+
+      <td>
+        `id` / `Any`
+      </td>
+
+      <td>
+        Required. The `self` reference of the method you are tracing.
+      </td>
+    </tr>
+
+    <tr>
+      <td>
+        `timer`
+      </td>
+
+      <td>
+        `NRTimer`
+      </td>
+
+      <td>
+        Required. A timer that you create just before calling `startTracingMethod`, and then pass to `endTracingMethod`. Create it with `NewRelic.createAndStartTimer()`.
+      </td>
+    </tr>
+
+    <tr>
+      <td>
+        `category`
+      </td>
+
+      <td>
+        `NRTraceType`
+      </td>
+
+      <td>
+        Required. The category of the trace.
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+## Examples [#examples]
+
+### Objective-C [#obj-c]
+
+Here's an example that uses the macros:
+
+```objectivec
+- (void)loadItems {
+    NR_TRACE_METHOD_START(NRTraceTypeDatabase);
+
+    // ... the work you want to trace ...
+
+    NR_TRACE_METHOD_STOP;
+}
+```
+
+Here's the same example, using the methods directly:
+
+```objectivec
+- (void)loadItems {
+    NRTimer *timer = [NewRelic createAndStartTimer];
+    [NewRelic startTracingMethod:_cmd object:self timer:timer category:NRTraceTypeDatabase];
+
+    // ... the work you want to trace ...
+
+    [NewRelic endTracingMethodWithTimer:timer];
+}
+```
+
+### Swift [#swift]
+
+```swift
+@objc func loadItems() {
+    let timer = NewRelic.createAndStartTimer()
+    NewRelic.startTracingMethod(#selector(loadItems), object: self, timer: timer, category: NRTraceTypeDatabase)
+    defer { NewRelic.endTracingMethod(with: timer) }
+
+    // ... the work you want to trace ...
+}
+```

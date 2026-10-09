@@ -1,0 +1,140 @@
+---
+title: Start the iOS agent
+type: apiDoc
+shortDescription: Starts New Relic data collection in your iOS or tvOS app.
+tags:
+  - Mobile monitoring
+  - Mobile SDK API
+  - New Relic Mobile iOS
+  - iOS SDK API
+metaDescription: Mobile app monitoring API used to start the New Relic iOS agent with your application token.
+freshnessValidatedDate: never
+---
+
+## Syntax [#syntax]
+
+### Objective-C [#objc]
+
+```objectivec
++ (void)startWithApplicationToken:(NSString *)appToken;
+
++ (void)startWithApplicationToken:(NSString *)appToken
+              andCollectorAddress:(NSString *)url
+         andCrashCollectorAddress:(NSString *)crashCollectorUrl;
+```
+
+### Swift [#swift]
+
+```swift
+NewRelic.start(withApplicationToken: String)
+
+NewRelic.start(withApplicationToken: String, andCollectorAddress: String, andCrashCollectorAddress: String)
+```
+
+## Description [#description]
+
+Starts New Relic data collection. Call this method at the beginning of your app delegate's `application:didFinishLaunchingWithOptions:` method, on the main thread. Each app in New Relic has a unique application token, so be sure to use the correct one. To find your token, see [Find your application token](/docs/mobile-apps/viewing-your-application-token).
+
+Set any [feature flags](/docs/mobile-monitoring/new-relic-mobile/mobile-sdk/configure-settings#ios-feature-flags), [application version](/docs/mobile-monitoring/new-relic-mobile/mobile-sdk/set-application-version), and [application build number](/docs/mobile-monitoring/new-relic-mobile/mobile-sdk/set-application-build-number) before you call this method. To stop data collection, see [Shut down the agent](/docs/mobile-monitoring/new-relic-mobile/mobile-sdk/shut-down-agent).
+
+Use the second overload to send data to custom endpoints. By default, the agent sends harvest data to `mobile-collector.newrelic.com` and crash data to `mobile-crash.newrelic.com`. All connections use SSL.
+
+## Parameters [#parameters]
+
+<table>
+  <thead>
+    <tr>
+      <th width={250}>
+        Parameter
+      </th>
+
+      <th width={200}>
+        Type
+      </th>
+
+      <th>
+        Description
+      </th>
+    </tr>
+  </thead>
+
+  <tbody>
+    <tr>
+      <td>
+        `appToken`
+      </td>
+
+      <td>
+        `NSString` / `String`
+      </td>
+
+      <td>
+        Required. Your application token.
+      </td>
+    </tr>
+
+    <tr>
+      <td>
+        `andCollectorAddress`
+      </td>
+
+      <td>
+        `NSString` / `String`
+      </td>
+
+      <td>
+        Required for the second overload. The URI authority component of the harvest data upload endpoint. This endpoint is also used for handled exception uploads.
+      </td>
+    </tr>
+
+    <tr>
+      <td>
+        `andCrashCollectorAddress`
+      </td>
+
+      <td>
+        `NSString` / `String`
+      </td>
+
+      <td>
+        Required for the second overload. The authority component of the crash data upload URI.
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+## Examples [#examples]
+
+### Objective-C [#obj-c]
+
+```objectivec
+- (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
+    [NewRelic startWithApplicationToken:@"APP_TOKEN"];
+    return YES;
+}
+```
+
+Here's an example that uses custom endpoints:
+
+```objectivec
+[NewRelic startWithApplicationToken:@"APP_TOKEN"
+                andCollectorAddress:@"harvest-upload.domain.com"
+           andCrashCollectorAddress:@"crash-upload.domain.com"];
+```
+
+### Swift [#swift]
+
+```swift
+func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]? = nil) -> Bool {
+    NewRelic.start(withApplicationToken: "APP_TOKEN")
+    return true
+}
+```
+
+Here's an example that uses custom endpoints:
+
+```swift
+NewRelic.start(withApplicationToken: "APP_TOKEN",
+               andCollectorAddress: "harvest-upload.domain.com",
+               andCrashCollectorAddress: "crash-upload.domain.com")
+```

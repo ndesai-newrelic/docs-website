@@ -1,0 +1,91 @@
+---
+title: Track a SwiftUI view as an interaction
+type: apiDoc
+shortDescription: Starts an interaction trace when a SwiftUI view appears and stops it when the view disappears.
+tags:
+  - Mobile monitoring
+  - Mobile SDK API
+  - Custom instrumentation
+  - SwiftUI
+  - New Relic Mobile iOS
+  - iOS SDK API
+metaDescription: Mobile app monitoring API used to track a SwiftUI view as an interaction in your iOS app.
+freshnessValidatedDate: never
+---
+
+<Callout variant="caution">
+  This is an experimental feature.
+</Callout>
+
+## Syntax [#syntax]
+
+### Swift [#swift]
+
+```swift
+func NRTrackView(name: String? = nil) -> some View
+```
+
+## Requirements [#requirements]
+
+* iOS 13 or higher, or tvOS 13 or higher.
+* Swift only. `NRTrackView` is a SwiftUI view modifier, so it isn't available from Objective-C.
+
+## Description [#description]
+
+`NRTrackView` is a modifier that you add to a SwiftUI view. When the view appears, the agent starts an interaction trace with [`startInteraction`](/docs/mobile-monitoring/new-relic-mobile/mobile-sdk/start-interaction). When the view disappears, the agent stops that interaction with [`stopCurrentInteraction`](/docs/mobile-monitoring/new-relic-mobile/mobile-sdk/stop-interaction).
+
+If you don't pass a name, the agent uses the name of the view's type.
+
+## Parameters [#parameters]
+
+<table>
+  <thead>
+    <tr>
+      <th width={200}>
+        Parameter
+      </th>
+
+      <th width={200}>
+        Type
+      </th>
+
+      <th>
+        Description
+      </th>
+    </tr>
+  </thead>
+
+  <tbody>
+    <tr>
+      <td>
+        `name`
+      </td>
+
+      <td>
+        `String?`
+      </td>
+
+      <td>
+        Optional. The name of the interaction. Defaults to the name of the view's type.
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+## Example [#example]
+
+### Swift [#swift-example]
+
+```swift
+import SwiftUI
+import NewRelic
+
+struct CheckoutView: View {
+    var body: some View {
+        VStack {
+            Text("Checkout")
+        }
+        .NRTrackView(name: "Checkout")
+    }
+}
+```

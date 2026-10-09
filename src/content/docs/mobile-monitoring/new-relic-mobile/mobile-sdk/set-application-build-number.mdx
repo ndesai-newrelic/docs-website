@@ -123,7 +123,7 @@ NewRelic.setApplicationBuild(_ buildNumber: String)
 
       ## Description [#description]
 
-      By default, New Relic uses the `CFBundleVersion` when reporting the build number. But you can override the reported build number by calling this method before you start the agent with `startWithApplicationToken`.
+      By default, New Relic uses the `CFBundleVersion` when reporting the build number. But you can override the reported build number by calling this method before you start the agent with `startWithApplicationToken`. If you call this method after the agent has started, it throws an `InvalidUsageException`.
 
       ## Parameters [#parameters]
 

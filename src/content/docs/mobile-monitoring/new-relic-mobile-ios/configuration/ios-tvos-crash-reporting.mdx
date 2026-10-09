@@ -93,4 +93,54 @@ To disable New Relic crash reporting, call the following API method:
   </tbody>
 </table>
 
+You can also enable or disable crash reporting with the `enableCrashReporting` method. As with feature flags, call it before you start the agent.
+
+<table>
+  <thead>
+    <tr>
+      <th style={{ width: "200px" }}>
+        <DNT>
+          **Language**
+        </DNT>
+      </th>
+
+      <th>
+        <DNT>
+          **Procedure**
+        </DNT>
+      </th>
+    </tr>
+  </thead>
+
+  <tbody>
+    <tr>
+      <td>
+        Objective-C
+      </td>
+
+      <td>
+        ```objectivec
+        + (void)enableCrashReporting:(BOOL)enabled;
+
+        [NewRelic enableCrashReporting:NO];
+        ```
+      </td>
+    </tr>
+
+    <tr>
+      <td>
+        Swift
+      </td>
+
+      <td>
+        ```swift
+        NewRelic.enableCrashReporting(_ enabled: Bool)
+
+        NewRelic.enableCrashReporting(false)
+        ```
+      </td>
+    </tr>
+  </tbody>
+</table>
+
 For more information about this call, see the `NewRelic.h` file. For more on applicable feature flags, see the `NewRelicFeatureFlags.h` file.

@@ -1,0 +1,56 @@
+---
+title: Access the original NSURLSession delegate
+type: apiDoc
+tags:
+  - Mobile monitoring
+  - New Relic Mobile iOS
+  - Troubleshooting
+metaDescription: When the New Relic iOS agent is running, the delegate property of an NSURLSession returns an agent wrapper. Use realDelegate to get your original delegate.
+freshnessValidatedDate: never
+---
+
+## Problem [#problem]
+
+When you create an `NSURLSession` with a delegate, the `delegate` property of the session returns an `NRURLSessionTaskDelegateBase` object instead of your own delegate. Code that casts `session.delegate` to your delegate type, or compares it to your delegate, can then fail.
+
+## Solution [#solution]
+
+Use the `realDelegate` property of the `NRURLSessionTaskDelegateBase` object to get your original delegate.
+
+### Syntax [#syntax]
+
+#### Objective-C [#objc]
+
+```objectivec
+@interface NRURLSessionTaskDelegateBase : NSObject <NSURLSessionTaskDelegate, NSURLSessionDataDelegate>
+@property (nonatomic, retain, readonly) id<NSURLSessionDataDelegate> realDelegate;
+@end
+```
+
+#### Swift [#swift]
+
+```swift
+NRURLSessionTaskDelegateBase.realDelegate: NSURLSessionDataDelegate
+```
+
+### Examples [#examples]
+
+#### Objective-C [#obj-c]
+
+```objectivec
+id<NSURLSessionDelegate> sessionDelegate = session.delegate;
+
+if ([sessionDelegate isKindOfClass:[NRURLSessionTaskDelegateBase class]]) {
+    sessionDelegate = ((NRURLSessionTaskDelegateBase *)sessionDelegate).realDelegate;
+}
+```
+
+#### Swift [#swift-example]
+
+```swift
+var sessionDelegate: URLSessionDelegate? = session.delegate
+
+if let wrapper = sessionDelegate as? NRURLSessionTaskDelegateBase {
+    sessionDelegate = wrapper.realDelegate
+}
+```

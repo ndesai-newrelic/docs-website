@@ -38,3 +38,74 @@ The agent separates log messages using a `'\n\n'` delimiter. The timestamp refle
 This feature interferes with Xcode's built-in console, so it can not be enabled while the debugger is attached.
 </Callout>
 
+
+
+## Configure agent logging with NRLogger [#nrlogger]
+
+Use the `NRLogger` class to control the agent's own diagnostic logging. The agent logs to the device console by default, with the levels `NRLogLevelError` and `NRLogLevelWarning`. Call these methods before you start the agent to capture start-up messages.
+
+<Callout variant="important">
+  Only increase the log level to `NRLogLevelVerbose` or higher for debugging, not for release builds.
+</Callout>
+
+### Syntax [#nrlogger-syntax]
+
+#### Objective-C [#nrlogger-objc]
+
+```objectivec
++ (void)setLogLevels:(unsigned int)levels;
++ (void)setRemoteLogLevel:(unsigned int)level;
++ (void)setLogTargets:(unsigned int)targets;
++ (NSString *)logFilePath;
++ (void)clearLog;
++ (void)enqueueLogUpload;
++ (NRLogLevels)logLevels;
+```
+
+#### Swift [#nrlogger-swift]
+
+```swift
+NRLogger.setLogLevels(_ levels: UInt32)
+NRLogger.setRemoteLogLevel(_ level: UInt32)
+NRLogger.setLogTargets(_ targets: UInt32)
+NRLogger.logFilePath() -> String!
+NRLogger.clearLog()
+NRLogger.enqueueLogUpload()
+NRLogger.logLevels() -> NRLogLevels
+```
+
+### Description [#nrlogger-description]
+
+* `setLogLevels` sets the amount of information that the agent writes about its internal operation. Pass a single `NRLogLevels` constant, such as `NRLogLevelInfo`, to also output all higher-priority levels. The levels, from highest to lowest priority, are `NRLogLevelError`, `NRLogLevelWarning`, `NRLogLevelInfo`, `NRLogLevelVerbose`, `NRLogLevelAudit`, and `NRLogLevelDebug`. `NRLogLevelALL` outputs everything.
+* `setRemoteLogLevel` sets the verbosity of the logs that the agent sends to New Relic. The default is `NRLogLevelError` and `NRLogLevelWarning`. When the **Mobile Logs** setting is configured in the New Relic UI, the agent applies the log level from that server-side configuration, which overrides the value that you set.
+* `setLogTargets` sets where the agent writes its log messages. Pass `NRLogTargetConsole` to use `NSLog()`, `NRLogTargetFile` to write JSON-formatted messages to a file, or a bitwise OR of both. The default is `NRLogTargetConsole`.
+* `logFilePath` returns the path of the file that the agent logs to when `NRLogTargetFile` is enabled. The file contains comma-separated JSON blobs, each one a log message.
+* `clearLog` truncates the agent log file.
+* `enqueueLogUpload` enqueues the log messages written since the last upload.
+* `logLevels` returns the log levels that are currently set.
+
+### Examples [#nrlogger-examples]
+
+#### Objective-C [#nrlogger-examples-objc]
+
+```objectivec
+// Write all agent log messages to the console and to a file
+[NRLogger setLogLevels:NRLogLevelALL];
+[NRLogger setLogTargets:NRLogTargetConsole | NRLogTargetFile];
+
+[NewRelic startWithApplicationToken:@"APP_TOKEN"];
+
+NSString *path = [NRLogger logFilePath];
+```
+
+#### Swift [#nrlogger-examples-swift]
+
+```swift
+// Write all agent log messages to the console and to a file
+NRLogger.setLogLevels(NRLogLevelALL.rawValue)
+NRLogger.setLogTargets(NRLogTargetConsole.rawValue | NRLogTargetFile.rawValue)
+
+NewRelic.start(withApplicationToken: "APP_TOKEN")
+
+let path = NRLogger.logFilePath()
+```

@@ -1,0 +1,97 @@
+---
+title: Rewrite reported URLs with regex rules
+type: apiDoc
+shortDescription: Normalizes the request URLs that the iOS agent reports by applying regular expression replacement rules.
+tags:
+  - Mobile monitoring
+  - Mobile SDK API
+  - Custom instrumentation
+  - New Relic Mobile iOS
+  - iOS SDK API
+metaDescription: Mobile app monitoring API used to rewrite network request URLs with regular expression rules before the iOS agent reports them.
+freshnessValidatedDate: never
+---
+
+## Syntax [#syntax]
+
+### Objective-C [#objc]
+
+```objectivec
++ (void)setURLRegexRules:(NSDictionary<NSString *, NSString *> *)regexRules;
+```
+
+### Swift [#swift]
+
+```swift
+NewRelic.setURLRegexRules(_ regexRules: [String: String])
+```
+
+## Description [#description]
+
+Sets a dictionary of regular expression rules that the agent applies to the URL of each network request before it reports the request. Use this method to group requests that have variable path segments, such as IDs, or to remove values you don't want to send to New Relic. The rules apply to requests that the agent instruments automatically and to requests you report with [`noticeNetworkRequest`](/docs/mobile-monitoring/new-relic-mobile/mobile-sdk/network-request-success) and [`noticeNetworkFailure`](/docs/mobile-monitoring/new-relic-mobile/mobile-sdk/network-request-failures).
+
+Each key in the dictionary is a regular expression pattern, and the matching value is the replacement template. The agent matches patterns case-insensitively against the full URL string, and replaces every match with the template. Replacement templates use the syntax of `NSRegularExpression`, so you can refer to capture groups with `$1`, `$2`, and so on.
+
+Keep these points in mind:
+
+* The agent applies the rules in an undefined order, so avoid rules where the output of one rule changes what another rule matches.
+* If the rewritten string is not a valid URL, the agent reports the original URL.
+* Each call replaces the rules from any earlier call.
+
+## Parameters [#parameters]
+
+<table>
+  <thead>
+    <tr>
+      <th width={200}>
+        Parameter
+      </th>
+
+      <th width={200}>
+        Type
+      </th>
+
+      <th>
+        Description
+      </th>
+    </tr>
+  </thead>
+
+  <tbody>
+    <tr>
+      <td>
+        `regexRules`
+      </td>
+
+      <td>
+        `NSDictionary<NSString *, NSString *>` / `[String: String]`
+      </td>
+
+      <td>
+        Required. A dictionary where each key is a regular expression pattern and each value is the replacement template.
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+## Examples [#examples]
+
+Here's an example that replaces numeric user IDs and removes query strings:
+
+### Objective-C [#obj-c]
+
+```objectivec
+[NewRelic setURLRegexRules:@{
+    @"/users/[0-9]+": @"/users/{id}",
+    @"\\?.*$": @""
+}];
+```
+
+### Swift [#swift]
+
+```swift
+NewRelic.setURLRegexRules([
+    "/users/[0-9]+": "/users/{id}",
+    "\\?.*$": ""
+])
+```

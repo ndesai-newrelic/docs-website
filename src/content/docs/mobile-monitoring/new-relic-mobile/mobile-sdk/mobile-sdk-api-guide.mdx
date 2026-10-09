@@ -436,3 +436,44 @@ When naming custom metrics:
 
 * Use only letters, numbers, underscores, and spaces in metric names and categories. Metrics with other characters, such as `/` `]` `[` `|` `*`, are not recorded.
 * Avoid multi-byte characters.
+
+## (iOS) More iOS SDK API reference [#ios-more-api]
+
+In addition to the methods in the table of [available customizations](#methods), the iOS agent provides these APIs. Each page shows the syntax and examples in Swift and Objective-C.
+
+### Start and configure the agent [#ios-start-configure]
+
+* [Start the iOS agent](/docs/mobile-monitoring/new-relic-mobile/mobile-sdk/start-agent-ios)
+* [Enable/disable monitoring features](/docs/mobile-monitoring/new-relic-mobile/mobile-sdk/configure-settings#ios)
+* [Set the maximum size of offline storage](/docs/mobile-monitoring/new-relic-mobile/mobile-sdk/set-max-offline-storage)
+* [Log with the iOS agent and configure the agent log](/docs/mobile-monitoring/new-relic-mobile-ios/configuration/ios-remote-logging#nrlogger)
+
+### Instrumentation and tracing [#ios-instrumentation]
+
+* [Trace custom methods](/docs/mobile-monitoring/new-relic-mobile/mobile-sdk/trace-custom-methods-ios)
+* [Track a SwiftUI view as an interaction](/docs/mobile-monitoring/new-relic-mobile/mobile-sdk/track-swiftui-view-ios)
+* App launch time is measured automatically. See [App launch times for iOS apps](/docs/mobile-monitoring/new-relic-mobile-ios/configuration/app-launch-times-ios-apps).
+
+### Network requests [#ios-network]
+
+* [Track HTTP requests](/docs/mobile-monitoring/new-relic-mobile/mobile-sdk/network-request-success), including how to create a timer with `createAndStartTimer`
+* [Track failing HTTP requests](/docs/mobile-monitoring/new-relic-mobile/mobile-sdk/network-request-failures)
+* [Track HTTP request headers](/docs/mobile-monitoring/new-relic-mobile/mobile-sdk/add-tracked-headers)
+* [Rewrite reported URLs with regex rules](/docs/mobile-monitoring/new-relic-mobile/mobile-sdk/set-url-regex-rules-ios)
+* [Generate distributed tracing headers](/docs/mobile-monitoring/new-relic-mobile/mobile-sdk/generate-distributed-tracing-headers-ios)
+* [Get the cross process ID](/docs/mobile-monitoring/new-relic-mobile/mobile-sdk/cross-process-id-ios)
+* [Access the original NSURLSession delegate](/docs/mobile-monitoring/new-relic-mobile-ios/troubleshoot/urlsession-delegate)
+
+### Logs [#ios-logs]
+
+* [Mobile logs](/docs/mobile-monitoring/mobile-monitoring-ui/mobile-logs#ios): `logInfo`, `logError`, `logAll`, `logAttributes`, and more
+
+### Session replay [#ios-session-replay]
+
+* [Start recording a session replay](/docs/mobile-monitoring/new-relic-mobile/mobile-sdk/record-replay)
+* [Pause recording a session replay](/docs/mobile-monitoring/new-relic-mobile/mobile-sdk/pause-replay)
+* [Configure session replay privacy settings](/docs/mobile-monitoring/mobile-monitoring-ui/mobile-session-replay/configure-privacy-settings), including the `addSessionReplay` masking methods
+
+### For wrapper and cross-platform SDKs [#ios-wrapper-apis]
+
+* [iOS APIs for wrapper and cross-platform SDKs](/docs/mobile-monitoring/new-relic-mobile/mobile-sdk/ios-wrapper-sdk-apis): `setPlatform` and `recordHandledExceptionWithStackTrace`

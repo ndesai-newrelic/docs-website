@@ -119,7 +119,7 @@ NewRelic.setApplicationVersion(_ versionString: String)
 
       ## Description [#description]
 
-      By default, New Relic uses the `CFBundleShortVersionString` when reporting the application version. But you can override the reported application version by calling this method before you start the agent with `startWithApplicationToken`.
+      By default, New Relic uses the `CFBundleShortVersionString` when reporting the application version. But you can override the reported application version by calling this method before you start the agent with `startWithApplicationToken`. If you call this method after the agent has started, it throws an `InvalidUsageException`.
 
       ## Parameters [#parameters]
 

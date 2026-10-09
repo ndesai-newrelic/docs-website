@@ -1,0 +1,62 @@
+---
+title: Get the cross process ID
+type: apiDoc
+shortDescription: Returns the value for the X-NewRelic-ID header, for cross application tracing on requests that the iOS agent doesn't instrument.
+tags:
+  - Mobile monitoring
+  - Mobile SDK API
+  - Custom instrumentation
+  - New Relic Mobile iOS
+  - iOS SDK API
+metaDescription: Mobile app monitoring API used to get the cross process ID to add to uninstrumented network requests in your iOS app.
+freshnessValidatedDate: never
+---
+
+<Callout variant="important">
+  Cross application tracing is a legacy feature. For new instrumentation, use [distributed tracing](/docs/mobile-monitoring/new-relic-mobile/mobile-sdk/generate-distributed-tracing-headers-ios).
+</Callout>
+
+## Syntax [#syntax]
+
+### Objective-C [#objc]
+
+```objectivec
++ (NSString * _Nullable)crossProcessId;
+```
+
+### Swift [#swift]
+
+```swift
+NewRelic.crossProcessId() -> String?
+```
+
+## Description [#description]
+
+Returns a string that you can add to a network request that the agent doesn't instrument, under the header name `X-NewRelic-ID`. Adding the header allows New Relic to record cross application tracing for the request.
+
+## Return values [#return-values]
+
+Returns the cross process ID string, or `nil` if it isn't available, for example before the agent starts. Check for `nil` (and an empty string) before you add the header.
+
+## Examples [#examples]
+
+### Objective-C [#obj-c]
+
+```objectivec
+NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:[NSURL URLWithString:@"https://www.newrelic.com"]];
+
+NSString *crossProcessId = [NewRelic crossProcessId];
+if (crossProcessId.length) {
+    [request setValue:crossProcessId forHTTPHeaderField:@"X-NewRelic-ID"];
+}
+```
+
+### Swift [#swift]
+
+```swift
+var request = URLRequest(url: URL(string: "https://www.newrelic.com")!)
+
+if let crossProcessId = NewRelic.crossProcessId(), !crossProcessId.isEmpty {
+    request.setValue(crossProcessId, forHTTPHeaderField: "X-NewRelic-ID")
+}
+```

@@ -151,18 +151,22 @@ val request: Request = Builder()
 
 ```objectivec
 + (void)addHTTPHeaderTrackingFor:(NSArray<NSString *> *)headers;
++ (NSArray<NSString *> *)httpHeadersAddedForTracking;
 ```
 
       ### Swift [#swift]
 
 ```swift
 NewRelic.addHTTPHeaderTracking(for headers: [String])
+NewRelic.httpHeadersAddedForTracking() -> [String]
 ```
 
       ## Description [#description]
 
       This API allows you to add any header field strings to a list that gets recorded as attributes with networking request events. After header fields have been added using this function, if the headers are in a network call they will be included in networking events in the New Relic platform.
       The iOS agent currently automatically captures the following header fields: X-APOLLO-OPERATION-NAME, X-APOLLO-OPERATION-TYPE, and X-APOLLO-OPERATION-ID.
+
+      To retrieve the list of header fields that are currently tracked, call `httpHeadersAddedForTracking`. It returns an array of the header names, including the header fields that the agent captures automatically.
 
       ## Parameters [#parameters]
 
@@ -199,6 +203,10 @@ NewRelic.addHTTPHeaderTracking(for headers: [String])
           </tr>
         </tbody>
       </table>
+
+      ## Return values [#return-values]
+
+      `addHTTPHeaderTrackingFor` returns `void`. `httpHeadersAddedForTracking` returns an array of strings that contains the tracked header names.
 
       ## Examples [#examples]
 

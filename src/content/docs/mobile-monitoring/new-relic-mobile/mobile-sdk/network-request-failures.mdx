@@ -259,7 +259,7 @@ NewRelic.noticeNetworkFailure(for: URL, httpMethod: String, startTime: Double, e
 
       You can identify the duration of the request in one of two ways: pass an `NRTimer`, or pass the `startTime` and `endTime` of the request.
 
-      The overloads that take `traceHeaders` (agent version 7.7.8 and higher) report the failure against a distributed trace that you own. Pass the dictionary returned by `generateDistributedTracingContext` so that the resulting `MobileRequestError` event is reported against that trace instead of one that the agent generates. Cross-platform agents that both make and report the request use these overloads. Native instrumentation does not need them.
+      The overloads that take `traceHeaders` (agent version 7.7.8 and higher) report the failure against a distributed trace that you own. Pass the dictionary returned by [`generateDistributedTracingContext`](/docs/mobile-monitoring/new-relic-mobile/mobile-sdk/generate-distributed-tracing-headers-ios) so that the resulting `MobileRequestError` event is reported against that trace instead of one that the agent generates. Cross-platform agents that both make and report the request use these overloads. Native instrumentation does not need them.
 
       ## Parameters [#parameters]
 
@@ -319,7 +319,7 @@ NewRelic.noticeNetworkFailure(for: URL, httpMethod: String, startTime: Double, e
             </td>
 
             <td>
-              Required for the timer overloads. A timer that captures the start and end of the request.
+              Required for the timer overloads. A timer that captures the start and end of the request. Create it with `NewRelic.createAndStartTimer()`; see [Track HTTP requests](/docs/mobile-monitoring/new-relic-mobile/mobile-sdk/network-request-success#timers).
             </td>
           </tr>
 
@@ -389,9 +389,12 @@ NewRelic.noticeNetworkFailure(for: URL, httpMethod: String, startTime: Double, e
       Here's an example that uses a timer:
 
 ```objectivec
+NRTimer *timer = [NewRelic createAndStartTimer];
+// ... the request fails ...
+
 [NewRelic noticeNetworkFailureForURL:[NSURL URLWithString:@"https://www.newrelic.com"]
                           httpMethod:@"GET"
-                           withTimer:[[NRTimer alloc] init]
+                           withTimer:timer
                       andFailureCode:NSURLErrorTimedOut];
 ```
 
@@ -414,8 +417,11 @@ double endTime = [[NSDate date] timeIntervalSince1970] * 1000;
       Here's an example that uses a timer:
 
 ```swift
+let timer = NewRelic.createAndStartTimer()
+// ... the request fails ...
+
 NewRelic.noticeNetworkFailure(for: URL(string: "https://www.newrelic.com"), httpMethod: "GET",
-                              with: NRTimer(), andFailureCode: NSURLErrorTimedOut)
+                              with: timer, andFailureCode: NSURLErrorTimedOut)
 ```
 
       Here's an example with start and end times, in milliseconds since the Unix epoch:

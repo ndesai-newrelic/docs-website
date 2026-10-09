@@ -351,6 +351,25 @@ Inline masking overrides are applied in your code by tagging the component you w
       sensitiveView.accessibilityIdentifier = "nr-block"
       ```
 
+      **Per-view masking properties:**
+
+      In Swift, `UIView` also has properties that override the masking behavior for that view and its subviews, the same way the `NRConditionalMaskView` parameters do for SwiftUI. These properties are `Bool?`, so they are not visible from Objective-C. When a property is `nil` (the default), the view inherits the setting from its parent. These properties are available on iOS and tvOS.
+
+      - `maskApplicationText`: When `true`, masks all text content within the view. When `false`, ensures text is visible.
+      - `maskUserInputText`: When `true`, masks user input fields within the view. When `false`, shows input content.
+      - `maskAllImages`: When `true`, masks all images within the view. When `false`, shows images.
+      - `maskAllUserTouches`: When `true`, masks user touch interactions within the view. When `false`, shows touch events.
+      - `blockView`: When `true`, the entire view area is obscured in the session replay.
+
+      ```swift
+      let accountView = UIView()
+      accountView.maskApplicationText = true
+      accountView.maskAllImages = true
+
+      let publicBanner = UIView()
+      publicBanner.maskApplicationText = false
+      ```
+
       **Parameters:**
       - `maskApplicationText`: When `true`, masks all text content within the view. When `false`, ensures text is visible. When `nil`, inherits from parent.
       - `maskUserInputText`: When `true`, masks user input fields within the view. When `false`, shows input content. When `nil`, inherits from parent.
