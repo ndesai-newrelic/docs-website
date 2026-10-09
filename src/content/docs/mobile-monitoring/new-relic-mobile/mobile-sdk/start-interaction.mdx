@@ -589,6 +589,23 @@ const badApiLoad = async () => {
     });;
 };
 ```
+
+      And in TypeScript:
+
+```typescript
+import NewRelic from 'newrelic-react-native-agent';
+
+const loadMovies = async (): Promise<void> => {
+  const interactionId: string = await NewRelic.startInteraction('LoadMovies');
+
+  try {
+    const response = await fetch('https://example.com/movies.json');
+    await response.json();
+  } finally {
+    NewRelic.endInteraction(interactionId);
+  }
+};
+```
     </TabsPageItem>
 
     <TabsPageItem id="unity">

@@ -2288,6 +2288,21 @@ NewRelic.setJSAppVersion(version);
 AppRegistry.registerComponent(name, () => App);
 ```
 
+      In TypeScript, the generated type declaration for `startAgent()` is `startAgent(appkey: string, customerConfiguration: object): void`. The configuration is a plain object, so there is no configuration type to import. Pass the object literal, or one that you type yourself:
+
+```typescript
+import NewRelic from 'newrelic-react-native-agent';
+
+const agentConfiguration: Record<string, boolean | string> = {
+  loggingEnabled: true,
+  logLevel: NewRelic.LogLevel.INFO,
+  interactionTracingEnabled: true,
+  offlineStorageEnabled: true
+};
+
+NewRelic.startAgent('YOUR_APP_TOKEN', agentConfiguration);
+```
+
       ## Available configurations [#react-native-configurations]
 
       <table>

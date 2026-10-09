@@ -537,6 +537,16 @@ NewRelic.addHTTPHeadersTrackingFor(headers:string[])
 ```js
 NewRelic.addHTTPHeadersTrackingFor(["Car"]);
 ```
+
+      And in TypeScript. The method takes an array of strings at runtime, but the TypeScript type declarations are generated from the agent's JSDoc comments, which declare the parameter as a `Map<string, any>`. Cast the array so your code compiles:
+
+```typescript
+import NewRelic from 'newrelic-react-native-agent';
+
+const headers: string[] = ['Car'];
+
+NewRelic.addHTTPHeadersTrackingFor(headers as unknown as Map<string, any>);
+```
     </TabsPageItem>
 
     <TabsPageItem id="xamarin">

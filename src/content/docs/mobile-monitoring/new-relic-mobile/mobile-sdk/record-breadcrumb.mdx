@@ -647,6 +647,20 @@ recordBreadcrumb(eventName: string, attributes: {[key: string]: any}): void;
 ```js
 NewRelic.recordBreadcrumb("shoe", {"shoeColor": "blue","shoesize": 9,"shoeLaces": true});
 ```
+
+      And in TypeScript. The TypeScript type declarations are generated from the agent's JSDoc comments, which declare `attributes` as a `Map<string, any>`. Pass a `Map` so your code type-checks. The agent also accepts a plain object at runtime.
+
+```typescript
+import NewRelic from 'newrelic-react-native-agent';
+
+const attributes = new Map<string, any>([
+  ['shoeColor', 'blue'],
+  ['shoesize', 9],
+  ['shoeLaces', true],
+]);
+
+NewRelic.recordBreadcrumb('shoe', attributes);
+```
     </TabsPageItem>
 
     <TabsPageItem id="unity">

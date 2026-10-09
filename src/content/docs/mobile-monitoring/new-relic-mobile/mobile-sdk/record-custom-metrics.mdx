@@ -1006,6 +1006,22 @@ NewRelic.recordMetric('RNCustomMetricName', 'RNCustomMetricCategory');
 NewRelic.recordMetric('RNCustomMetricName', 'RNCustomMetricCategory', 12);
 NewRelic.recordMetric('RNCustomMetricName', 'RNCustomMetricCategory', 13, NewRelic.MetricUnit.PERCENT, NewRelic.MetricUnit.SECONDS);
 ```
+
+      And in TypeScript:
+
+```typescript
+import NewRelic from 'newrelic-react-native-agent';
+
+NewRelic.recordMetric('RNCustomMetricName', 'RNCustomMetricCategory');
+NewRelic.recordMetric('RNCustomMetricName', 'RNCustomMetricCategory', 12);
+NewRelic.recordMetric(
+  'RNCustomMetricName',
+  'RNCustomMetricCategory',
+  13,
+  NewRelic.MetricUnit.PERCENT,
+  NewRelic.MetricUnit.SECONDS
+);
+```
     </TabsPageItem>
 
     <TabsPageItem id="unity">

@@ -244,6 +244,27 @@ currentSessionId(): Promise<string>;
 ```js
 let sessionId = await NewRelic.currentSessionId();
 ```
+
+      Because the promise can resolve to `undefined`, check the result before you use it:
+
+```js
+const sessionId = await NewRelic.currentSessionId();
+
+if (sessionId) {
+  console.log(`New Relic session ID: ${sessionId}`);
+}
+```
+
+      And in TypeScript:
+
+```typescript
+import NewRelic from 'newrelic-react-native-agent';
+
+const getSessionId = async (): Promise<string | undefined> => {
+  const sessionId: string | undefined = await NewRelic.currentSessionId();
+  return sessionId;
+};
+```
     </TabsPageItem>
 
     <TabsPageItem id="unity">

@@ -156,7 +156,8 @@ NewRelic.recordReplay();
 ```
       ## Requirements
 
-      * React Native v1.7.0 or higher.
+      * React Native agent version 1.7.0 or higher.
+      * Session replay [set up for your app](/docs/mobile-monitoring/mobile-monitoring-ui/mobile-session-replay/set-up-session-replay).
 
       ## Description
 
@@ -175,6 +176,14 @@ NewRelic.recordReplay();
       Here's an example of forcing a replay to start recording.
       
 ```js
+NewRelic.recordReplay();
+```
+
+      And in TypeScript:
+
+```typescript
+import NewRelic from 'newrelic-react-native-agent';
+
 NewRelic.recordReplay();
 ```
     </TabsPageItem>

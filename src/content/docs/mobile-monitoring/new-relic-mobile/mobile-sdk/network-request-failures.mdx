@@ -778,6 +778,21 @@ noticeNetworkFailure(url: string, httpMethod: string, startTime: number, endTime
 ```js
 NewRelic.noticeNetworkFailure('https://github.com', 'GET', Date.now(), Date.now(), NewRelic.NetworkFailure.BadURL);
 ```
+
+      And in TypeScript, recording a failed request from a `catch` block:
+
+```typescript
+import NewRelic from 'newrelic-react-native-agent';
+
+const url = 'https://example.com/api';
+const startTime: number = Date.now();
+
+try {
+  await fetch(url);
+} catch (e) {
+  NewRelic.noticeNetworkFailure(url, 'GET', startTime, Date.now(), NewRelic.NetworkFailure.CannotConnectToHost);
+}
+```
     </TabsPageItem>
 
     <TabsPageItem id="xamarin">

@@ -149,7 +149,8 @@ NewRelic.pauseReplay();
 ```
       ## Requirements
 
-      * React native v1.7.0 or higher.
+      * React Native agent version 1.7.0 or higher.
+      * Session replay [set up for your app](/docs/mobile-monitoring/mobile-monitoring-ui/mobile-session-replay/set-up-session-replay).
 
       ## Description
 
@@ -169,6 +170,20 @@ NewRelic.pauseReplay();
 
 ```js
 NewRelic.pauseReplay();
+```
+
+      And in TypeScript, pausing recording while a sensitive screen is shown and resuming it afterward:
+
+```typescript
+import NewRelic from 'newrelic-react-native-agent';
+
+const onEnterPaymentScreen = (): void => {
+  NewRelic.pauseReplay();
+};
+
+const onLeavePaymentScreen = (): void => {
+  NewRelic.recordReplay();
+};
 ```
     </TabsPageItem>
   </TabsPages>

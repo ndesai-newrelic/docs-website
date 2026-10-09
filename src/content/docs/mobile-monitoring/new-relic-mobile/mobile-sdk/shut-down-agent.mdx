@@ -176,12 +176,26 @@ shutdown() : void;
 
       ## Description [#description]
 
-      Shut down the agent within the current application lifecycle during runtime.
+      Shut down the agent within the current application lifecycle during runtime. After you call `shutdown()`, [`NewRelic.isAgentStarted()`](/docs/mobile-monitoring/new-relic-mobile/mobile-sdk/configure-settings/#react-native-is-agent-started) returns `false`, and later calls to other agent methods aren't recorded. Instead, the agent logs an error that it isn't started. Available for React Native agent version 1.2.0 or higher.
+
+      ## Return values [#return-values]
+
+      This method doesn't return a value (`void`).
 
       ## Example [#example]
 
 ```js
 NewRelic.shutdown();
+```
+
+      And in TypeScript, checking that the agent is running first:
+
+```typescript
+import NewRelic from 'newrelic-react-native-agent';
+
+if (NewRelic.isAgentStarted()) {
+  NewRelic.shutdown();
+}
 ```
     </TabsPageItem>
 

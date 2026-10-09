@@ -798,6 +798,20 @@ recordCustomEvent(eventType: string, eventName?: string, attributes?: {[key: str
 ```js
 NewRelic.recordCustomEvent("mobileClothes", "pants", {"pantsColor": "blue","pantssize": 32,"belt": true});
 ```
+
+      And in TypeScript. The TypeScript type declarations are generated from the agent's JSDoc comments, which declare `eventName` and `attributes` as required, and `attributes` as a `Map<string, any>`. Pass a `Map` so your code type-checks. The agent also accepts a plain object at runtime.
+
+```typescript
+import NewRelic from 'newrelic-react-native-agent';
+
+const attributes = new Map<string, any>([
+  ['pantsColor', 'blue'],
+  ['pantssize', 32],
+  ['belt', true],
+]);
+
+NewRelic.recordCustomEvent('mobileClothes', 'pants', attributes);
+```
     </TabsPageItem>
 
     <TabsPageItem id="unity">
