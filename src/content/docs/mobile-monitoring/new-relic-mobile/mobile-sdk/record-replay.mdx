@@ -140,6 +140,20 @@ NewRelic.recordReplay() -> Bool
 
       Here's an example of forcing a replay to start recording.
 
+      ### Objective-C [#obj-c]
+
+```objectivec
+- (void)viewDidDisappear:(BOOL)animated {
+    [super viewDidDisappear:animated];
+
+    // Resume session replay only if we successfully paused it, we only want to start the replay back up if it was recording already
+    if (self.wasReplayPaused) {
+        BOOL resumed = [NewRelic recordReplay];
+        self.wasReplayPaused = NO;
+    }
+}
+```
+
       ### Swift [#swift]
 
 ```swift

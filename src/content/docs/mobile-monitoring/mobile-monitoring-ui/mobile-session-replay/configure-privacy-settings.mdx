@@ -564,12 +564,25 @@ Local API method masking overrides are also applied in your code within the New 
 
       Example:
 
+      Swift:
+
       ```swift
       NewRelic.addSessionReplayMaskViewClass("SecureLabel")
       NewRelic.addSessionReplayUnmaskViewClass("UnsecureLabel")
       NewRelic.addSessionReplayMaskedAccessibilityIdentifier("login")
       NewRelic.addSessionReplayUnmaskedAccessibilityIdentifier("editTextEmail")
       ```
+
+      Objective-C:
+
+      ```objectivec
+      [NewRelic addSessionReplayMaskViewClass:@"SecureLabel"];
+      [NewRelic addSessionReplayUnmaskViewClass:@"UnsecureLabel"];
+      [NewRelic addSessionReplayMaskedAccessibilityIdentifier:@"login"];
+      [NewRelic addSessionReplayUnmaskedAccessibilityIdentifier:@"editTextEmail"];
+      ```
+
+      Each of these methods returns a `BOOL` (`Bool` in Swift) that is `YES` (`true`) if the value was added to the list. The values that you add for masking are added to the list of values that New Relic returns from the server, and the values that you add for unmasking replace the values from the server.
     </TabsPageItem>
 
     <TabsPageItem id="android">

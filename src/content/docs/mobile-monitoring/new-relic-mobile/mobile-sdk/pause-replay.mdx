@@ -135,9 +135,20 @@ NewRelic.pauseReplay() -> Bool
       ## Example [#example]
 
       Here's an example of forcing a replay to pause recording.
-      
+
+      ### Objective-C [#obj-c]
+
+```objectivec
+- (void)viewWillAppear:(BOOL)animated {
+    [super viewWillAppear:animated];
+
+    // Pause session replay when entering confidential view
+    self.wasReplayPaused = [NewRelic pauseReplay];
+}
+```
+
       ### Swift [#swift]
-      
+
 ```swift
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
