@@ -32,29 +32,35 @@ freshnessValidatedDate: never
       ### Java [#java]
 
 ```java
-NewRelic.pauseReplay()
+NewRelic.pauseReplay();
 ```
 
       ### Kotlin [#kotlin]
 
 ```kotlin
-NewRelic.pauseReplay()
+NewRelic.pauseReplay(): Boolean
 ```
+
       ## Requirements
 
       * Android agent v7.7.0 or higher.
+      * Session Replay is enabled for your app in the mobile app settings.
 
       ## Description
 
-      `newrelic.pauseReplay()` can be called to manually force a replay to pause recording.
+      `NewRelic.pauseReplay()` can be called to manually force a replay to pause recording. The agent stops recording regardless of how the recording started (through sampling or through `recordReplay()`), immediately starts a harvest to send the buffered replay data, and clears the buffered replay file after the harvest completes. The session keeps its `hasReplay` attribute.
 
       If a replay is not already in progress, this API method will have no effect.
 
-      If the mobile session is still valid, you can resume a paused replay by calling the [`newrelic.recordReplay()`](/docs/mobile-monitoring/new-relic-mobile/mobile-sdk/record-replay) API method.
+      If the mobile session is still valid, you can resume a paused replay by calling the [`NewRelic.recordReplay()`](/docs/mobile-monitoring/new-relic-mobile/mobile-sdk/record-replay) API method.
+
+      ## Return values [#return-values]
+
+      Returns `true` if recording was stopped and a harvest was triggered, or `false` if recording was already stopped, wasn't active, or Session Replay is disabled in the configuration.
 
       ## Use Cases
 
-      * You want to manually trigger a replay to stop recording on certain site pages or under certain conditions, such as a healthcare page, credit card info page, etc.
+      * You want to manually trigger a replay to stop recording on certain screens or under certain conditions, such as a healthcare screen, credit card info screen, etc.
 
       ## Example [#example]
 
@@ -86,14 +92,11 @@ public class MainActivity extends Activity {
 class MainActivity : AppCompatActivity() {
 
   ...
-  var client: OkHttpClient = OkHttpClient();
-
-      binding.fab.setOnClickListener { view ->
-
-          NewRelic.pauseReplay()
-          }
-      }
-    ...
+  binding.fab.setOnClickListener { view ->
+    NewRelic.pauseReplay()
+  }
+  ...
+}
 ```
     </TabsPageItem>
 

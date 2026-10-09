@@ -62,13 +62,13 @@ freshnessValidatedDate: 2023-07-20
       ### Java [#java]
 
 ```java
-NewRelic.setUserId(string $userId)
+NewRelic.setUserId(String userId);
 ```
 
       ### Kotlin [#kotlin]
 
 ```kotlin
-NewRelic.setUserId(userId: String?)
+NewRelic.setUserId(userId: String?): Boolean
 ```
 
       ## Description [#description]
@@ -89,8 +89,8 @@ NewRelic.setUserId(userId: String?)
       <Callout variant="important">
         The following enhancements were added in Android agent v7.4.0:
 
-        * When `setUserId(value: string|null)` is called, if `userID` was previously null and the new value is not null, the current session continues and a new `userID` will be set.
-        * When `setUserId(value: string|null)` is called, if `userID` was previously not null and the new `userID` is different (including `null`), the current session will be ended and a harvest will be performed. A new session will be created with the new `userID`.
+        * When `setUserId(userId: String?)` is called, if `userId` was previously null and the new value is not null, the current session continues and a new `userId` will be set.
+        * When `setUserId(userId: String?)` is called, if `userId` was previously not null and the new `userId` is different (including `null`), the current session will be ended and a harvest will be performed. A new session will be created with the new `userId`.
       </Callout>
 
       ## Parameters [#parameters]
@@ -115,11 +115,11 @@ NewRelic.setUserId(userId: String?)
         <tbody>
           <tr>
             <td>
-              `$userID`
+              `userId`
             </td>
 
             <td>
-              `string`
+              `String`
             </td>
 
             <td>
@@ -131,7 +131,7 @@ NewRelic.setUserId(userId: String?)
 
       ## Return values [#return-values]
 
-      Returns `true` if it succeeds, or `false` if it doesn't.
+      Always returns `true`.
 
       ## Example [#example]
 

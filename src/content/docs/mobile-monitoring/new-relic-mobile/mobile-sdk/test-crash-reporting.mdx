@@ -59,13 +59,15 @@ freshnessValidatedDate: 2023-07-20
       ### Java [#java]
 
 ```java
-NewRelic.crashNow(string $message)
+NewRelic.crashNow();
+NewRelic.crashNow(String message);
 ```
 
       ### Kotlin [#kotlin]
 
 ```kotlin
-NewRelic.crashNow(message:String!)
+NewRelic.crashNow()
+NewRelic.crashNow(message: String)
 ```
 
       ## Description [#description]
@@ -96,15 +98,15 @@ NewRelic.crashNow(message:String!)
         <tbody>
           <tr>
             <td>
-              `$message`
+              `message`
             </td>
 
             <td>
-              `string`
+              `String`
             </td>
 
             <td>
-              Optional. A message attached to the exception.
+              Optional. A message attached to the exception. If you call `crashNow()` without a message, the exception message is "This is a demonstration crash courtesy of New Relic".
             </td>
           </tr>
         </tbody>
@@ -121,7 +123,7 @@ NewRelic.crashNow("This is my test message");
       ### Kotlin [#kotlin]
 
 ```kotlin
-dNewRelic.crashNow("This is my test message")
+NewRelic.crashNow("This is my test message")
 ```
     </TabsPageItem>
 

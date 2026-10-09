@@ -62,13 +62,13 @@ freshnessValidatedDate: 2023-07-21
       ### Java [#java]
 
 ```java
-NewRelic.endInteraction(string $interactionID)
+NewRelic.endInteraction(String id);
 ```
 
       ### Kotlin [#kotlin]
 
 ```kotlin
-NewRelic. endInteraction(id : String!)
+NewRelic.endInteraction(id: String?)
 ```
 
       ## Description [#description]
@@ -99,11 +99,11 @@ NewRelic. endInteraction(id : String!)
         <tbody>
           <tr>
             <td>
-              `interactionID`
+              `id`
             </td>
 
             <td>
-              `string`
+              `String`
             </td>
 
             <td>
@@ -123,16 +123,35 @@ NewRelic. endInteraction(id : String!)
 ```java
 public class MainActivity extends Activity {
   ...
-  @Override
-  public boolean onOptionsItemSelected(MenuItem item) {
-    switch (item.getItemId()) {
-      case R.id.action_refresh:
-        String interactionId = NewRelic.startInteraction("RefreshContacts");
-        ...
-        return true;
-      default:
-        NewRelic.endInteraction(interactionId);
-        return super.onOptionsItemSelected(item);
+  refreshButton.setOnClickListener(new View.OnClickListener() {
+    @Override
+    public void onClick(View view) {
+      final String interactionId = NewRelic.startInteraction("RefreshContacts");
+
+      new Thread(new Runnable() {
+        @Override
+        public void run() {
+          refreshContacts();
+          NewRelic.endInteraction(interactionId);
+        }
+      }).start();
+    }
+  });
+  ...
+}
+```
+
+      ### Kotlin [#kotlin]
+
+```kotlin
+class MainActivity : AppCompatActivity() {
+  ...
+  refreshButton.setOnClickListener {
+    val interactionId = NewRelic.startInteraction("RefreshContacts")
+
+    lifecycleScope.launch(Dispatchers.IO) {
+      refreshContacts()
+      NewRelic.endInteraction(interactionId)
     }
   }
   ...

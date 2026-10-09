@@ -49,14 +49,18 @@ freshnessValidatedDate: 2023-11-02
       ### Java [#java]
 
 ```java
-NewRelic.addHTTPHeadersTrackingFor(List<String> headers)
+NewRelic.addHTTPHeadersTrackingFor(List<String> headers);
 ```
 
       ### Kotlin [#kotlin]
 
 ```kotlin
-NewRelic.addHTTPHeadersTrackingFor(List<String> headers)
+NewRelic.addHTTPHeadersTrackingFor(headers: List<String>): Boolean
 ```
+
+      ## Requirements [#requirements]
+
+      * Android agent v7.2.0 or higher.
 
       ## Description [#description]
 
@@ -85,7 +89,7 @@ NewRelic.addHTTPHeadersTrackingFor(List<String> headers)
         <tbody>
           <tr>
             <td>
-              `$headers`
+              `headers`
             </td>
 
             <td>
@@ -110,7 +114,7 @@ NewRelic.addHTTPHeadersTrackingFor(List<String> headers)
       ### Java [#java]
 
 ```java
-List headers = new ArrayList();
+List<String> headers = new ArrayList<>();
 headers.add("httpClient");
 headers.add("CustomAttribute");
 NewRelic.addHTTPHeadersTrackingFor(headers);
@@ -126,17 +130,13 @@ Request request = new Request.Builder()
       ### Kotlin [#kotlin]
 
 ```kotlin
-val headers = mutableListOf()
+val headers = mutableListOf<String>()
 headers.add("httpClient")
 headers.add("CustomAttribute")
 NewRelic.addHTTPHeadersTrackingFor(headers)
 
-val client = OkHttpClient().newBuilder()
-    .addInterceptor(new MyInterceptor())
-    .cache(cache)
-    .build()
-
-val request: Request = Builder()
+// Okhttp3
+val request: Request = Request.Builder()
     .url("https://speed.hetzner.de/1GB.bin")
     .addHeader("httpClient", "Okhttp3")
     .addHeader("CustomAttribute", "OutOfMemoryAPI")

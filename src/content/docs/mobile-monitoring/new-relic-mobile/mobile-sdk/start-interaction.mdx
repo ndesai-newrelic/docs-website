@@ -65,18 +65,24 @@ freshnessValidatedDate: 2023-07-20
       ### Java [#java]
 
 ```java
-NewRelic.startInteraction(string $interactionName)
+NewRelic.startInteraction(String actionName);
 ```
 
       ### Kotlin [#kotlin]
 
 ```kotlin
-NewRelic.startInteraction(actionName: String)
+NewRelic.startInteraction(actionName: String): String?
 ```
 
       ## Description [#description]
 
       Create an interaction to instrument a method in your Android app code.
+
+      A forward slash (`/`) in the interaction name is converted to a period (`.`). If tracing is inactive, the method returns `null`. If you pass a `null` name, the method throws an `IllegalArgumentException`.
+
+      <Callout variant="important">
+        The `startInteraction(Context activityContext, String actionName)` overload is deprecated. Use `startInteraction(String actionName)`.
+      </Callout>
 
       To name an interaction that already exists and is already being tracked, see [`setInteractionName()`](/docs/mobile-monitoring/new-relic-mobile/mobile-sdk/name-interaction/#android).
 
@@ -102,11 +108,11 @@ NewRelic.startInteraction(actionName: String)
         <tbody>
           <tr>
             <td>
-              `$interactionName`
+              `actionName`
             </td>
 
             <td>
-              `string`
+              `String`
             </td>
 
             <td>
@@ -118,7 +124,7 @@ NewRelic.startInteraction(actionName: String)
 
       ## Return values [#return-values]
 
-      Returns an interaction ID number which can be used for [ending the interaction](/docs/mobile-monitoring/new-relic-mobile-android/android-sdk-api/end-interaction) at a certain point.
+      Returns the interaction ID as a `String`, or `null` if tracing is inactive. Use the ID to [end the interaction](/docs/mobile-monitoring/new-relic-mobile/mobile-sdk/stop-interaction) at a certain point.
 
       ## Example [#example]
 
@@ -148,21 +154,17 @@ public class MainActivity extends Activity {
 
 ```kotlin
 class MainActivity : AppCompatActivity() {
-
-  ...
-  var client: OkHttpClient = OkHttpClient();
-
-      binding.fab.setOnClickListener { view ->
-
-          val interActionId = NewRelic.startInteraction("Getting Data From Server")
-
-              lifecycleScope.launch(Dispatchers.IO) {
-                  val result = getRequest()
-                  NewRelic.endInteraction(interActionId)
-              }
-          }
-      }
     ...
+    binding.fab.setOnClickListener { view ->
+        val interactionId = NewRelic.startInteraction("Getting Data From Server")
+
+        lifecycleScope.launch(Dispatchers.IO) {
+            val result = getRequest()
+            NewRelic.endInteraction(interactionId)
+        }
+    }
+    ...
+}
 ```
     </TabsPageItem>
 

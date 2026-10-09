@@ -42,30 +42,25 @@ freshnessValidatedDate: 2023-07-20
       ### Java [#android-syntax-java]
 
 ```java
-NewRelic.recordHandledException(Exception $exceptionToHandle)
-NewRelic.recordHandledException(Exception $exceptionToHandle, Map of String, Object $exceptionAttributes)
-```
-
-```java
-NewRelic.recordHandledException(Throwable $throwableToHandle)
-NewRelic.recordHandledException(Throwable $throwableToHandle, Map of String, Object $exceptionAttributes)
+NewRelic.recordHandledException(Exception exception);
+NewRelic.recordHandledException(Exception exception, Map<String, Object> exceptionAttributes);
+NewRelic.recordHandledException(Throwable throwable);
+NewRelic.recordHandledException(Throwable throwable, Map<String, Object> attributes);
 ```
 
       ### Kotlin [#android-syntax-kotlin]
 
 ```kotlin
+NewRelic.recordHandledException(exception: Exception): Boolean
 NewRelic.recordHandledException(
-  exception: Exception?,
-  exceptionAttributes: Map<String?, Any?>?
-)
-```
-
-```kotlin
-NewRelic.recordHandledException(throwable: Throwable?)
-NewRelic. recordHandledException(
-  throwable: Throwable?,
-  attributes: Map<String?, Any?>?
-)
+    exception: Exception,
+    exceptionAttributes: Map<String, Any>?
+): Boolean
+NewRelic.recordHandledException(throwable: Throwable): Boolean
+NewRelic.recordHandledException(
+    throwable: Throwable,
+    attributes: Map<String, Any>?
+): Boolean
 ```
 
       ## Description [#android-description]
@@ -73,6 +68,8 @@ NewRelic. recordHandledException(
       Records a handled exception or other throwable type. Optionally takes map with additional attributes showing context.
 
       Use `recordHandledException()` within a `try{...} catch(){...}` block to help understand how often your application is throwing exceptions, and under what conditions.
+
+      The agent records handled exceptions when either the `HandledExceptions` or the `NativeReporting` feature flag is enabled. `HandledExceptions` is enabled by default. If Session Replay is enabled and is in error mode, recording a handled exception switches it to full mode. Attribute values must be a `String`, a `Boolean`, or a numeric type.
 
       In addition to associated custom attributes, the events will also have associated [session attributes](/docs/insights/insights-data-sources/default-attributes/mobile-default-attributes-insights). You can view event data in the mobile monitoring UI in the [Crash event trail](/docs/mobile-monitoring/mobile-monitoring-ui/crashes/mobile-crash-event-trail), or via NRQL.
 
@@ -98,25 +95,25 @@ NewRelic. recordHandledException(
         <tbody>
           <tr>
             <td>
-              `$exceptionToHandle`
+              `exception` or `throwable`
             </td>
 
             <td>
-              `Exception`
+              `Exception` or `Throwable`
             </td>
 
             <td>
-              Required. The exception to be recorded.
+              Required. The exception or other throwable to be recorded.
             </td>
           </tr>
 
           <tr>
             <td>
-              `$exceptionAttributes`
+              `exceptionAttributes` or `attributes`
             </td>
 
             <td>
-              `Map of String, Object`
+              `Map<String, Object>`
             </td>
 
             <td>
@@ -139,7 +136,7 @@ NewRelic. recordHandledException(
 ```java
 public class MainActivity extends Activity {
   ... coolButton.setOnClickListener(new View.OnClickListener() {
-    Map myMap = new HashMap<>();
+    Map<String, Object> myMap = new HashMap<>();
     @Override
     public void onClick(View view) {
       try {
@@ -161,14 +158,12 @@ public class MainActivity extends Activity {
 class MainActivity : AppCompatActivity() {
   ...
   binding.fab.setOnClickListener { view ->
-    val myMap = mutableMapOf<String,Any>()
+    val myMap = mutableMapOf<String, Any>()
     try {
       myMap["Key"] = "Value"
-      Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-          .setAnchorView(R.id.fab)
-          .setAction("Action", null).show()
-    } catch(exception:Exception) {
-      NewRelic.recordHandledException(exception,myMap)
+      val intVar = myMap["Key"] as Int // throws ClassCastException
+    } catch (exception: Exception) {
+      NewRelic.recordHandledException(exception, myMap)
     }
   }
   ...

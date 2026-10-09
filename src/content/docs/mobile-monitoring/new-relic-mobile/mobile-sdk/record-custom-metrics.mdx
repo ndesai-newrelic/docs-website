@@ -55,7 +55,9 @@ freshnessValidatedDate: 2023-07-20
       ### Java [#java]
 
 ```java
-NewRelic.setUserId(string $userId)
+NewRelic.recordMetric(String name, String category, int count, double totalValue, double exclusiveValue, MetricUnit countUnit, MetricUnit valueUnit);
+NewRelic.recordMetric(String name, String category, double value);
+NewRelic.recordMetric(String name, String category);
 ```
 
       ### Kotlin [#kotlin]
@@ -67,10 +69,11 @@ NewRelic.recordMetric(
     count: Int,
     totalValue: Double,
     exclusiveValue: Double,
-    countUnit: MetricUnit,
-    valueUnit: MetricUnit
+    countUnit: MetricUnit?,
+    valueUnit: MetricUnit?
 )
-NewRelic.recordMetric(name: String?, category: String?, value: Double = 1.0)
+NewRelic.recordMetric(name: String, category: String, value: Double)
+NewRelic.recordMetric(name: String, category: String)
 ```
 
       ## Description [#description]
@@ -84,7 +87,17 @@ NewRelic.recordMetric(name: String?, category: String?, value: Double = 1.0)
       * Avoid using the characters `/` `]` `[` `|` `*` when naming metrics.
       * Avoid multi-byte characters.
 
-      The `category` is also required; it is displayed in the UI and is useful for organizing custom metrics if you have many of them. It can be a custom category or it can be a predefined category using the [`MetricCategory` enum](/docs/mobile-monitoring/new-relic-mobile-android/install-configure/work-android-sdk-api#cat).
+      The `category` is also required; it is displayed in the UI and is useful for organizing custom metrics if you have many of them. It can be a custom category string or the name of a predefined category from the `MetricCategory` enum (`com.newrelic.agent.android.instrumentation.MetricCategory`). Use `getCategoryName()` to get the string for a predefined category, for example `MetricCategory.NETWORK.getCategoryName()`. The predefined categories are:
+
+      * `NONE`
+      * `VIEW_LOADING`
+      * `VIEW_LAYOUT`
+      * `DATABASE`
+      * `IMAGE`
+      * `JSON`
+      * `NETWORK`
+
+      If `category` is `null` or `name` is empty, the method throws an `IllegalArgumentException`. If `count` is negative, the agent logs an error and doesn't record the metric.
 
       ## Parameters [#parameters]
 
@@ -108,11 +121,11 @@ NewRelic.recordMetric(name: String?, category: String?, value: Double = 1.0)
         <tbody>
           <tr>
             <td>
-              `$name`
+              `name`
             </td>
 
             <td>
-              `string`
+              `String`
             </td>
 
             <td>
@@ -122,15 +135,15 @@ NewRelic.recordMetric(name: String?, category: String?, value: Double = 1.0)
 
           <tr>
             <td>
-              `$category`
+              `category`
             </td>
 
             <td>
-              `string`
+              `String`
             </td>
 
             <td>
-              Required. The metric category name, either custom or using a predefined [metric category](/docs/mobile-monitoring/new-relic-mobile-android/install-configure/work-android-sdk-api#cat).
+              Required. The metric category name, either custom or a predefined metric category name from the `MetricCategory` enum.
             </td>
           </tr>
 
@@ -200,7 +213,7 @@ NewRelic.recordMetric(name: String?, category: String?, value: Double = 1.0)
             </td>
 
             <td>
-              Required. Unit of measurement for the metric count, including `PERCENT`, `BYTES`, `SECONDS`, `BYTES_PER_SECOND`, or `OPERATIONS`.
+              Optional (may be `null`). Unit of measurement for the metric count, including `PERCENT`, `BYTES`, `SECONDS`, `BYTES_PER_SECOND`, or `OPERATIONS`.
             </td>
           </tr>
 
@@ -214,7 +227,7 @@ NewRelic.recordMetric(name: String?, category: String?, value: Double = 1.0)
             </td>
 
             <td>
-              Required. Unit of measurement for the metric value, including `PERCENT`, `BYTES`, `SECONDS`, `BYTES_PER_SECOND`, or `OPERATIONS`.
+              Optional (may be `null`). Unit of measurement for the metric value, including `PERCENT`, `BYTES`, `SECONDS`, `BYTES_PER_SECOND`, or `OPERATIONS`.
             </td>
           </tr>
         </tbody>
@@ -257,7 +270,7 @@ NewRelic.recordMetric("Agent start", "Lifecycle")
       ### Java [#java]
 
 ```java
-NewRelic.recordMetric("Agent start", "Lifecycle", 10.11f);
+NewRelic.recordMetric("Agent start", "Lifecycle", 10.11);
 ```
 
       ### Kotlin [#kotlin]

@@ -53,24 +53,73 @@ freshnessValidatedDate: 2023-07-19
       ### Java [#java]
 
 ```java
-NewRelic.noticeNetworkFailure(string $url, string $httpMethod, long $startTime, long $endTime, exception $exception OR enum $networkFailure)
+// Record a failure using a NetworkFailure value
+NewRelic.noticeNetworkFailure(String url, String httpMethod, long startTimeMs, long endTimeMs, NetworkFailure failure);
+
+// Record a failure using a NetworkFailure value and a message
+NewRelic.noticeNetworkFailure(String url, String httpMethod, long startTimeMs, long endTimeMs, NetworkFailure failure, String message);
+
+// Record a failure using a NetworkFailure value, a message, and distributed tracing attributes
+NewRelic.noticeNetworkFailure(String url, String httpMethod, long startTimeMs, long endTimeMs, NetworkFailure failure, String message, Map<String, Object> traceAttributes);
+
+// Record a failure using an exception
+NewRelic.noticeNetworkFailure(String url, String httpMethod, long startTimeMs, long endTimeMs, Exception exception);
+
+// Record a failure with all arguments passed as a map of attributes
+NewRelic.noticeNetworkFailure(Map<String, Object> attributes);
 ```
 
       ### Kotlin [#kotlin]
 
 ```kotlin
+// Record a failure using a NetworkFailure value
 NewRelic.noticeNetworkFailure(
-    url: String?,
-    httpMethod: String?,
-    startTime: Long,
-    endTime: Long,
-    failure: NetworkFailure?,
+    url: String,
+    httpMethod: String,
+    startTimeMs: Long,
+    endTimeMs: Long,
+    failure: NetworkFailure
 )
+
+// Record a failure using a NetworkFailure value and a message
+NewRelic.noticeNetworkFailure(
+    url: String,
+    httpMethod: String,
+    startTimeMs: Long,
+    endTimeMs: Long,
+    failure: NetworkFailure,
+    message: String?
+)
+
+// Record a failure using a NetworkFailure value, a message, and distributed tracing attributes
+NewRelic.noticeNetworkFailure(
+    url: String,
+    httpMethod: String,
+    startTimeMs: Long,
+    endTimeMs: Long,
+    failure: NetworkFailure,
+    message: String?,
+    traceAttributes: Map<String, Any>?
+)
+
+// Record a failure using an exception
+NewRelic.noticeNetworkFailure(
+    url: String,
+    httpMethod: String,
+    startTimeMs: Long,
+    endTimeMs: Long,
+    exception: Exception
+)
+
+// Record a failure with all arguments passed as a map of attributes
+NewRelic.noticeNetworkFailure(attributes: Map<String, Any>)
 ```
 
       ## Description [#description]
 
-      The New Relic Android SDK API provides several methods to [track network requests](/docs/mobile-monitoring/new-relic-mobile/mobile-sdk/network-request-success/). If a network request fails, you can record details about the failure with `noticeNetworkFailure`. In most cases, place this call inside exception handlers, such as catch blocks.
+      The New Relic Android SDK API provides several methods to [track network requests](/docs/mobile-monitoring/new-relic-mobile/mobile-sdk/network-request-success/). If a network request fails, you can record details about the failure with `noticeNetworkFailure`. In most cases, place this call inside exception handlers, such as catch blocks.
+
+      The time values are milliseconds since the epoch, not `System.nanoTime()` values. The agent calculates the duration of the request as `endTimeMs - startTimeMs` and reports it in seconds.
 
       ## Parameters [#parameters]
 
@@ -94,25 +143,25 @@ NewRelic.noticeNetworkFailure(
         <tbody>
           <tr>
             <td>
-              `$url`
+              `url`
             </td>
 
             <td>
-              `string`
+              `String`
             </td>
 
             <td>
-              Required. The URL of the request.
+              Required. The URL of the request. An empty URL throws an `IllegalArgumentException` when you pass an `Exception`.
             </td>
           </tr>
 
           <tr>
             <td>
-              `$httpMethod`
+              `httpMethod`
             </td>
 
             <td>
-              `string`
+              `String`
             </td>
 
             <td>
@@ -122,7 +171,7 @@ NewRelic.noticeNetworkFailure(
 
           <tr>
             <td>
-              `$startTime`
+              `startTimeMs`
             </td>
 
             <td>
@@ -130,13 +179,13 @@ NewRelic.noticeNetworkFailure(
             </td>
 
             <td>
-              Required. The start time of the request in milliseconds since the epoch.
+              Required. The start time of the request in milliseconds since the epoch, such as the value of `System.currentTimeMillis()`.
             </td>
           </tr>
 
           <tr>
             <td>
-              `$endTime`
+              `endTimeMs`
             </td>
 
             <td>
@@ -144,66 +193,166 @@ NewRelic.noticeNetworkFailure(
             </td>
 
             <td>
-              Required. The end time of the request in milliseconds since the epoch.
+              Required. The end time of the request in milliseconds since the epoch. If this is earlier than `startTimeMs`, the agent logs an error and doesn't record the failure.
             </td>
           </tr>
 
           <tr>
             <td>
-              `$exception`
+              `exception`
             </td>
 
             <td>
-              `string`
+              `Exception`
             </td>
 
             <td>
-              Either this or `$failure` parameter is required. This is the exception that occurred. New Relic can automatically translate many common exceptions into network failure types.
+              Either this or the `failure` parameter is required. This is the exception that occurred. New Relic automatically translates many common exceptions into network failure types, and uses the exception message as the failure message.
             </td>
           </tr>
 
           <tr>
             <td>
-              `$failure`
+              `failure`
             </td>
 
             <td>
-              `enum`
+              `NetworkFailure`
             </td>
 
             <td>
-              Either this or `$exception` parameter is required. The type of network failure that occurred. If an exception cannot be resolved to a network failure automatically, this method can be used to categorize the failure accurately. The values are defined by the `NetworkFailure` enum. Valid values include `Unknown`, `BadURL`, `TimedOut`, `CannotConnectToHost`, `DNSLookupFailed`, `BadServerResponse`, and `SecureConnectionFailed`.
+              Either this or the `exception` parameter is required. The type of network failure that occurred. If an exception cannot be resolved to a network failure automatically, use this parameter to categorize the failure accurately. See [Network failure values](#network-failure-values).
+            </td>
+          </tr>
+
+          <tr>
+            <td>
+              `message`
+            </td>
+
+            <td>
+              `String`
+            </td>
+
+            <td>
+              Optional. A message that describes the failure.
+            </td>
+          </tr>
+
+          <tr>
+            <td>
+              `traceAttributes`
+            </td>
+
+            <td>
+              `Map<String, Object>`
+            </td>
+
+            <td>
+              Optional. Distributed tracing attributes for the request, such as the map returned by `TraceContext.asTraceAttributes()`. See [Track a request with distributed tracing headers](/docs/mobile-monitoring/new-relic-mobile/mobile-sdk/network-request-success/#distributed-trace).
             </td>
           </tr>
         </tbody>
       </table>
 
+      ### Network failure values [#network-failure-values]
+
+      The `NetworkFailure` enum (`com.newrelic.agent.android.util.NetworkFailure`) has these values:
+
+      * `Unknown`
+      * `BadURL`
+      * `TimedOut`
+      * `CannotConnectToHost`
+      * `DNSLookupFailed`
+      * `BadServerResponse`
+      * `SecureConnectionFailed`
+
+      You can convert an exception to a failure value with `NetworkFailure.exceptionToNetworkFailure(Exception e)`. Exceptions that the agent doesn't recognize are converted to `Unknown`.
+
+      ### Pass the failure as a map [#map-attributes]
+
+      When you call `noticeNetworkFailure(Map<String, Object> attributes)`, use these keys. The `startTimeMs`, `endTimeMs`, and `errorCode` values must be passed as strings, for example `"1001"`. If a value can't be parsed as a number, the agent logs an error and records a handled exception instead of the failure.
+
+      * `url`: String
+      * `httpMethod`: String
+      * `startTimeMs`: String containing a long
+      * `endTimeMs`: String containing a long
+      * `errorCode`: String containing the error code of a `NetworkFailure` value, such as `"-1001"` for `TimedOut`. Unrecognized codes are recorded as `Unknown`.
+      * `message`: String (optional)
+      * `traceAttributes`: `Map<String, Object>` (optional)
+
       ## Examples [#examples]
 
-      Here’s an example of an error listener that uses an error as part of the noticed network failure to New Relic:
+      Here's an example of an error listener that uses an error as part of the noticed network failure to New Relic:
 
-      ### Java [#java]
+      ### Java [#java-example]
 
 ```java
 new Response.ErrorListener() {
   @Override
-  public void onErrorResponse(Error error) {
-    NewRelic.noticeNetworkFailure(badUrl, "GET", System.nanoTime(),
-        System.nanoTime(), NetworkFailure.exceptionToNetworkFailure(error));
+  public void onErrorResponse(VolleyError error) {
+    NewRelic.noticeNetworkFailure(badUrl, "GET", startTimeMs,
+        System.currentTimeMillis(), NetworkFailure.exceptionToNetworkFailure(error));
   }
 }
 ```
 
-      ### Kotlin [#kotlin]
+      ### Kotlin [#kotlin-example]
 
 ```kotlin
-NewRelic.noticeNetworkFailure(
-    badUrl,
-    "GET",
-    System.nanoTime(),
-    System.nanoTime(),
-    NetworkFailure.exceptionToNetworkFailure(error)
-)
+Response.ErrorListener { error ->
+    NewRelic.noticeNetworkFailure(
+        badUrl,
+        "GET",
+        startTimeMs,
+        System.currentTimeMillis(),
+        NetworkFailure.exceptionToNetworkFailure(error)
+    )
+}
+```
+
+      ### Record an exception from a catch block [#exception-example]
+
+      This example passes the exception directly. The agent translates it into a network failure and uses the exception message as the failure message.
+
+      #### Java [#java-exception]
+
+```java
+long startTimeMs = System.currentTimeMillis();
+try {
+    HttpURLConnection connection = (HttpURLConnection) new URL(url).openConnection();
+    connection.getResponseCode();
+} catch (IOException e) {
+    NewRelic.noticeNetworkFailure(url, "GET", startTimeMs, System.currentTimeMillis(), e);
+}
+```
+
+      #### Kotlin [#kotlin-exception]
+
+```kotlin
+val startTimeMs = System.currentTimeMillis()
+try {
+    val connection = URL(url).openConnection() as HttpURLConnection
+    connection.responseCode
+} catch (e: IOException) {
+    NewRelic.noticeNetworkFailure(url, "GET", startTimeMs, System.currentTimeMillis(), e)
+}
+```
+
+      ### Record a failure with a message [#message-example]
+
+      #### Java [#java-message]
+
+```java
+NewRelic.noticeNetworkFailure(url, "POST", startTimeMs, System.currentTimeMillis(),
+    NetworkFailure.TimedOut, "Checkout request timed out after 30 seconds");
+```
+
+      #### Kotlin [#kotlin-message]
+
+```kotlin
+NewRelic.noticeNetworkFailure(url, "POST", startTimeMs, System.currentTimeMillis(),
+    NetworkFailure.TimedOut, "Checkout request timed out after 30 seconds")
 ```
     </TabsPageItem>
 

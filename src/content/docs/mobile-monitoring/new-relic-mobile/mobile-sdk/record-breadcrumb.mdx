@@ -61,19 +61,18 @@ freshnessValidatedDate: 2023-07-18
       ### Java [#java]
 
 ```java
-      NewRelic.recordBreadcrumb(
-                  string $Name,
-                  map<string, object> $eventAttributes
-              )
+NewRelic.recordBreadcrumb(String breadcrumbName);
+NewRelic.recordBreadcrumb(String breadcrumbName, Map<String, Object> attributes);
 ```
 
       ### Kotlin [#kotlin]
 
 ```kotlin
+NewRelic.recordBreadcrumb(breadcrumbName: String?): Boolean
 NewRelic.recordBreadcrumb(
-            breadcrumbName: String?,
-            attributes: MutableMap<String?, Any?>?
-        )
+    breadcrumbName: String?,
+    attributes: Map<String, Any>?
+): Boolean
 ```
 
       ## Description [#description]
@@ -81,6 +80,8 @@ NewRelic.recordBreadcrumb(
       This call creates and records a `MobileBreadcrumb` event, which can be queried with NRQL and in the [crash event trail](/docs/mobile-monitoring/mobile-monitoring-ui/crashes/mobile-crash-event-trail). Mobile breadcrumbs are useful for crash analysis; they should be created for app activity that may be helpful for troubleshooting crashes.
 
       In addition to any custom attributes you choose, the event will also have associated [session attributes](/docs/insights/explore-data/attributes/mobile-default-attributes-insights#mobile-list). Unlike with using [`setAttribute`](/docs/mobile-monitoring/new-relic-mobile/mobile-sdk/create-attribute/), adding attributes to a breadcrumb event adds them only to that event; they are not session attributes.
+
+      Attribute names must be shorter than 255 characters, and string values must be shorter than 4096 bytes. Attribute values must be a `String`, a `Boolean`, or a numeric type; the agent drops attributes with other value types. For details, see [`recordCustomEvent`](/docs/mobile-monitoring/new-relic-mobile/mobile-sdk/record-custom-events/) and [`setAttribute`](/docs/mobile-monitoring/new-relic-mobile/mobile-sdk/create-attribute/).
 
       ## Parameters [#parameters]
 
@@ -104,11 +105,11 @@ NewRelic.recordBreadcrumb(
         <tbody>
           <tr>
             <td>
-              `Name`
+              `breadcrumbName`
             </td>
 
             <td>
-              `string`
+              `String`
             </td>
 
             <td>
@@ -118,11 +119,11 @@ NewRelic.recordBreadcrumb(
 
           <tr>
             <td>
-              `eventAttributes`
+              `attributes`
             </td>
 
             <td>
-              `dictionary`
+              `Map<String, Object>`
             </td>
 
             <td>
@@ -143,17 +144,31 @@ NewRelic.recordBreadcrumb(
       ### Java [#java]
 
 ```java
-Map attributes = new HashMap();
+Map<String, Object> attributes = new HashMap<>();
 attributes.put("attributeName1", "value1");
-attributes.put("attributeName1", 2);
+attributes.put("attributeName2", 2);
 boolean eventRecorded = NewRelic.recordBreadcrumb("Name", attributes);
 ```
 
       ### Kotlin [#kotlin]
 
 ```kotlin
-val map = mutableMapOf<String,Any>("attributeName1" to "value1", "attributeName1" to 2)
+val map = mutableMapOf<String, Any>("attributeName1" to "value1", "attributeName2" to 2)
 val eventRecorded = NewRelic.recordBreadcrumb("Name", map)
+```
+
+      Here's an example of a breadcrumb event with only a name:
+
+      ### Java [#java]
+
+```java
+NewRelic.recordBreadcrumb("user opened settings");
+```
+
+      ### Kotlin [#kotlin]
+
+```kotlin
+NewRelic.recordBreadcrumb("user opened settings")
 ```
 
       Here's an example of a breadcrumb event with real-world values:
@@ -161,7 +176,7 @@ val eventRecorded = NewRelic.recordBreadcrumb("Name", map)
       ### Java [#java]
 
 ```java
-Map attributes = new HashMap();
+Map<String, Object> attributes = new HashMap<>();
 attributes.put("button", "sign-in");
 attributes.put("location", "LaunchFragment");
 
@@ -171,7 +186,7 @@ NewRelic.recordBreadcrumb("user tapped sign in button", attributes);
       ### Kotlin [#kotlin]
 
 ```kotlin
-val attributes = mutableMapOf<String,Any>("button" to "sign-in", "location" to "LaunchFragment")
+val attributes = mutableMapOf<String, Any>("button" to "sign-in", "location" to "LaunchFragment")
 NewRelic.recordBreadcrumb("user tapped sign in button", attributes)
 ```
     </TabsPageItem>

@@ -55,15 +55,46 @@ freshnessValidatedDate: 2023-07-19
       ### Java [#java]
 
 ```java
-NewRelic.noticeHttpTransaction(string $url, string $httpMethod, int $statusCode, long $startTime, long $endTime, long $bytesSent, long $bytesReceived [, string $responseBody])
+// Required arguments only
+NewRelic.noticeHttpTransaction(String url, String httpMethod, int statusCode, long startTimeMs, long endTimeMs, long bytesSent, long bytesReceived);
+
+// With a response body
+NewRelic.noticeHttpTransaction(String url, String httpMethod, int statusCode, long startTimeMs, long endTimeMs, long bytesSent, long bytesReceived, String responseBody);
+
+// With additional parameters
+NewRelic.noticeHttpTransaction(String url, String httpMethod, int statusCode, long startTimeMs, long endTimeMs, long bytesSent, long bytesReceived, String responseBody, Map<String, String> params);
+
+// With the X-NewRelic-App-Data header value
+NewRelic.noticeHttpTransaction(String url, String httpMethod, int statusCode, long startTimeMs, long endTimeMs, long bytesSent, long bytesReceived, String responseBody, Map<String, String> params, String appData);
+
+// With the connection used for the request
+NewRelic.noticeHttpTransaction(String url, String httpMethod, int statusCode, long startTimeMs, long endTimeMs, long bytesSent, long bytesReceived, String responseBody, Map<String, String> params, URLConnection urlConnection);
+
+// With distributed tracing attributes
+NewRelic.noticeHttpTransaction(String url, String httpMethod, int statusCode, long startTimeMs, long endTimeMs, long bytesSent, long bytesReceived, String responseBody, Map<String, String> params, String appData, Map<String, Object> traceAttributes);
+
+// With all arguments passed as a map of attributes
+NewRelic.noticeHttpTransaction(Map<String, Object> attributes);
 ```
 
       ### Kotlin [#kotlin]
 
 ```kotlin
+// Required arguments only
 NewRelic.noticeHttpTransaction(
-    url: String?,
-    httpMethod: String?,
+    url: String,
+    httpMethod: String,
+    statusCode: Int,
+    startTimeMs: Long,
+    endTimeMs: Long,
+    bytesSent: Long,
+    bytesReceived: Long
+)
+
+// With a response body
+NewRelic.noticeHttpTransaction(
+    url: String,
+    httpMethod: String,
     statusCode: Int,
     startTimeMs: Long,
     endTimeMs: Long,
@@ -71,13 +102,76 @@ NewRelic.noticeHttpTransaction(
     bytesReceived: Long,
     responseBody: String?
 )
+
+// With additional parameters
+NewRelic.noticeHttpTransaction(
+    url: String,
+    httpMethod: String,
+    statusCode: Int,
+    startTimeMs: Long,
+    endTimeMs: Long,
+    bytesSent: Long,
+    bytesReceived: Long,
+    responseBody: String?,
+    params: Map<String, String>?
+)
+
+// With the X-NewRelic-App-Data header value
+NewRelic.noticeHttpTransaction(
+    url: String,
+    httpMethod: String,
+    statusCode: Int,
+    startTimeMs: Long,
+    endTimeMs: Long,
+    bytesSent: Long,
+    bytesReceived: Long,
+    responseBody: String?,
+    params: Map<String, String>?,
+    appData: String?
+)
+
+// With the connection used for the request
+NewRelic.noticeHttpTransaction(
+    url: String,
+    httpMethod: String,
+    statusCode: Int,
+    startTimeMs: Long,
+    endTimeMs: Long,
+    bytesSent: Long,
+    bytesReceived: Long,
+    responseBody: String?,
+    params: Map<String, String>?,
+    urlConnection: URLConnection?
+)
+
+// With distributed tracing attributes
+NewRelic.noticeHttpTransaction(
+    url: String,
+    httpMethod: String,
+    statusCode: Int,
+    startTimeMs: Long,
+    endTimeMs: Long,
+    bytesSent: Long,
+    bytesReceived: Long,
+    responseBody: String?,
+    params: Map<String, String>?,
+    appData: String?,
+    traceAttributes: Map<String, Any>?
+)
+
+// With all arguments passed as a map of attributes
+NewRelic.noticeHttpTransaction(attributes: Map<String, Any>)
 ```
 
       ## Description [#description]
 
       Record HTTP transactions with an option to also send a response body.
 
+      Use this method for requests that the agent doesn't instrument automatically, such as requests made through a custom or unsupported HTTP client.
+
       If a network request fails, you can record details about the failure with [`noticeNetworkFailure()`](/docs/mobile-monitoring/new-relic-mobile/mobile-sdk/network-request-failures/).
+
+      The time values are milliseconds since the epoch, not `System.nanoTime()` values. The agent calculates the duration of the request as `endTimeMs - startTimeMs` and reports it in seconds.
 
       ## Parameters [#parameters]
 
@@ -101,35 +195,35 @@ NewRelic.noticeHttpTransaction(
         <tbody>
           <tr>
             <td>
-              `$url`
+              `url`
             </td>
 
             <td>
-              `string`
+              `String`
             </td>
 
             <td>
-              Required. The URL of the request.
-            </td>
-          </tr>
-
-          <tr>
-            <td>
-              `$httpMethod`
-            </td>
-
-            <td>
-              `string`
-            </td>
-
-            <td>
-              Required. The HTTP method used, such as GET or POST.
+              Required. The URL of the request. An empty or malformed URL throws an `IllegalArgumentException`.
             </td>
           </tr>
 
           <tr>
             <td>
-              `$statusCode`
+              `httpMethod`
+            </td>
+
+            <td>
+              `String`
+            </td>
+
+            <td>
+              Required. The HTTP method used, such as GET or POST. An empty value throws an `IllegalArgumentException`.
+            </td>
+          </tr>
+
+          <tr>
+            <td>
+              `statusCode`
             </td>
 
             <td>
@@ -137,45 +231,45 @@ NewRelic.noticeHttpTransaction(
             </td>
 
             <td>
-              Required. The statusCode of the HTTP response, such as 200 for <DNT>**OK**</DNT>.
+              Required. The status code of the HTTP response, such as 200 for <DNT>**OK**</DNT>.
             </td>
           </tr>
 
           <tr>
             <td>
-              `$startTime`
+              `startTimeMs`
             </td>
 
             <td>
-              `int`
+              `long`
             </td>
 
             <td>
-              Required. The start time of the request in milliseconds since the epoch.
-            </td>
-          </tr>
-
-          <tr>
-            <td>
-              `$endTime`
-            </td>
-
-            <td>
-              `int`
-            </td>
-
-            <td>
-              Required. The end time of the request in milliseconds since the epoch.
+              Required. The start time of the request in milliseconds since the epoch, such as the value of `System.currentTimeMillis()`.
             </td>
           </tr>
 
           <tr>
             <td>
-              `$bytesSent`
+              `endTimeMs`
             </td>
 
             <td>
-              `int`
+              `long`
+            </td>
+
+            <td>
+              Required. The end time of the request in milliseconds since the epoch. If this is earlier than `startTimeMs`, the agent logs an error and doesn't record the transaction.
+            </td>
+          </tr>
+
+          <tr>
+            <td>
+              `bytesSent`
+            </td>
+
+            <td>
+              `long`
             </td>
 
             <td>
@@ -185,11 +279,11 @@ NewRelic.noticeHttpTransaction(
 
           <tr>
             <td>
-              `$bytesReceived`
+              `bytesReceived`
             </td>
 
             <td>
-              `int`
+              `long`
             </td>
 
             <td>
@@ -199,63 +293,242 @@ NewRelic.noticeHttpTransaction(
 
           <tr>
             <td>
-              `$responseBody`
+              `responseBody`
             </td>
 
             <td>
-              `string`
+              `String`
             </td>
 
             <td>
-              Optional. The response body of the HTTP response. The response body will be truncated and included in an HTTP Error metric if the HTTP transaction is an error.
+              Optional. The response body of the HTTP response. The response body is truncated and included in an HTTP error event if the HTTP transaction is an error, and the `HttpResponseBodyCapture` feature flag is enabled (the default).
+            </td>
+          </tr>
+
+          <tr>
+            <td>
+              `params`
+            </td>
+
+            <td>
+              `Map<String, String>`
+            </td>
+
+            <td>
+              Optional. Additional key/value string parameters to associate with the request.
+            </td>
+          </tr>
+
+          <tr>
+            <td>
+              `appData`
+            </td>
+
+            <td>
+              `String`
+            </td>
+
+            <td>
+              Optional. The value of the `X-NewRelic-App-Data` response header, used to correlate the request with a New Relic-monitored server.
+            </td>
+          </tr>
+
+          <tr>
+            <td>
+              `urlConnection`
+            </td>
+
+            <td>
+              `URLConnection`
+            </td>
+
+            <td>
+              Optional. In place of `appData`, pass the connection used for the request. The agent reads the `X-NewRelic-App-Data` response header from it.
+            </td>
+          </tr>
+
+          <tr>
+            <td>
+              `traceAttributes`
+            </td>
+
+            <td>
+              `Map<String, Object>`
+            </td>
+
+            <td>
+              Optional. Distributed tracing attributes for the request, such as the map returned by `TraceContext.asTraceAttributes()`. See [Track a request with distributed tracing headers](#distributed-trace).
             </td>
           </tr>
         </tbody>
       </table>
 
+      ### Pass the transaction as a map [#map-attributes]
+
+      When you call `noticeHttpTransaction(Map<String, Object> attributes)`, use these keys. The `statusCode`, `startTimeMs`, `endTimeMs`, `bytesSent`, and `bytesReceived` values must be passed as strings, for example `"200"`. If a value can't be parsed as a number, the agent logs an error and records a handled exception instead of the transaction.
+
+      * `url`: String
+      * `httpMethod`: String
+      * `statusCode`: String containing an integer
+      * `startTimeMs`: String containing a long
+      * `endTimeMs`: String containing a long
+      * `bytesSent`: String containing a long
+      * `bytesReceived`: String containing a long
+      * `responseBody`: String (optional)
+      * `appData`: String (optional)
+      * `traceAttributes`: `Map<String, Object>` (optional)
+
       ## Examples [#examples]
 
       Here's an example of tracking an HTTP transaction:
 
-      ### Java [#java]
+      ### Java [#java-example]
 
 ```java
 public class CustomHttpMetricsLogger implements Interceptor {
     @Override
     public Response intercept(Chain chain) throws IOException {
         Request request = chain.request();
-        // collect request start time
-        long t1 = System.nanoTime();
+        // collect request start time, in milliseconds since the epoch
+        long startTimeMs = System.currentTimeMillis();
         // get the size of the request body
         long requestSize = null == request.body() ? 0 : request.body().contentLength();
         // proceed with the request
         Response response = chain.proceed(request);
         // capture the time when response returns
-        long t2 = System.nanoTime();
+        long endTimeMs = System.currentTimeMillis();
         long responseSize = null == response.body() ? 0 : response.body().contentLength();
         // tell New Relic to notice this request
-        NewRelic.noticeHttpTransaction(request.urlString(), request.method(), response.code(), t1, t2, requestSize, responseSize);
+        NewRelic.noticeHttpTransaction(request.url().toString(), request.method(), response.code(), startTimeMs, endTimeMs, requestSize, responseSize);
         // return response for processing
         return response;
     }
 }
 ```
 
-      ### Kotlin [#kotlin]
+      ### Kotlin [#kotlin-example]
 
 ```kotlin
 class CustomInterceptor : Interceptor {
     override fun intercept(chain: Interceptor.Chain): Response {
-        val t1 = System.nanoTime()
+        val startTimeMs = System.currentTimeMillis()
         val aRequest: Request = chain.request()
         val requestSize: Long = if (null == aRequest.body) 0 else aRequest.body!!.contentLength()
         val aResponse = chain.proceed(aRequest)
-        val t2 = System.nanoTime()
+        val endTimeMs = System.currentTimeMillis()
         val responseSize: Long = if (null == aResponse.body) 0 else aResponse.body!!.contentLength()
-        NewRelic.noticeHttpTransaction(aRequest.url.toString(), aRequest.method, aResponse.code, t1, t2, requestSize, responseSize)
+        NewRelic.noticeHttpTransaction(aRequest.url.toString(), aRequest.method, aResponse.code, startTimeMs, endTimeMs, requestSize, responseSize)
         return aResponse
     }
 }
+```
+
+      ### Include a response body and request parameters [#response-body-example]
+
+      This example records the response body and additional parameters for a request. The agent includes the response body in the event only when the transaction is an error.
+
+      #### Java [#java-body]
+
+```java
+Map<String, String> params = new HashMap<>();
+params.put("endpoint", "checkout");
+
+NewRelic.noticeHttpTransaction(
+    "https://example.com/api/orders",
+    "POST",
+    500,
+    startTimeMs,
+    endTimeMs,
+    requestSize,
+    responseSize,
+    "{\"error\":\"internal server error\"}",
+    params);
+```
+
+      #### Kotlin [#kotlin-body]
+
+```kotlin
+val params = mapOf("endpoint" to "checkout")
+
+NewRelic.noticeHttpTransaction(
+    "https://example.com/api/orders",
+    "POST",
+    500,
+    startTimeMs,
+    endTimeMs,
+    requestSize,
+    responseSize,
+    """{"error":"internal server error"}""",
+    params
+)
+```
+
+      ### Correlate with a New Relic-monitored server [#app-data-example]
+
+      If your server is monitored by New Relic APM, pass the connection used for the request. The agent reads the `X-NewRelic-App-Data` response header from it.
+
+      #### Java [#java-urlconnection]
+
+```java
+HttpURLConnection connection = (HttpURLConnection) new URL(url).openConnection();
+long startTimeMs = System.currentTimeMillis();
+int statusCode = connection.getResponseCode();
+long endTimeMs = System.currentTimeMillis();
+
+NewRelic.noticeHttpTransaction(url, "GET", statusCode, startTimeMs, endTimeMs, 0, connection.getContentLengthLong(), null, null, connection);
+```
+
+      #### Kotlin [#kotlin-urlconnection]
+
+```kotlin
+val connection = URL(url).openConnection() as HttpURLConnection
+val startTimeMs = System.currentTimeMillis()
+val statusCode = connection.responseCode
+val endTimeMs = System.currentTimeMillis()
+
+NewRelic.noticeHttpTransaction(url, "GET", statusCode, startTimeMs, endTimeMs, 0, connection.contentLengthLong, null, null, connection)
+```
+
+      ### Track a request with distributed tracing headers [#distributed-trace]
+
+      For requests made by a client the agent doesn't instrument, call `NewRelic.noticeDistributedTrace()` before you send the request. It returns a `TraceContext`. Add the headers from the trace context to your request, then pass `traceContext.asTraceAttributes()` when you record the transaction to link the request to its trace.
+
+      `noticeDistributedTrace(Map<String, String> requestAttributes)` accepts a map of key/value strings that identify the request, or `null`. The trace context's headers are `traceparent` and `tracestate`. Import `TraceContext` and `TraceHeader` from `com.newrelic.agent.android.distributedtracing`.
+
+      #### Java [#java-dt]
+
+```java
+TraceContext traceContext = NewRelic.noticeDistributedTrace(null);
+
+HttpURLConnection connection = (HttpURLConnection) new URL(url).openConnection();
+for (TraceHeader header : traceContext.getHeaders()) {
+    connection.setRequestProperty(header.getHeaderName(), header.getHeaderValue());
+}
+
+long startTimeMs = System.currentTimeMillis();
+int statusCode = connection.getResponseCode();
+long endTimeMs = System.currentTimeMillis();
+
+NewRelic.noticeHttpTransaction(url, "GET", statusCode, startTimeMs, endTimeMs, 0, connection.getContentLengthLong(),
+        null, null, null, traceContext.asTraceAttributes());
+```
+
+      #### Kotlin [#kotlin-dt]
+
+```kotlin
+val traceContext = NewRelic.noticeDistributedTrace(null)
+
+val connection = URL(url).openConnection() as HttpURLConnection
+traceContext.headers.forEach { header ->
+    connection.setRequestProperty(header.headerName, header.headerValue)
+}
+
+val startTimeMs = System.currentTimeMillis()
+val statusCode = connection.responseCode
+val endTimeMs = System.currentTimeMillis()
+
+NewRelic.noticeHttpTransaction(url, "GET", statusCode, startTimeMs, endTimeMs, 0, connection.contentLengthLong,
+    null, null, null, traceContext.asTraceAttributes())
 ```
     </TabsPageItem>
 

@@ -33,27 +33,23 @@ freshnessValidatedDate: 2023-07-21
 
   <TabsPages>
     <TabsPageItem id="android">
-      <Callout variant="important">
-        As of version 5.3.0 of the New Relic Android agent, `withBuildIdentifier()` has replaced `NewRelic.withApplicationBuild()`.
-      </Callout>
-
       ## Syntax [#syntax]
 
       ### Java [#java]
 
 ```java
-NewRelic.withApplicationBuild(string $buildId)
+NewRelic.withApplicationToken(String appToken).withApplicationBuild(String buildId).start(Context context);
 ```
 
       ### Kotlin [#kotlin]
 
 ```kotlin
-NewRelic.withApplicationBuild(buildId: String?)
+NewRelic.withApplicationToken(appToken: String).withApplicationBuild(buildId: String).start(context: Context)
 ```
 
       ## Description [#description]
 
-      This call allows you to set a custom build identifier string that appears next to the application version in the [Crash report page](/docs/mobile-monitoring/mobile-monitoring-ui/crashes/mobile-apps-crash-report-dashboard#details). Instead of using the `versionCode` string defined in `AndroidManifest.xml`, call the `withApplicationBuild()` method and pass along the custom build ID as a string.
+      This call allows you to set a custom build identifier string that appears next to the application version in the [Crash report page](/docs/mobile-monitoring/mobile-monitoring-ui/crashes/mobile-apps-crash-report-dashboard#details). Instead of using the `versionCode` string defined in `AndroidManifest.xml`, call the `withApplicationBuild()` builder method on the object returned by `withApplicationToken()`, before you call `start()`, and pass along the custom build ID as a string. An empty string is ignored.
 
       ## Parameters [#parameters]
 
@@ -77,11 +73,11 @@ NewRelic.withApplicationBuild(buildId: String?)
         <tbody>
           <tr>
             <td>
-              `$buildId`
+              `buildId`
             </td>
 
             <td>
-              `string`
+              `String`
             </td>
 
             <td>

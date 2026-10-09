@@ -57,6 +57,10 @@ This method controls the maximum amount of offline storage that can be stored in
         Offline storage is disabled by default. To enable it, add the following feature flag:
 
   ```java
+NewRelic.enableFeature(FeatureFlag.OfflineStorage);
+  ```
+
+  ```kotlin
 NewRelic.enableFeature(FeatureFlag.OfflineStorage)
   ```
 
@@ -68,14 +72,25 @@ NewRelic.enableFeature(FeatureFlag.OfflineStorage)
       ### Java [#java]
 
 ```java
-NewRelic.setMaxOfflineStorageSize(int $megaBytes)
+NewRelic.setMaxOfflineStorageSize(int maxSize);
 ```
 
       ### Kotlin [#kotlin]
 
 ```kotlin
-NewRelic.setMaxOfflineStorageSize(megaBytes: Int)
+NewRelic.setMaxOfflineStorageSize(maxSize: Int)
 ```
+
+      ## Requirements [#requirements]
+
+      * Android agent v7.3.0 or higher.
+      * The `OfflineStorage` feature flag must be enabled.
+
+      ## Description [#description]
+
+      On Android, the size is specified in **bytes**, not megabytes. The default is `104857600` bytes (100 * 1024 * 1024, which is 100 MB). If you pass a value of zero or less, the agent logs an error and resets the limit to the default.
+
+      When a new payload would exceed the limit, the agent first deletes the oldest stored payloads to make room. If the payload still doesn't fit, it isn't stored. The agent also deletes stored payloads that are older than 7 days instead of sending them.
 
       ## Parameters [#parameters]
 
@@ -99,7 +114,7 @@ NewRelic.setMaxOfflineStorageSize(megaBytes: Int)
         <tbody>
           <tr>
             <td>
-              `$megaBytes`
+              `maxSize`
             </td>
 
             <td>
@@ -107,7 +122,7 @@ NewRelic.setMaxOfflineStorageSize(megaBytes: Int)
             </td>
 
             <td>
-              Required. Maximum size in megaBytes that can be stored in the file system.
+              Required. Maximum size, in bytes, that can be stored in the file system. The default is `104857600` (100 MB).
             </td>
           </tr>
         </tbody>
@@ -115,18 +130,18 @@ NewRelic.setMaxOfflineStorageSize(megaBytes: Int)
 
       ## Example [#example]
 
-      Here's an example to set max offline storage size to 1000:
+      Here's an example that sets the max offline storage size to 50 MB. The value is specified in bytes:
 
       ### Java [#java]
 
 ```java
-NewRelic.setMaxOfflineStorageSize(1000);
+NewRelic.setMaxOfflineStorageSize(50 * 1024 * 1024);
 ```
 
       ### Kotlin [#kotlin]
 
 ```kotlin
-NewRelic.setMaxOfflineStorageSize(1000)
+NewRelic.setMaxOfflineStorageSize(50 * 1024 * 1024)
 ```
     </TabsPageItem>
 

@@ -38,18 +38,18 @@ freshnessValidatedDate: 2023-07-21
       ### Java [#java]
 
 ```java
-NewRelic.withApplicationVersion(string $appVersion)
+NewRelic.withApplicationToken(String appToken).withApplicationVersion(String appVersion).start(Context context);
 ```
 
       ### Kotlin [#kotlin]
 
 ```kotlin
-NewRelic.withApplicationVersion(appVersion: String?)
+NewRelic.withApplicationToken(appToken: String).withApplicationVersion(appVersion: String).start(context: Context)
 ```
 
       ## Description [#description]
 
-      By default, the New Relic Android agent gets the app version from the `AndroidManifest.xml` or `build.gradle`. This method lets you override that value and set an app version by passing the app version. The app version is displayed as a dropdown in the New Relic UI, and you can use it to sort interactions.
+      By default, the New Relic Android agent gets the app version from the `AndroidManifest.xml` or `build.gradle`. `withApplicationVersion` is a builder method: call it on the object returned by `withApplicationToken()`, before you call `start()`. This method lets you override that value and set an app version by passing the app version. The app version is displayed as a dropdown in the New Relic UI, and you can use it to sort interactions.
 
       ## Parameters [#parameters]
 
@@ -73,11 +73,11 @@ NewRelic.withApplicationVersion(appVersion: String?)
         <tbody>
           <tr>
             <td>
-              `$appVersion`
+              `appVersion`
             </td>
 
             <td>
-              `string`
+              `String`
             </td>
 
             <td>

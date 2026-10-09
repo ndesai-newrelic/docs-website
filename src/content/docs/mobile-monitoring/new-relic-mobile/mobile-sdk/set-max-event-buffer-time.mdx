@@ -62,7 +62,7 @@ freshnessValidatedDate: 2023-07-20
       ### Java [#java]
 
 ```java
-NewRelic.setMaxEventBufferTime(int $maxBufferTimeInSec)
+NewRelic.setMaxEventBufferTime(int maxBufferTimeInSec)
 ```
 
       ### Kotlin [#kotlin]
@@ -78,12 +78,14 @@ NewRelic.setMaxEventBufferTime(maxBufferTimeInSec: Int)
       This method sets the maximum time in seconds that the New Relic Android agent will store events in memory before including the buffered event to be sent to New Relic in the next [harvest cycle](/docs/apm/new-relic-apm/getting-started/glossary#harvest-cycle).
 
       * Default is 60 seconds (1 minute).
-      * Minimum value cannot be less than 60 seconds.
-      * Maximum value should not be greater than 600 seconds.
+      * Minimum value is 60 seconds. Smaller values are raised to 60.
+      * Maximum value is 60 seconds. Larger values are lowered to 60.
+
+      Since Android agent version 7.7.0, the minimum and maximum are both 60 seconds, so the agent always clamps the value you pass to 60 seconds.
 
       In other words, when the oldest event timestamp exceeds this custom configured time, the agent transmits the buffered content at the harvest cycle between each connection from a New Relic agent to the collector.
 
-      See also [`setMaxEventPoolSize()`](/docs/mobile-monitoring/new-relic-mobile-android/android-sdk-api/setmaxeventpoolsize-android-sdk-api), which sets the maximum number of events that are stored by the agent during a harvest cycle.
+      See also [`setMaxEventPoolSize()`](/docs/mobile-monitoring/new-relic-mobile/mobile-sdk/set-max-event-pool-size), which sets the maximum number of events that are stored by the agent during a harvest cycle.
 
       <Callout variant="important">
         Be aware that reporting a large number of events, or reporting events too frequently, may impact app performance.
@@ -111,7 +113,7 @@ NewRelic.setMaxEventBufferTime(maxBufferTimeInSec: Int)
         <tbody>
           <tr>
             <td>
-              `$maxBufferTimeInSec`
+              `maxBufferTimeInSec`
             </td>
 
             <td>
@@ -119,7 +121,7 @@ NewRelic.setMaxEventBufferTime(maxBufferTimeInSec: Int)
             </td>
 
             <td>
-              Required. The maximum time (in seconds) that the agent should store events in memory. The default value harvest cycle length is 60 seconds.
+              Required. The maximum time (in seconds) that the agent should store events in memory. The agent clamps the value to 60 seconds (the minimum and maximum are both 60 seconds). The default is 60 seconds.
             </td>
           </tr>
         </tbody>
@@ -127,18 +129,18 @@ NewRelic.setMaxEventBufferTime(maxBufferTimeInSec: Int)
 
       ## Example [#example]
 
-      Here's an example to set max event buffer time to 300 seconds:
+      Here's an example to set max event buffer time to 60 seconds:
 
       ### Java [#java]
 
 ```java
-boolean NewRelic.setMaxEventBufferTime(300);
+NewRelic.setMaxEventBufferTime(60);
 ```
 
       ### Kotlin [#kotlin]
 
 ```kotlin
-NewRelic.setMaxEventBufferTime(300)
+NewRelic.setMaxEventBufferTime(60)
 ```
     </TabsPageItem>
 

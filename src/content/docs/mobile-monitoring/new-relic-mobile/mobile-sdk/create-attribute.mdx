@@ -62,15 +62,17 @@ freshnessValidatedDate: 2023-07-21
       ### Java [#java]
 
 ```java
-NewRelic.setAttribute(string $name, string or float $value)
+NewRelic.setAttribute(String name, String value);
+NewRelic.setAttribute(String name, double value);
+NewRelic.setAttribute(String name, boolean value);
 ```
 
       ### Kotlin [#kotlin]
 
 ```kotlin
-NewRelic.setAttribute(name: String?, value: String?)
-NewRelic.setAttribute(name: String?, value: Double)
-NewRelic.setAttribute(name: String?, value: Boolean)
+NewRelic.setAttribute(name: String, value: String): Boolean
+NewRelic.setAttribute(name: String, value: Double): Boolean
+NewRelic.setAttribute(name: String, value: Boolean): Boolean
 ```
 
       ## Description [#description]
@@ -79,30 +81,43 @@ NewRelic.setAttribute(name: String?, value: Boolean)
 
       You can override any of the [MobileSession default attributes](/docs/insights/insights-data-sources/default-attributes/mobile-default-attributes-insights) except:
 
+      * `appBuild`
       * `appId`
       * `appName`
+      * `appVersionAtRecord`
       * `accountId`
+      * `architecture`
       * `carrier`
       * `category`
       * `deviceManufacturer`
       * `deviceModel`
       * `eventType`
       * `install`
+      * `interactionDuration`
       * `lastInteraction`
       * `memUsageMb`
       * `newRelicVersion`
+      * `osBuild`
       * `osMajorVersion`
       * `osName`
       * `osVersion`
       * `platform`
       * `platformVersion`
+      * `runTime`
       * `sessionDuration`
       * `sessionId`
       * `timestamp`
       * `type`
       * `upgradeFrom`
       * `uuid`
-      * Anything prefixed with `NewRelic`
+      * Anything prefixed with `newRelic`, `nr.`, or `Public_`
+
+      ### Limits [#limits]
+
+      * You can set a maximum of 128 custom attributes. After that, the agent logs a warning and ignores new attributes until you remove one.
+      * The attribute name can't be empty and must be shorter than 255 characters.
+      * A string value can't be empty and must be shorter than 4096 bytes.
+      * Attributes that fail validation are ignored and the method returns `false`.
 
       ## Parameters [#parameters]
 
@@ -126,11 +141,11 @@ NewRelic.setAttribute(name: String?, value: Boolean)
         <tbody>
           <tr>
             <td>
-              `$name`
+              `name`
             </td>
 
             <td>
-              `string`
+              `String`
             </td>
 
             <td>
@@ -140,15 +155,15 @@ NewRelic.setAttribute(name: String?, value: Boolean)
 
           <tr>
             <td>
-              `$value`
+              `value`
             </td>
 
             <td>
-              `string` or `float`
+              `String`, `double`, or `boolean`
             </td>
 
             <td>
-              Required. The second parameter passed can be either a `string` value or a `float` value.
+              Required. The value of the attribute. It can be a `String`, a numeric `double` value, or a `boolean` value.
             </td>
           </tr>
         </tbody>
@@ -156,7 +171,7 @@ NewRelic.setAttribute(name: String?, value: Boolean)
 
       ## Return values [#return-values]
 
-      Returns `true` if recorded successfully, and `false` if it doesn't.
+      Returns `true` if the attribute was created or updated, and `false` if it wasn't. For example, it returns `false` if the name is reserved or invalid, the value is empty or too long, the 128-attribute limit is reached, or the agent hasn't started.
 
       ## Example [#example]
 
@@ -186,6 +201,20 @@ boolean attributeSet = NewRelic.setAttribute("rate", 9999.99);
 
 ```kotlin
 val attributeSet = NewRelic.setAttribute("rate", 9999.99)
+```
+
+      Here's an example of creating an attribute with the specified text name and boolean value:
+
+      ### Java [#java]
+
+```java
+boolean attributeSet = NewRelic.setAttribute("isPremiumUser", true);
+```
+
+      ### Kotlin [#kotlin]
+
+```kotlin
+val attributeSet = NewRelic.setAttribute("isPremiumUser", true)
 ```
     </TabsPageItem>
 

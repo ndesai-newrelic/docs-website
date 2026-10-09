@@ -61,20 +61,22 @@ freshnessValidatedDate: 2023-07-20
       ### Java [#java]
 
 ```java
-NewRelic.incrementAttribute(string $name[, float $value])
+NewRelic.incrementAttribute(String name);
+NewRelic.incrementAttribute(String name, double value);
 ```
 
       ### Kotlin [#kotlin]
 
 ```kotlin
-NewRelic.incrementAttribute(name: String!, value : Double)
+NewRelic.incrementAttribute(name: String): Boolean
+NewRelic.incrementAttribute(name: String, value: Double): Boolean
 ```
 
       ## Description [#description]
 
-      Increments the count of an attribute. Overwrites its previous value and type each time it is called.
+      Increments the count of a numeric attribute.
 
-      When passed with only a name value, this method increments the count for the specified attribute by 1. If the attribute does not exist, it creates the attribute with a value of 1. When passed an optional float value, it increments the count for the specified attribute by the float value.
+      When passed with only a name value, this method increments the count for the specified attribute by 1. If the attribute does not exist, it creates the attribute with a value of 1. When passed an optional `double` value, it increments the count for the specified attribute by that value. If the attribute already exists as a string or boolean attribute, it can't be incremented and the method returns `false`. New attributes count toward the limit of 128 custom attributes.
 
       ## Parameters [#parameters]
 
@@ -98,11 +100,11 @@ NewRelic.incrementAttribute(name: String!, value : Double)
         <tbody>
           <tr>
             <td>
-              `$name`
+              `name`
             </td>
 
             <td>
-              `string`
+              `String`
             </td>
 
             <td>
@@ -112,15 +114,15 @@ NewRelic.incrementAttribute(name: String!, value : Double)
 
           <tr>
             <td>
-              `$value`
+              `value`
             </td>
 
             <td>
-              `float`
+              `double`
             </td>
 
             <td>
-              Optional. The attribute is incremented by this float value.
+              Optional. The attribute is incremented by this value. The default is 1.
             </td>
           </tr>
         </tbody>
@@ -128,7 +130,7 @@ NewRelic.incrementAttribute(name: String!, value : Double)
 
       ## Return values [#return-values]
 
-      Returns `true` if recorded successfully, or `false` if not.
+      Returns `true` if the attribute was created or incremented, or `false` if not. For example, it returns `false` if the existing attribute is not numeric.
 
       ## Examples [#examples]
 
@@ -146,12 +148,12 @@ boolean incremented = NewRelic.incrementAttribute("rate");
 val incremented = NewRelic.incrementAttribute("rate")
 ```
 
-      Here's an example to increment the count for the specified attribute by the float value amount:
+      Here's an example to increment the count for the specified attribute by the specified amount:
 
       ### Java [#java]
 
 ```java
-boolean incremented = NewRelic.incrementAttribute("rate", 9999.99, false);
+boolean incremented = NewRelic.incrementAttribute("rate", 9999.99);
 ```
 
       ### Kotlin [#kotlin]

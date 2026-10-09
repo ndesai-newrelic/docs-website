@@ -38,7 +38,7 @@ freshnessValidatedDate: 2023-07-20
       ### Java [#java]
 
 ```java
-NewRelic.setInteractionName(string $interactionName)
+NewRelic.setInteractionName(String name);
 ```
 
       ### Kotlin [#kotlin]
@@ -57,7 +57,7 @@ NewRelic.setInteractionName(name: String?)
 
       To create a new interaction, see `startInteraction()`.
 
-      For general info on using this API, see the [Android SDK API usage guide](/docs/mobile-monitoring/new-relic-mobile-android/install-configure/work-android-sdk-api).
+      For general info on using this API, see the [Mobile SDK API guide](/docs/mobile-monitoring/new-relic-mobile/mobile-sdk/mobile-sdk-api-guide).
 
       ## Parameters [#parameters]
 
@@ -81,11 +81,11 @@ NewRelic.setInteractionName(name: String?)
         <tbody>
           <tr>
             <td>
-              `$interactionName`
+              `name`
             </td>
 
             <td>
-              `string`
+              `String`
             </td>
 
             <td>
@@ -118,7 +118,17 @@ public class MainActivity extends Activity {
       ### Kotlin [#kotlin]
 
 ```kotlin
-NewRelic.setInteractionName("Display MyCustomInteraction")
+class MainActivity : AppCompatActivity() {
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+
+        // Rename the in-flight interaction
+        NewRelic.setInteractionName("Display MyCustomInteraction")
+    }
+
+    // ... continue methods ...
+}
 ```
     </TabsPageItem>
 

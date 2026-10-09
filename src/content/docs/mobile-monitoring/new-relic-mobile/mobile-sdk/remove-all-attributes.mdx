@@ -58,22 +58,22 @@ freshnessValidatedDate: 2023-07-21
       ### Java [#java]
 
 ```java
-NewRelic.removeAllAttributes ()
+NewRelic.removeAllAttributes();
 ```
 
       ### Kotlin [#kotlin]
 
 ```kotlin
-NewRelic.removeAllAttributes()
+NewRelic.removeAllAttributes(): Boolean
 ```
 
       ## Description [#description]
 
-      This method removes all attributes from a session. If you want to remove a single session attribute, see [Remove an attribute](/docs/mobile-monitoring/new-relic-mobile/mobile-sdk/remove-all-attributes).
+      This method removes all custom attributes that your app has set, including the ones stored on the device. If you want to remove a single session attribute, see [Remove an attribute](/docs/mobile-monitoring/new-relic-mobile/mobile-sdk/remove-attribute).
 
       ## Return values [#return-values]
 
-      Returns `true` if recorded successfully, and `false` if it doesn't.
+      Returns `true` if the attributes were removed, and `false` if they weren't.
 
       ## Example [#example]
 

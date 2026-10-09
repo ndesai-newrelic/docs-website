@@ -15,16 +15,18 @@ freshnessValidatedDate: never
 
 ## Syntax [#syntax]
 
+`withLaunchActivityName` is a builder method. Call it on the object returned by `withApplicationToken()`, before you call `start()`.
+
 ### Java [#java]
 
 ```java
-NewRelic.withApplicationToken(apptoken).withLaunchActivityName().start(this.getApplication());
+NewRelic.withApplicationToken(String appToken).withLaunchActivityName(String className).start(Context context);
 ```
 
 ### Kotlin [#kotlin]
 
 ```kotlin
-NewRelic.withLaunchActivityName(className: String?)
+NewRelic.withApplicationToken(appToken: String).withLaunchActivityName(className: String).start(context: Context)
 ```
 
 Set the target activity name for app launch time to calculate the cold time and hot time.
@@ -55,7 +57,7 @@ By default, the New Relic Android agent calculates the cold time and hot time wh
   <tbody>
     <tr>
       <td>
-        `$activityName`
+        `className`
       </td>
 
       <td>
@@ -75,14 +77,18 @@ By default, the New Relic Android agent calculates the cold time and hot time wh
 
 Here's an example of setting the activity name:
 
-### Java [#java]
+### Java [#java-example]
 
 ```java
-NewRelic.withLaunchActivityName($activityName)
+NewRelic.withApplicationToken("<YOUR_APP_TOKEN>")
+    .withLaunchActivityName("MainActivity")
+    .start(this.getApplication());
 ```
 
-### Kotlin [#kotlin]
+### Kotlin [#kotlin-example]
 
 ```kotlin
-NewRelic.withApplicationToken("apptoken").withLaunchActivityName($activityName).start(applicationContext)
+NewRelic.withApplicationToken("<YOUR_APP_TOKEN>")
+    .withLaunchActivityName("MainActivity")
+    .start(this.application)
 ```
