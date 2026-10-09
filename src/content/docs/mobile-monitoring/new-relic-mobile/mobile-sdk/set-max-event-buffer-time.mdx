@@ -409,7 +409,7 @@ Future<void> setMaxEventBufferTime(int maxBufferTimeInSec)
 
       * Default is 60 seconds (1 minute).
       * On iOS, the minimum value is 60 seconds and the maximum value is 600 seconds.
-      * On Android, the agent clamps the value to 60 seconds, so changing it has no effect.
+      * On Android, the minimum and maximum value are both 60 seconds. Values outside that range are set to 60 seconds.
 
       ## Parameters [#parameters]
 
