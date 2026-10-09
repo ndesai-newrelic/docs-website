@@ -292,6 +292,24 @@ recordError(err: Error | string, attributes?: Map<string, boolean | number | str
 
       ## Examples [#examples]
 
+      ### Plain Cordova (JavaScript)
+
+      Record an error you catch, with optional attributes that add context:
+
+```js
+try {
+  JSON.parse(responseText);
+} catch (err) {
+  NewRelic.recordError(err, { "screen": "checkout", "retryCount": 2 });
+}
+```
+
+      You can also pass a string:
+
+```js
+NewRelic.recordError("Payment form failed validation");
+```
+
       ### Angular
 
       Angular 2+ exposes an ErrorHandler class to handle errors. You can implement New Relic by extending this class as follows:

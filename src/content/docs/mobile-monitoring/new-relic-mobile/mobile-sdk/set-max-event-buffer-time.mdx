@@ -340,6 +340,14 @@ setMaxEventBufferTime(maxBufferTimeInSeconds: number): void;
 ```js
 NewRelic.setMaxEventBufferTime(60);
 ```
+
+      Plugin methods are available once Cordova fires the `deviceready` event, so call this method from a `deviceready` handler:
+
+```js
+document.addEventListener("deviceready", () => {
+  NewRelic.setMaxEventBufferTime(120);
+}, false);
+```
     </TabsPageItem>
 
     <TabsPageItem id="maui">

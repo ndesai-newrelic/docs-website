@@ -178,6 +178,14 @@ currentSessionId(): Promise<sessionId>;
 ```js
 let sessionId = await NewRelic.currentSessionId();
 ```
+
+      The method returns a promise, so you can also use it outside an `async` function:
+
+```js
+NewRelic.currentSessionId().then((sessionId) => {
+  console.log("New Relic session ID:", sessionId);
+});
+```
     </TabsPageItem>
 
     <TabsPageItem id="maui">

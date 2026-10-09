@@ -419,6 +419,12 @@ recordBreadcrumb(eventName: string, attributes: {[key: string]: boolean | number
 ```js
 NewRelic.recordBreadcrumb("shoe", {"shoeColor": "blue","shoesize": 9,"shoeLaces": true});
 ```
+
+      If you have no attributes to add, pass an empty object:
+
+```js
+NewRelic.recordBreadcrumb("checkout started", {});
+```
     </TabsPageItem>
 
     <TabsPageItem id="maui">

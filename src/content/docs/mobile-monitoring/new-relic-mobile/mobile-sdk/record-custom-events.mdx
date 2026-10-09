@@ -532,6 +532,12 @@ recordCustomEvent(eventType: string, eventName: string, attributes: {[key: strin
 ```js
 NewRelic.recordCustomEvent("mobileClothes", "pants", {"pantsColor": "blue", "pantssize": 32, "belt": true});
 ```
+
+      If you have no attributes to add, pass an empty object. If you don't want to name the event, pass an empty string for `eventName`:
+
+```js
+NewRelic.recordCustomEvent("mobileClothes", "", {});
+```
     </TabsPageItem>
 
     <TabsPageItem id="maui">

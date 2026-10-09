@@ -147,6 +147,14 @@ shutdown() : void;
 ```js
 NewRelic.shutdown();
 ```
+
+      For example, shut down the agent when a user opts out of monitoring:
+
+```js
+const onOptOut = () => {
+  NewRelic.shutdown();
+};
+```
     </TabsPageItem>
 
     <TabsPageItem id="maui">

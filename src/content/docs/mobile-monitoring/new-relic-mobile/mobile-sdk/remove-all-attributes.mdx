@@ -180,6 +180,17 @@ removeAllAttributes(): void;
 ```js
 NewRelic.removeAllAttributes();
 ```
+
+      For example, clear the session attributes when a user signs out:
+
+```js
+NewRelic.setAttribute("plan", "premium");
+NewRelic.setAttribute("betaTester", true);
+
+const onSignOut = () => {
+  NewRelic.removeAllAttributes();
+};
+```
     </TabsPageItem>
 
     <TabsPageItem id="react">

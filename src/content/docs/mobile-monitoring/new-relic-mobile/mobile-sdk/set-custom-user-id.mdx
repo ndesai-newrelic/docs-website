@@ -361,6 +361,14 @@ setUserId(userId: string): void;
 ```js
 NewRelic.setUserId("CORDOVA12934");
 ```
+
+      For example, set the user ID after a user signs in:
+
+```js
+const onSignIn = (user) => {
+  NewRelic.setUserId(user.id);
+};
+```
     </TabsPageItem>
 
     <TabsPageItem id="maui">

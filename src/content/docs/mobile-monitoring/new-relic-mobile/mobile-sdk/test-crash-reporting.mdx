@@ -362,6 +362,14 @@ NewRelic.crashNow();
 NewRelic.crashNow("New Relic example crash message");
 ```
 
+      For example, trigger a test crash from a button in a debug build of your app:
+
+```js
+document.getElementById("test-crash").addEventListener("click", () => {
+  NewRelic.crashNow("Test crash from the Cordova app");
+});
+```
+
     </TabsPageItem>
 
     <TabsPageItem id="maui">
