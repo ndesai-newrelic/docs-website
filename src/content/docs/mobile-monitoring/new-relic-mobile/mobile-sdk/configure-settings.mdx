@@ -1983,40 +1983,71 @@ backgroundReportingEnabled: true
     <TabsPageItem id="flutter">
       The Flutter agent SDK allows you to configure default settings to change the behavior of the agent.
 
-      If you make any changes to the default settings, make sure to add the feature flags just after calling `appToken`.
+      If you make any changes to the default settings, pass them as named arguments to the `Config` constructor, along with the required `accessToken`. All settings are applied once when the agent starts; there are no runtime enable or disable methods.
 
-      Here's a sample configuration:
+      Here's a sample configuration. The values shown are the defaults, except for `logLevel`, which is shown with a non-default value:
 
 ```dart
-if (Platform.isAndroid) {
-  appToken = AppConfig.androidToken;
-} else if (Platform.isIOS) {
-  appToken = AppConfig.iOSToken;
-}
+import 'dart:io';
 
-Config config = Config(
+import 'package:flutter/material.dart';
+import 'package:newrelic_mobile/config.dart';
+import 'package:newrelic_mobile/loglevel.dart';
+import 'package:newrelic_mobile/newrelic_mobile.dart';
+
+void main() {
+  String appToken = "";
+
+  if (Platform.isAndroid) {
+    appToken = "ANDROID_APP_TOKEN";
+  } else if (Platform.isIOS) {
+    appToken = "IOS_APP_TOKEN";
+  }
+
+  final Config config = Config(
     accessToken: appToken,
-    analyticsEventEnabled: false,
-    networkErrorRequestEnabled: false,
-    networkRequestEnabled: false,
-    crashReportingEnabled: false,
-    interactionTracingEnabled: false,
-    httpResponseBodyCaptureEnabled: false,
-    loggingEnabled: false,
-    webViewInstrumentation: false,
-    printStatementAsEventsEnabled: false,
-    httpInstrumentationEnabled: false,
-    offlineStorageEnabled: true);
+    analyticsEventEnabled: true, // Android only
+    crashReportingEnabled: true,
+    interactionTracingEnabled: true,
+    networkRequestEnabled: true,
+    networkErrorRequestEnabled: true,
+    httpResponseBodyCaptureEnabled: true,
+    loggingEnabled: true,
+    logLevel: LogLevel.INFO, // default is LogLevel.WARN
+    webViewInstrumentation: true, // iOS only
+    printStatementAsEventsEnabled: true,
+    httpInstrumentationEnabled: true,
+    distributedTracingEnabled: true,
+    offlineStorageEnabled: true,
+    fedRampEnabled: false,
+    backgroundReportingEnabled: false,
+    newEventSystemEnabled: false, // iOS only
+  );
 
-// NewrelicMobile.instance.start(config, () {
-//   runApp(MyApp());
-// });
+  NewrelicMobile.instance.start(config, () {
+    runApp(const MyApp());
+  });
+}
+```
 
+      ## Start the agent with start or startAgent [#flutter-start-agent]
+
+      `NewrelicMobile.instance.start(Config config, Function runApp)` is the recommended way to launch the agent. It does the following:
+
+      * Runs your app inside `runZonedGuarded` and records uncaught errors with `recordError`.
+      * Assigns `NewrelicMobile.onError` to `FlutterError.onError` so Flutter framework errors are recorded.
+      * Calls `startAgent(config)`, then calls your `runApp` callback.
+      * Forwards `print()` output as `INFO` level logs when `printStatementAsEventsEnabled` is `true`.
+      * Sets the `Flutter Agent Version` session attribute.
+
+      If you need full control, you can call `startAgent(config)` yourself. In that case you must set up error handling and the zone yourself, and `printStatementAsEventsEnabled` has no effect:
+
+```dart
 runZonedGuarded(() async {
   WidgetsFlutterBinding.ensureInitialized();
   FlutterError.onError = NewrelicMobile.onError;
   await NewrelicMobile.instance.startAgent(config);
-  runApp(MyApp());
+  runApp(const MyApp());
 }, (Object error, StackTrace stackTrace) {
   NewrelicMobile.instance.recordError(error, stackTrace);
 });
@@ -2040,7 +2071,9 @@ runZonedGuarded(() async {
         <tbody>
           <tr>
             <td>
-              (Android only) Enable or disable collection of event data.
+              (Android only) Enable or disable collection of event data. The iOS bridge doesn't read this setting.
+
+              Default value is `true`.
             </td>
 
             <td>
@@ -2053,6 +2086,8 @@ analyticsEventEnabled: true
           <tr>
             <td>
               Enable or disable crash reporting.
+
+              Default value is `true`.
             </td>
 
             <td>
@@ -2064,7 +2099,9 @@ crashReportingEnabled: true
 
           <tr>
             <td>
-              Enable or disable interaction tracing. Trace instrumentation still occurs, but no traces are harvested. This will disable default and custom interactions.
+              Enable or disable interaction tracing. Trace instrumentation still occurs, but no traces are harvested. This will disable default and custom interactions. When disabled, `startInteraction()` returns an empty string.
+
+              Default value is `true`.
             </td>
 
             <td>
@@ -2077,6 +2114,8 @@ interactionTracingEnabled: true
           <tr>
             <td>
               Enable or disable reporting successful HTTP requests to the `MobileRequest` event type.
+
+              Default value is `true`.
             </td>
 
             <td>
@@ -2089,6 +2128,8 @@ networkRequestEnabled: true
           <tr>
             <td>
               Enable or disable reporting network and HTTP request errors to the `MobileRequestError` event type.
+
+              Default value is `true`.
             </td>
 
             <td>
@@ -2101,6 +2142,8 @@ networkErrorRequestEnabled: true
           <tr>
             <td>
               Enable or disable capture of HTTP response bodies for HTTP error traces, and `MobileRequestError` events.
+
+              Default value is `true`.
             </td>
 
             <td>
@@ -2112,7 +2155,9 @@ httpResponseBodyCaptureEnabled: true
 
           <tr>
             <td>
-              Enable or disable agent logging.
+              Enable or disable agent logging. On Android, this controls whether the agent writes its own log output. On iOS, the agent applies `logLevel` only when this is `true`; setting it to `false` doesn't change iOS logging. This setting doesn't affect the [mobile logs](/docs/mobile-monitoring/mobile-monitoring-ui/mobile-logs) APIs such as `NewrelicMobile.instance.log()`.
+
+              Default value is `true`.
             </td>
 
             <td>
@@ -2124,21 +2169,23 @@ loggingEnabled: true
 
           <tr>
             <td>
-              Specifies the log level. Omit this field for the default log level.
+              Specifies the log level of the agent. Omit this field for the default log level, `LogLevel.WARN`.
 
-              Options include: `ERROR` (least verbose), `WARNING`, `INFO`, `VERBOSE`, `AUDIT` (most verbose).
+              Options are the members of the `LogLevel` enum, from least to most verbose: `LogLevel.ERROR`, `LogLevel.WARN`, `LogLevel.INFO`, `LogLevel.VERBOSE`, `LogLevel.DEBUG`. Import it with `import 'package:newrelic_mobile/loglevel.dart';`.
             </td>
 
             <td>
 ```dart
-logLevel: NREnums.LogLevel.INFO
+logLevel: LogLevel.INFO
 ```
             </td>
           </tr>
 
           <tr>
             <td>
-              (iOS only) Enable/Disable automatic instrumentation of `WebViews`.
+              (iOS only) Enable or disable automatic instrumentation of `WebViews`. The Android bridge doesn't read this setting.
+
+              Default value is `true`.
             </td>
 
             <td>
@@ -2150,12 +2197,40 @@ webViewInstrumentation: true
 
           <tr>
             <td>
+              Enable or disable forwarding of `print()` output to New Relic as `INFO` level logs. This setting takes effect only when you launch your app with `NewrelicMobile.instance.start()`. It has no effect when you call `startAgent()` directly.
+
+              Default value is `true`.
+            </td>
+
+            <td>
+```dart
+printStatementAsEventsEnabled: true
+```
+            </td>
+          </tr>
+
+          <tr>
+            <td>
+              Enable or disable automatic instrumentation of Dart HTTP requests. When `true`, `startAgent()` sets `HttpOverrides.global` to `NewRelicHttpOverrides` so the agent can record requests made through `dart:io` `HttpClient`. If your app sets its own `HttpOverrides`, see [Chain with your own HttpOverrides](/docs/mobile-monitoring/new-relic-mobile-flutter/monitor-your-flutter-application/#flutter-http-overrides).
+
+              Default value is `true`.
+            </td>
+
+            <td>
+```dart
+httpInstrumentationEnabled: true
+```
+            </td>
+          </tr>
+
+          <tr>
+            <td>
               Set a specific collector address for sending data. Omit this field for default address.
             </td>
 
             <td>
 ```dart
-collectorAddress: "crash-upload-delegate.domain.com"
+collectorAddress: "mobile-collector.domain.com"
 ```
             </td>
           </tr>
@@ -2168,18 +2243,6 @@ collectorAddress: "crash-upload-delegate.domain.com"
             <td>
 ```dart
 crashCollectorAddress: "crash-upload-delegate.domain.com"
-```
-            </td>
-          </tr>
-
-          <tr>
-            <td>
-              Enable or disable sending JavaScript console logs to New Relic.
-            </td>
-
-            <td>
-```dart
-sendConsoleEvents: true
 ```
             </td>
           </tr>
@@ -2200,7 +2263,7 @@ offlineStorageEnabled: false
 
           <tr>
             <td>
-              Enable or disable the adding of distributed tracing headers to network requests.
+              Enable or disable the adding of distributed tracing headers to network requests. When `false`, the Flutter agent doesn't generate distributed tracing headers for the requests it instruments, and `noticeHttpTransaction()` ignores `traceData`. The iOS bridge also passes this setting to the native iOS agent; the Android bridge doesn't pass it to the native Android agent.
 
               Default value is `true`.
 
@@ -2218,17 +2281,47 @@ distributedTracingEnabled: false
 
           <tr>
             <td>
-              Enable or disable background reporting when application goes to the background state.
+              Enable or disable FedRAMP compliant data handling.
+
+              Default value is `false`.
+            </td>
+
+            <td>
+```dart
+fedRampEnabled: true
+```
+            </td>
+          </tr>
+
+          <tr>
+            <td>
+              (iOS only) Enable or disable the new event system. The Android bridge doesn't read this setting.
+
+              Default value is `false`.
+            </td>
+
+            <td>
+```dart
+newEventSystemEnabled: true
+```
+            </td>
+          </tr>
+
+          <tr>
+            <td>
+              Enable or disable background reporting when application goes to the background state. The Android and iOS bridges both read this setting.
+
+              Default value is `false`.
             </td>
 
             <td>
               Background reporting is disabled by default. To enable it, add the following feature flag:
 
-```typescript
+```dart
 backgroundReportingEnabled: true
 ```
 
-              To use background instrumentation, you'll need the following in your iOS app project:
+              To use background instrumentation on iOS, you'll need the following in your iOS app project:
 
               * In your app's `Info.plist` file, add the key "Permitted background task scheduler identifiers". This key should be an array containing a single string value, which is your app's bundle identifier.
 
@@ -2239,6 +2332,16 @@ backgroundReportingEnabled: true
           </tr>
         </tbody>
       </table>
+
+      ## Platform-specific behavior [#flutter-platform-differences]
+
+      Some settings are read by only one platform's native bridge:
+
+      * `analyticsEventEnabled` is read on Android only.
+      * `webViewInstrumentation` and `newEventSystemEnabled` are read on iOS only.
+      * `backgroundReportingEnabled` is read on both Android and iOS.
+      * `distributedTracingEnabled` is passed to the native agent on iOS only. On both platforms, it controls whether the Flutter agent generates distributed tracing headers.
+      * `printStatementAsEventsEnabled` and `httpInstrumentationEnabled` are handled in Dart, so they apply to both platforms. `printStatementAsEventsEnabled` is honored only when you launch with `start()`.
     </TabsPageItem>
 
     <TabsPageItem id="react">
