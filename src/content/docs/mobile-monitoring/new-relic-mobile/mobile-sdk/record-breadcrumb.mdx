@@ -505,7 +505,7 @@ CrossNewRelic.Current.RecordBreadcrumb("MAUIExampleBreadcrumb", new Dictionary<s
       ## Syntax [#syntax]
 
 ```dart
-recordBreadcrumb(String name,{Map<String, dynamic>? eventAttributes}): void;
+Future<bool> recordBreadcrumb(String name, {Map<String, dynamic>? eventAttributes})
 ```
 
       ## Description [#description]
@@ -540,7 +540,7 @@ recordBreadcrumb(String name,{Map<String, dynamic>? eventAttributes}): void;
             </td>
 
             <td>
-              `string`
+              `String`
             </td>
 
             <td>
@@ -554,7 +554,7 @@ recordBreadcrumb(String name,{Map<String, dynamic>? eventAttributes}): void;
             </td>
 
             <td>
-              `Dictionary`
+              `Map<String, dynamic>?`
             </td>
 
             <td>
@@ -566,12 +566,26 @@ recordBreadcrumb(String name,{Map<String, dynamic>? eventAttributes}): void;
 
       ## Return values [#return-values]
 
-      Returns `true` if the event is recorded successfully, or `false` if not.
+      Returns a `Future<bool>` that completes with `true` if the event is recorded successfully, or `false` if not.
 
-      ## Example [#example]
+      ## Examples [#examples]
+
+      Record a breadcrumb with only a name:
 
 ```dart
-NewrelicMobile.instance.recordBreadcrumb("Button Got Pressed on Screen 3");
+await NewrelicMobile.instance.recordBreadcrumb('Button Got Pressed on Screen 3');
+```
+
+      Record a breadcrumb with event attributes:
+
+```dart
+await NewrelicMobile.instance.recordBreadcrumb(
+  'Checkout started',
+  eventAttributes: {
+    'screen': 'Cart',
+    'itemCount': 3,
+  },
+);
 ```
     </TabsPageItem>
 

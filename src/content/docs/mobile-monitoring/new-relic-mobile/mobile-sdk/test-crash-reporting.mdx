@@ -256,12 +256,12 @@ NewRelicCapacitorPlugin.crashNow({ message: "A demo crash message" });
       ## Syntax [#syntax]
 
 ```dart
-crashNow({String name}) : void ;
+void crashNow({String? name})
 ```
 
       ## Description [#description]
 
-      Throws a demo run-time exception on Android/iOS to test New Relic crash reporting.
+      Triggers a demo crash in the native Android or iOS agent to test New Relic crash reporting. Because the crash happens in native code, your app terminates immediately and a Dart `try`/`catch` block can't intercept it. If you omit `name`, the crash message is `NewRelic Demo Crash`.
 
       ## Parameters [#parameters]
 
@@ -289,11 +289,11 @@ crashNow({String name}) : void ;
             </td>
 
             <td>
-              `string`
+              `String?`
             </td>
 
             <td>
-              Optional. A message attached to the exception.
+              Optional named parameter. A message attached to the exception.
             </td>
           </tr>
         </tbody>
@@ -302,9 +302,10 @@ crashNow({String name}) : void ;
       ## Example [#example]
 
 ```dart
-      NewrelicMobile.instance.crashNow(name: "This is a crash");
-      NewrelicMobile.instance.crashNow();
+NewrelicMobile.instance.crashNow(name: "This is a crash");
 
+// Or use the default message:
+NewrelicMobile.instance.crashNow();
 ```
     </TabsPageItem>
 

@@ -399,13 +399,17 @@ CrossNewRelic.Current.SetMaxEventBufferTime(200);
     <TabsPageItem id="flutter">
       ## Syntax [#syntax]
 
-```typescript
-setMaxEventBufferTime(int maxBufferTimeInSec) void;
+```dart
+Future<void> setMaxEventBufferTime(int maxBufferTimeInSec)
 ```
 
       ## Description [#description]
 
-      Sets the event harvest cycle length. Default is 60 seconds (1 minute). Minimum value can not be less than 60 seconds. Maximum value should not be greater than 600 seconds.
+      Sets the event harvest cycle length: the maximum time in seconds that the agent stores events in memory before sending them to New Relic.
+
+      * Default is 60 seconds (1 minute).
+      * On iOS, the minimum value is 60 seconds and the maximum value is 600 seconds.
+      * On Android, the agent clamps the value to 60 seconds, so changing it has no effect.
 
       ## Parameters [#parameters]
 
@@ -443,10 +447,14 @@ setMaxEventBufferTime(int maxBufferTimeInSec) void;
         </tbody>
       </table>
 
+      ## Return values [#return-values]
+
+      Returns a `Future<void>`.
+
       ## Example [#example]
 
 ```dart
-NewrelicMobile.instance.setMaxEventBufferTime(200);
+await NewrelicMobile.instance.setMaxEventBufferTime(200);
 ```
     </TabsPageItem>
 

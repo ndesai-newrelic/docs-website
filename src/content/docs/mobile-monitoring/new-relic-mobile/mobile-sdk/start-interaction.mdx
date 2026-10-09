@@ -460,7 +460,7 @@ CrossNewRelic.Current.EndInteraction(interactionId);
       ## Syntax [#syntax]
 
 ```dart
-startInteraction(String actionName);
+Future<String> startInteraction(String actionName)
 ```
 
       ## Description [#description]
@@ -489,11 +489,11 @@ startInteraction(String actionName);
         <tbody>
           <tr>
             <td>
-              `string actionName`
+              `actionName`
             </td>
 
             <td>
-              `string`
+              `String`
             </td>
 
             <td>
@@ -503,20 +503,27 @@ startInteraction(String actionName);
         </tbody>
       </table>
 
+      ## Return values [#return-values]
+
+      Returns a `Future<String>` that completes with the interaction ID. Pass this ID to [`endInteraction()`](/docs/mobile-monitoring/new-relic-mobile/mobile-sdk/stop-interaction) to end the interaction.
+
+      If you set `interactionTracingEnabled` to `false` in your `Config`, `startInteraction` returns an empty string and doesn't start an interaction. You must call `startAgent()` or `start()` before you call `startInteraction`.
+
       ## Example [#example]
 
 ```dart
-var id = await NewrelicMobile.instance.startInteraction("Getting Data from Service");
+import 'package:dio/dio.dart';
+import 'package:newrelic_mobile/newrelic_mobile.dart';
+
+final String id = await NewrelicMobile.instance.startInteraction('Getting Data from Service');
 
 try {
-  var dio = Dio();
-  var response = await dio.get(
-    'https://reqres.in/api/users?delay=15');
-    print(response);
-    NewrelicMobile.instance.endInteraction(id);
-    Timeline.finishSync();
+  final response = await Dio().get('https://reqres.in/api/users?delay=15');
+  print(response);
 } catch (e) {
   print(e);
+} finally {
+  NewrelicMobile.instance.endInteraction(id);
 }
 ```
     </TabsPageItem>

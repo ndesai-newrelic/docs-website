@@ -481,21 +481,24 @@ CrossNewRelic.Current.LogAttributes(new Dictionary<string, object>()
 ### Syntax [#syntax]
 
 ```dart
-NewrelicMobile.instance.logInfo(String message) : void
+void logInfo(String message)
 
-NewrelicMobile.instance.logError(String message) : void
+void logError(String message)
 
-NewrelicMobile.instance.logVerbose(String message) : void
+void logVerbose(String message)
 
-NewrelicMobile.instance.logWarning(String message) : void
+void logWarning(String message)
 
-NewrelicMobile.instance.logDebug(String message) : void
+void logDebug(String message)
 
-NewrelicMobile.instance.log(LogLevel level, String message) : void
+void log(LogLevel logLevel, String message)
 
-NewrelicMobile.instance.logAll(Exception exception,Map<String, dynamic>? attributes) : void
+void logAll(Exception exception, Map<String, dynamic>? attributes)
 
-NewrelicMobile.instance.logAttributes(Dictionary<string, object> attributes) : void
+void logAttributes(Map<String, dynamic>? attributes)
+
+// All methods are called on NewrelicMobile.instance.
+// LogLevel values: ERROR, WARN, INFO, VERBOSE, DEBUG
 ```
 
 ### Example [#example]
@@ -512,7 +515,7 @@ NewrelicMobile.instance.logWarning("This is a warning message");
 
 NewrelicMobile.instance.logDebug("This is a debug message");
 
-NewrelicMobile.instance.log(LogLevel.Info, "This is an informational message");
+NewrelicMobile.instance.log(LogLevel.INFO, "This is an informational message");
 
 NewrelicMobile.instance.logAll(Exception("This is an exception"), {
   "BreadNumValue": 12.3,

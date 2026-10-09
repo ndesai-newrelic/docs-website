@@ -206,7 +206,7 @@ string sessionId = CrossNewRelic.Current.CurrentSessionId();
       ## Syntax [#syntax]
 
 ```dart
-currentSessionId(): Promise;
+Future<String> currentSessionId()
 ```
 
       ## Description [#description]
@@ -215,12 +215,12 @@ currentSessionId(): Promise;
 
       ## Return values [#return-values]
 
-      Returns ID string for the current session.
+      Returns a `Future<String>` that completes with the ID of the current session.
 
       ## Example [#example]
 
 ```dart
-var sessionId = await NewrelicMobile.instance.currentSessionId();
+final String sessionId = await NewrelicMobile.instance.currentSessionId();
 ```
     </TabsPageItem>
 

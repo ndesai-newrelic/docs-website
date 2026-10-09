@@ -772,21 +772,23 @@ CrossNewRelic.Current.RecordMetric("Login Auth Metric", "Network", 78.9);
     <TabsPageItem id="flutter">
       ## Syntax [#syntax]
 
-```typescript
-recordMetric(name: string, category: string, value?: number, countUnit?: string, valueUnit?: string): void;
+```dart
+Future<void> recordMetric(String name, String category, {double? value, MetricUnit? countUnit, MetricUnit? valueUnit})
 ```
 
       ## Description [#description]
 
-      Records custom metrics (arbitrary numerical data), where `countUnit` is the measurement unit of the metric count and `valueUnit` is the measurement unit for the metric value. If you use `countUnit` or `valueUnit`, then you must set all three: `value`, `countUnit`, and `valueUnit`.
+      Records custom metrics (arbitrary numerical data), where `countUnit` is the measurement unit of the metric count and `valueUnit` is the measurement unit for the metric value. `value`, `countUnit`, and `valueUnit` are optional named parameters. The agent applies `countUnit` and `valueUnit` only when you also set `value`; if you omit `value`, only the `name` and `category` are recorded.
 
-      Supported measurements for `countUnit` and `valueUnit` are:
+      Supported measurements for `countUnit` and `valueUnit` are the members of the `MetricUnit` enum (import `package:newrelic_mobile/metricunit.dart`):
 
-      * `PERCENT`
-      * `BYTES`
-      * `SECONDS`
-      * `BYTES_PER_SECOND`
-      * `OPERATIONS`
+      * `MetricUnit.PERCENT`
+      * `MetricUnit.BYTES`
+      * `MetricUnit.SECONDS`
+      * `MetricUnit.BYTES_PER_SECOND`
+      * `MetricUnit.OPERATIONS`
+
+      The Flutter agent translates each `MetricUnit` to the label that the native Android or iOS agent expects, so you don't need to handle platform differences.
 
       ## Parameters [#parameters]
 
@@ -814,7 +816,7 @@ recordMetric(name: string, category: string, value?: number, countUnit?: string,
             </td>
 
             <td>
-              `string`
+              `String`
             </td>
 
             <td>
@@ -828,7 +830,7 @@ recordMetric(name: string, category: string, value?: number, countUnit?: string,
             </td>
 
             <td>
-              `string`
+              `String`
             </td>
 
             <td>
@@ -842,11 +844,11 @@ recordMetric(name: string, category: string, value?: number, countUnit?: string,
             </td>
 
             <td>
-              `number`
+              `double?`
             </td>
 
             <td>
-              Required. The value of the metric.
+              Optional named parameter. The value of the metric.
             </td>
           </tr>
 
@@ -856,11 +858,11 @@ recordMetric(name: string, category: string, value?: number, countUnit?: string,
             </td>
 
             <td>
-              `string`
+              `MetricUnit?`
             </td>
 
             <td>
-              Required. The unit of measurement for the count.
+              Optional named parameter. The unit of measurement for the count.
             </td>
           </tr>
 
@@ -870,21 +872,37 @@ recordMetric(name: string, category: string, value?: number, countUnit?: string,
             </td>
 
             <td>
-              `string`
+              `MetricUnit?`
             </td>
 
             <td>
-              Required. The unit of measurement for the count.
+              Optional named parameter. The unit of measurement for the value.
             </td>
           </tr>
         </tbody>
       </table>
 
+      ## Return values [#return-values]
+
+      Returns a `Future<void>`.
+
       ## Example [#example]
 
 ```dart
-NewrelicMobile.instance.recordMetric("testMetric", "Test Champ",value: 12.0);
-NewrelicMobile.instance.recordMetric("testMetric1", "TestChamp12",value: 10,valueUnit: MetricUnit.BYTES,countUnit: MetricUnit.PERCENT);
+import 'package:newrelic_mobile/metricunit.dart';
+import 'package:newrelic_mobile/newrelic_mobile.dart';
+
+// Record a metric with a value only.
+await NewrelicMobile.instance.recordMetric('testMetric', 'Test Champ', value: 12.0);
+
+// Record a metric with a value and units.
+await NewrelicMobile.instance.recordMetric(
+  'testMetric1',
+  'TestChamp12',
+  value: 10,
+  valueUnit: MetricUnit.BYTES,
+  countUnit: MetricUnit.OPERATIONS,
+);
 ```
     </TabsPageItem>
 

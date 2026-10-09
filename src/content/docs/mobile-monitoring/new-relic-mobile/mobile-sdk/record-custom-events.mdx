@@ -632,7 +632,7 @@ CrossNewRelic.Current.RecordCustomEvent("MAUICustomEvent", "MAUICustomEventCateg
       ## Syntax [#syntax]
 
 ```dart
-recordCustomEvent(String eventType,{String eventName = "", Map<String, dynamic>? eventAttributes}): void;
+Future<bool> recordCustomEvent(String eventType, {String eventName = "", Map<String, dynamic>? eventAttributes})
 ```
 
       ## Description [#description]
@@ -665,7 +665,7 @@ recordCustomEvent(String eventType,{String eventName = "", Map<String, dynamic>?
             </td>
 
             <td>
-              `string`
+              `String`
             </td>
 
             <td>
@@ -679,11 +679,11 @@ recordCustomEvent(String eventType,{String eventName = "", Map<String, dynamic>?
             </td>
 
             <td>
-              `string`
+              `String`
             </td>
 
             <td>
-              Optional. Use this parameter to name the event. Using this parameter is equivalent to creating a `name` parameter.
+              Optional named parameter. Default is an empty string. Use this parameter to name the event. Using this parameter is equivalent to creating a `name` parameter.
             </td>
           </tr>
 
@@ -693,11 +693,11 @@ recordCustomEvent(String eventType,{String eventName = "", Map<String, dynamic>?
             </td>
 
             <td>
-              `dictionary`
+              `Map<String, dynamic>?`
             </td>
 
             <td>
-              Optional. A map that includes a list of attributes that further designate subcategories to the `eventType`.
+              Optional named parameter. A map that includes a list of attributes that further designate subcategories to the `eventType`.
             </td>
           </tr>
         </tbody>
@@ -705,12 +705,16 @@ recordCustomEvent(String eventType,{String eventName = "", Map<String, dynamic>?
 
       ## Return values [#return-values]
 
-      Returns `true` if the event is recorded successfully, or `false` if not.
+      Returns a `Future<bool>` that completes with `true` if the event is recorded successfully, or `false` if not.
 
       ## Example [#example]
 
 ```dart
-NewrelicMobile.instance.recordCustomEvent("Major",eventName: "User Purchase",eventAttributes: {"item1":"Clothes","price":34.00});
+await NewrelicMobile.instance.recordCustomEvent(
+  "Major",
+  eventName: "User Purchase",
+  eventAttributes: {"item1": "Clothes", "price": 34.00},
+);
 ```
     </TabsPageItem>
 

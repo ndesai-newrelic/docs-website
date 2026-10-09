@@ -377,12 +377,12 @@ CrossNewRelic.Current.RemoveAttribute("MAUINumAttr");
       ## Syntax [#syntax]
 
 ```dart
-removeAttribute(name: string): void;
+Future<bool> removeAttribute(String name)
 ```
 
       ## Description [#description]
 
-      This method removes the attribute specified by the name string. If you want to remove all custom attributes, see [Remove all attributes](/docs/mobile-monitoring/new-relic-mobile/mobile-sdk/remove-all-attributes).
+      This method removes the attribute specified by the name string.
 
       ## Parameters [#parameters]
 
@@ -410,7 +410,7 @@ removeAttribute(name: string): void;
             </td>
 
             <td>
-              `string`
+              `String`
             </td>
 
             <td>
@@ -420,10 +420,14 @@ removeAttribute(name: string): void;
         </tbody>
       </table>
 
+      ## Return values [#return-values]
+
+      Returns a `Future<bool>` that completes with `true` if the attribute is removed successfully, or `false` if not.
+
       ## Example [#example]
 
 ```dart
-NewrelicMobile.instance.removeAttribute("FlutterCustomAttrNumber");
+await NewrelicMobile.instance.removeAttribute("FlutterCustomAttrNumber");
 ```
     </TabsPageItem>
 

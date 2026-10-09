@@ -362,21 +362,108 @@ Vue.config.errorHandler = (err, vm, info) => {
       ## Syntax [#flutter-syntax]
 
 ```dart
-recordError(error, StackTrace.current, attributes: attributes);
+void recordError(Object error, StackTrace? stackTrace, {Map<String, dynamic>? attributes, bool isFatal = false})
 ```
 
       ## Description [#description]
 
-      You can register non-fatal exceptions using the `recordError` method with custom attributes.
+      Records an error (a handled exception) as a New Relic error event, with an optional map of custom attributes. Pass the stack trace from your `catch` block so the error is grouped and symbolicated correctly. The agent truncates stack traces longer than 4096 characters.
+
+      ## Parameters [#parameters]
+
+      <table>
+        <thead>
+          <tr>
+            <th width={200}>
+              Parameter
+            </th>
+
+            <th width={200}>
+              Type
+            </th>
+
+            <th>
+              Description
+            </th>
+          </tr>
+        </thead>
+
+        <tbody>
+          <tr>
+            <td>
+              `error`
+            </td>
+
+            <td>
+              `Object`
+            </td>
+
+            <td>
+              Required. The error or exception to record. The agent uses `error.toString()` as the error message.
+            </td>
+          </tr>
+
+          <tr>
+            <td>
+              `stackTrace`
+            </td>
+
+            <td>
+              `StackTrace?`
+            </td>
+
+            <td>
+              Required, but can be `null`. The stack trace of the error. Use the `StackTrace` that Dart passes to your `catch` block.
+            </td>
+          </tr>
+
+          <tr>
+            <td>
+              `attributes`
+            </td>
+
+            <td>
+              `Map<String, dynamic>?`
+            </td>
+
+            <td>
+              Optional named parameter. Custom attributes that give context for the error.
+            </td>
+          </tr>
+
+          <tr>
+            <td>
+              `isFatal`
+            </td>
+
+            <td>
+              `bool`
+            </td>
+
+            <td>
+              Optional named parameter. Default is `false`. Set to `true` to flag the error as fatal. The agent's `NewrelicMobile.onError` handler, which you assign to `FlutterError.onError`, records uncaught Flutter framework errors with `isFatal: true`.
+            </td>
+          </tr>
+        </tbody>
+      </table>
+
+      ## Return values [#return-values]
+
+      Returns `void`. The call is fire-and-forget, so you can't `await` it.
 
       ## Example [#example]
 
 ```dart
+import 'package:newrelic_mobile/newrelic_mobile.dart';
+
 try {
-  some_code_that_throws_error();
-} catch (ex) {
-  NewrelicMobile.instance
-    .recordError(error, StackTrace.current, attributes: attributes);
+  someCodeThatThrowsAnError();
+} catch (e, stackTrace) {
+  NewrelicMobile.instance.recordError(
+    e,
+    stackTrace,
+    attributes: {'screen': 'Checkout', 'retryCount': 2},
+  );
 }
 ```
     </TabsPageItem>

@@ -424,7 +424,7 @@ CrossNewRelic.Current.EndInteraction(interactionId);
       ## Syntax [#syntax]
 
 ```dart
-endInteraction(String interactionId): void;
+void endInteraction(String interactionId)
 ```
 
       ## Description [#description]
@@ -457,7 +457,7 @@ endInteraction(String interactionId): void;
             </td>
 
             <td>
-              `string`
+              `String`
             </td>
 
             <td>
@@ -468,20 +468,19 @@ endInteraction(String interactionId): void;
         </tbody>
       </table>
 
+      ## Return values [#return-values]
+
+      Returns `void`.
+
       ## Example [#example]
 
 ```dart
-var id = await NewrelicMobile.instance.startInteraction("Getting Data from Service");
+final String id = await NewrelicMobile.instance.startInteraction('Getting Data from Service');
 
 try {
-  var dio = Dio();
-  var response = await dio.get(
-    'https://reqres.in/api/users?delay=15');
-    print(response);
-    NewrelicMobile.instance.endInteraction(id);
-    Timeline.finishSync();
-} catch (e) {
-  print(e);
+  // Do the work that you want to track as an interaction.
+} finally {
+  NewrelicMobile.instance.endInteraction(id);
 }
 ```
     </TabsPageItem>

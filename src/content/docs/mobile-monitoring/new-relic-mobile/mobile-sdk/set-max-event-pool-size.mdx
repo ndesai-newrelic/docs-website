@@ -388,8 +388,8 @@ CrossNewRelic.Current.SetMaxEventPoolSize(1500);
     <TabsPageItem id="flutter">
       ## Syntax [#syntax]
 
-```typescript
-setMaxEventPoolSize(int maxSize): void;
+```dart
+Future<void> setMaxEventPoolSize(int maxSize)
 ```
 
       ## Description [#description]
@@ -432,10 +432,14 @@ setMaxEventPoolSize(int maxSize): void;
         </tbody>
       </table>
 
+      ## Return values [#return-values]
+
+      Returns a `Future<void>`.
+
       ## Example [#example]
 
 ```dart
-NewrelicMobile.instance.setMaxEventPoolSize(10000);
+await NewrelicMobile.instance.setMaxEventPoolSize(10000);
 ```
     </TabsPageItem>
 

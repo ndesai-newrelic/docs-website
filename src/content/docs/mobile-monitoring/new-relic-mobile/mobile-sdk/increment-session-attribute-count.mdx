@@ -491,7 +491,7 @@ CrossNewRelic.Current.IncrementAttribute("MAUINumAttr", 12.3);
       ## Syntax [#syntax]
 
 ```dart
-incrementAttribute(name: string, value?: number): void;
+Future<bool> incrementAttribute(String name, {double? value})
 ```
 
       ## Description [#description]
@@ -524,7 +524,7 @@ incrementAttribute(name: string, value?: number): void;
             </td>
 
             <td>
-              `string`
+              `String`
             </td>
 
             <td>
@@ -538,11 +538,11 @@ incrementAttribute(name: string, value?: number): void;
             </td>
 
             <td>
-              `number`
+              `double?`
             </td>
 
             <td>
-              Optional. The amount to increment the attribute by.
+              Optional named parameter. The amount to increment the attribute by.
             </td>
           </tr>
         </tbody>
@@ -550,13 +550,13 @@ incrementAttribute(name: string, value?: number): void;
 
       ## Return values [#return-values]
 
-      Returns `true` if the event is recorded successfully, or `false` if not.
+      Returns a `Future<bool>` that completes with `true` if the attribute is incremented successfully, or `false` if not.
 
       ## Example [#example]
 
 ```dart
-NewrelicMobile.instance.incrementAttribute("FlutterCustomAttrNumber");
-NewrelicMobile.instance.incrementAttribute("FlutterCustomAttrNumber", value :5.0);
+await NewrelicMobile.instance.incrementAttribute("FlutterCustomAttrNumber");
+await NewrelicMobile.instance.incrementAttribute("FlutterCustomAttrNumber", value: 5.0);
 ```
     </TabsPageItem>
 

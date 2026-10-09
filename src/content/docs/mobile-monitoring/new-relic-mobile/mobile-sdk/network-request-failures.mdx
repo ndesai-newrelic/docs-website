@@ -562,12 +562,16 @@ CrossNewRelic.Current.NoticeNetworkFailure(
       ## Syntax [#syntax]
 
 ```dart
-noticeNetworkFailure(String url, String httpMethod, int startTime, int endTime, NetworkFailure errorCode): void;
+Future<void> noticeNetworkFailure(String url, String httpMethod, int startTime, int endTime, NetworkFailure errorCode)
 ```
 
       ## Description [#description]
 
-      Records network failures. If a network request fails, use this method to record details about the failures.
+      Records network failures. If a network request fails, use this method to record details about the failures. Call it on the `NewrelicMobile.instance` singleton.
+
+      <Callout variant="tip">
+        The Flutter agent automatically records requests made through the `dart:io` `HttpClient` (including libraries built on it, such as `package:http` and `dio`) when `httpInstrumentationEnabled` is `true` (the default). Use this method only for requests the agent can't see.
+      </Callout>
 
       ## Parameters [#parameters]
 
@@ -595,7 +599,7 @@ noticeNetworkFailure(String url, String httpMethod, int startTime, int endTime, 
             </td>
 
             <td>
-              `string`
+              `String`
             </td>
 
             <td>
@@ -609,7 +613,7 @@ noticeNetworkFailure(String url, String httpMethod, int startTime, int endTime, 
             </td>
 
             <td>
-              `string`
+              `String`
             </td>
 
             <td>
@@ -627,8 +631,7 @@ noticeNetworkFailure(String url, String httpMethod, int startTime, int endTime, 
             </td>
 
             <td>
-              Optional. The start time of the request in milliseconds since the epoch.
-              `startTime` and `endTime` can be used as an alternative to `timer`.
+              Required. The start time of the request in milliseconds since the epoch, for example `DateTime.now().millisecondsSinceEpoch`.
             </td>
           </tr>
 
@@ -642,8 +645,7 @@ noticeNetworkFailure(String url, String httpMethod, int startTime, int endTime, 
             </td>
 
             <td>
-              Optional. The end time of the request in milliseconds since the epoch.
-              `startTime` and `endTime` can be used as an alternative to `timer`.
+              Required. The end time of the request in milliseconds since the epoch.
             </td>
           </tr>
 
@@ -653,20 +655,39 @@ noticeNetworkFailure(String url, String httpMethod, int startTime, int endTime, 
             </td>
 
             <td>
-              `network failure`
+              `NetworkFailure`
             </td>
 
             <td>
-              Required. In most cases, place this call inside exception handlers, such as catch blocks. Supported failures are: `Unknown`, `BadURL`, `TimedOut`, `CannotConnectToHost`, `DNSLookupFailed`, `BadServerResponse`, `SecureConnectionFailed`.
+              Required. In most cases, place this call inside exception handlers, such as catch blocks. Supported failures are the members of the `NetworkFailure` enum: `NetworkFailure.unknown`, `NetworkFailure.badURL`, `NetworkFailure.timedOut`, `NetworkFailure.cannotConnectToHost`, `NetworkFailure.dnsLookupFailed`, `NetworkFailure.badServerResponse`, and `NetworkFailure.secureConnectionFailed`.
             </td>
           </tr>
         </tbody>
       </table>
 
+      ## Return values [#return-values]
+
+      Returns a `Future<void>`.
+
       ## Example [#example]
 
 ```dart
-NewrelicMobile.instance.noticeNetworkFailure("https://cb6b02be-a319-4de5-a3b1-361de2564493.mock.pstmn.io/searchpage", "GET", 1000, 2000,'Test Network Failure', NetworkFailure.dnsLookupFailed);
+import 'package:newrelic_mobile/network_failure.dart';
+import 'package:newrelic_mobile/newrelic_mobile.dart';
+
+final int startTime = DateTime.now().millisecondsSinceEpoch;
+try {
+  // Perform a network request that the agent can't instrument automatically.
+} catch (e) {
+  final int endTime = DateTime.now().millisecondsSinceEpoch;
+  await NewrelicMobile.instance.noticeNetworkFailure(
+    'https://example.com/searchpage',
+    'GET',
+    startTime,
+    endTime,
+    NetworkFailure.dnsLookupFailed,
+  );
+}
 ```
     </TabsPageItem>
 

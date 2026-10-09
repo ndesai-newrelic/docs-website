@@ -420,8 +420,8 @@ CrossNewRelic.Current.SetUserId("User123");
     <TabsPageItem id="flutter">
       ## Syntax [#syntax]
 
-```typescript
-setUserId(String userId): void;
+```dart
+Future<bool?> setUserId(String userId)
 ```
 
       ## Description [#description]
@@ -450,11 +450,11 @@ setUserId(String userId): void;
         <tbody>
           <tr>
             <td>
-              `userID`
+              `userId`
             </td>
 
             <td>
-              `string`
+              `String`
             </td>
 
             <td>
@@ -464,10 +464,14 @@ setUserId(String userId): void;
         </tbody>
       </table>
 
+      ## Return values [#return-values]
+
+      Returns a `Future<bool?>` that completes with `true` if the user ID is set successfully, or `false` if not.
+
       ## Example [#example]
 
 ```dart
-NewrelicMobile.instance.setUserId("RN12934");
+await NewrelicMobile.instance.setUserId("User12934");
 ```
     </TabsPageItem>
 

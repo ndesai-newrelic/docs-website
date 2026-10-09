@@ -422,7 +422,7 @@ CrossNewRelic.Current.AddHTTPHeadersTrackingFor(headers);
       ## Syntax [#syntax]
 
 ```dart
-NewRelic.addHTTPHeadersTrackingFor(List<String> headers)
+void addHTTPHeadersTrackingFor(List<String> headers)
 ```
 
       ## Description [#description]
@@ -451,7 +451,7 @@ NewRelic.addHTTPHeadersTrackingFor(List<String> headers)
         <tbody>
           <tr>
             <td>
-              `$headers`
+              `headers`
             </td>
 
             <td>
@@ -467,14 +467,14 @@ NewRelic.addHTTPHeadersTrackingFor(List<String> headers)
 
       ## Return values [#return-values]
 
-      Returns `true` if added successfully, or `false` if not.
+      Returns `void`. The call is fire-and-forget, so you can't `await` it.
 
       ## Examples [#examples]
 
       Here's an example of adding some HTTP header fields:
 
 ```dart
-NewRelic.addHTTPHeadersTrackingFor(["Car"]);
+NewrelicMobile.instance.addHTTPHeadersTrackingFor(["Content-Type", "X-Request-Id"]);
 ```
     </TabsPageItem>
 

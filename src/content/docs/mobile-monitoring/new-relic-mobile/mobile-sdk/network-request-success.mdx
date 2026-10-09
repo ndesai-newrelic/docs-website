@@ -1015,12 +1015,26 @@ CrossNewRelic.Current.NoticeHttpTransaction(
       ## Syntax [#syntax]
 
 ```dart
-noticeHttpTransaction(String url,String httpMethod,int statusCode,int startTime,int endTime,int bytesSent,int bytesReceived,Map<String, dynamic>? traceData,{String responseBody = ""}): void;
+Future<void> noticeHttpTransaction(
+    String url,
+    String httpMethod,
+    int statusCode,
+    int startTime,
+    int endTime,
+    int bytesSent,
+    int bytesReceived,
+    Map<String, dynamic>? traceData,
+    {Map<String, dynamic>? httpParams,
+    String responseBody = ""})
 ```
 
       ## Description [#description]
 
-      Tracks network requests manually. You can use this method to record HTTP transactions, with an option to also send a response body.
+      Tracks network requests manually. You can use this method to record HTTP transactions, with an option to also send a response body and custom parameters.
+
+      <Callout variant="tip">
+        The Flutter agent automatically records requests made through the `dart:io` `HttpClient` (including libraries built on it, such as `package:http` and `dio`) when `httpInstrumentationEnabled` is `true` (the default). Use this method only for requests the agent can't see.
+      </Callout>
 
       ## Parameters [#parameters]
 
@@ -1048,7 +1062,7 @@ noticeHttpTransaction(String url,String httpMethod,int statusCode,int startTime,
             </td>
 
             <td>
-              `string`
+              `String`
             </td>
 
             <td>
@@ -1058,11 +1072,11 @@ noticeHttpTransaction(String url,String httpMethod,int statusCode,int startTime,
 
           <tr>
             <td>
-              `httpmethod`
+              `httpMethod`
             </td>
 
             <td>
-              `string`
+              `String`
             </td>
 
             <td>
@@ -1094,8 +1108,7 @@ noticeHttpTransaction(String url,String httpMethod,int statusCode,int startTime,
             </td>
 
             <td>
-              Optional. The start time of the request in milliseconds since the epoch.
-              `startTime` and `endTime` can be used as an alternative to `timer`.
+              Required. The start time of the request in milliseconds since the epoch, for example `DateTime.now().millisecondsSinceEpoch`.
             </td>
           </tr>
 
@@ -1109,8 +1122,7 @@ noticeHttpTransaction(String url,String httpMethod,int statusCode,int startTime,
             </td>
 
             <td>
-              Optional. The end time of the request in milliseconds since the epoch.
-              `startTime` and `endTime` can be used as an alternative to `timer`.
+              Required. The end time of the request in milliseconds since the epoch.
             </td>
           </tr>
 
@@ -1124,7 +1136,7 @@ noticeHttpTransaction(String url,String httpMethod,int statusCode,int startTime,
             </td>
 
             <td>
-              Required. The number of bytes sent in the request.
+              Required. The number of bytes sent in the request. A value of `-1` is reported as `0`.
             </td>
           </tr>
 
@@ -1138,7 +1150,7 @@ noticeHttpTransaction(String url,String httpMethod,int statusCode,int startTime,
             </td>
 
             <td>
-              Required. The number of bytes received in the response.
+              Required. The number of bytes received in the response. A value of `-1` is reported as `0`.
             </td>
           </tr>
 
@@ -1148,11 +1160,25 @@ noticeHttpTransaction(String url,String httpMethod,int statusCode,int startTime,
             </td>
 
             <td>
-              `dictionary`
+              `Map<String, dynamic>?`
             </td>
 
             <td>
-              Optional. A dictionary of key-value pairs that can be used to provide additional information about the transaction.
+              Required, but can be `null`. The distributed tracing data for the request, as returned by `NewrelicMobile.instance.noticeDistributedTrace()`. The agent uses it only when `distributedTracingEnabled` is `true`. Pass `null` if you aren't tracing the request.
+            </td>
+          </tr>
+
+          <tr>
+            <td>
+              `httpParams`
+            </td>
+
+            <td>
+              `Map<String, dynamic>?`
+            </td>
+
+            <td>
+              Optional named parameter. Additional key-value pairs to attach to the network request event. On Android, values must be strings.
             </td>
           </tr>
 
@@ -1162,20 +1188,39 @@ noticeHttpTransaction(String url,String httpMethod,int statusCode,int startTime,
             </td>
 
             <td>
-              `string`
+              `String`
             </td>
 
             <td>
-              Optional. The response body of the HTTP response.
+              Optional named parameter. The response body of the HTTP response. Default is an empty string.
             </td>
           </tr>
         </tbody>
       </table>
 
+      ## Return values [#return-values]
+
+      Returns a `Future<void>`.
+
       ## Example [#example]
 
 ```dart
-NewrelicMobile.instance.noticeHttpTransaction("https://cb6b02be-a319-4de5-a3b1-361de2564493.mock.pstmn.io/searchpage", "GET",200, 1000, 2000,100,300,null,responseBody: "This is Test Payload");
+final int startTime = DateTime.now().millisecondsSinceEpoch;
+// Perform the network request.
+final int endTime = DateTime.now().millisecondsSinceEpoch;
+
+await NewrelicMobile.instance.noticeHttpTransaction(
+  'https://example.com/searchpage',
+  'GET',
+  200,
+  startTime,
+  endTime,
+  100,
+  300,
+  null,
+  httpParams: {'region': 'us-west'},
+  responseBody: 'This is Test Payload',
+);
 ```
     </TabsPageItem>
 

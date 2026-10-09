@@ -518,7 +518,7 @@ CrossNewRelic.Current.SetAttribute("MAUINumAttr", 13.5);
       ## Syntax [#syntax]
 
 ```dart
-setAttribute (String name, dynamic value) : void;
+Future<bool> setAttribute(String name, dynamic value)
 ```
 
       ## Description [#description]
@@ -551,7 +551,7 @@ setAttribute (String name, dynamic value) : void;
             </td>
 
             <td>
-              `string`
+              `String`
             </td>
 
             <td>
@@ -561,24 +561,30 @@ setAttribute (String name, dynamic value) : void;
 
           <tr>
             <td>
-              `dynamic value`
+              `value`
             </td>
 
             <td>
-              `string`
+              `dynamic`
             </td>
 
             <td>
-              Required. The value of the attribute.
+              Required. The value of the attribute. Use a `String`, a `double`, or a `bool`. The Android agent ignores other value types, including `int`, so write numbers as doubles (for example, `37.0`).
             </td>
           </tr>
         </tbody>
       </table>
 
+      ## Return values [#return-values]
+
+      Returns a `Future<bool>` that completes with `true` if the attribute is recorded successfully, or `false` if not.
+
       ## Example [#example]
 
 ```dart
-NewrelicMobile.instance.setAttribute('RNCustomAttrNumber', 37);
+await NewrelicMobile.instance.setAttribute('FlutterCustomAttrString', 'SampleStoreId000');
+await NewrelicMobile.instance.setAttribute('FlutterCustomAttrNumber', 37.0);
+await NewrelicMobile.instance.setAttribute('FlutterCustomAttrBool', true);
 ```
     </TabsPageItem>
 
