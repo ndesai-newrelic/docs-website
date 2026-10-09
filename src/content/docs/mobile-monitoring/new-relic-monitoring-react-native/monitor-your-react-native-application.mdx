@@ -7,7 +7,7 @@ tags:
 translate:
   - kr
 metaDescription: Instructions for installing and configuring the New Relic React Native agent.
-freshnessValidatedDate: 2024-08-26
+freshnessValidatedDate: 2026-10-09
 ---
 
 Our New Relic React Native agent monitors your React Native mobile app and provides deep insights into your app's performance, errors, and user experience. Written in JavaScript, the React Native agent includes all New Relic mobile monitoring features we offer for native mobile apps. Once you install and configure the React Native agent, you'll be able to:
@@ -38,6 +38,58 @@ The agent allows your team to understand the health of your hybrid app regardles
 ## Compatibility and requirements [#requirements]
 
 Before you install the React Native agent, ensure your app meets these requirements:
+
+* React Native 0.61 or higher.
+* Android API level 24 or higher.
+* iOS: the minimum iOS version depends on the React Native agent version, as shown in the following table.
+
+<table>
+  <thead>
+    <tr>
+      <th>
+        React Native agent version
+      </th>
+
+      <th>
+        Minimum iOS version
+      </th>
+    </tr>
+  </thead>
+
+  <tbody>
+    <tr>
+      <td>
+        Lower than 1.5.12
+      </td>
+
+      <td>
+        iOS 10
+      </td>
+    </tr>
+
+    <tr>
+      <td>
+        1.5.12 to 1.7.0
+      </td>
+
+      <td>
+        iOS 16
+      </td>
+    </tr>
+
+    <tr>
+      <td>
+        1.7.1 or higher
+      </td>
+
+      <td>
+        iOS 15
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+The React Native agent wraps the New Relic native agents. React Native agent version 1.9.2 uses Android agent 7.8.3 and iOS agent 7.7.7 (or a later 7.7.x patch release). For the native requirements, see:
 
 * [iOS native requirements](/docs/mobile-monitoring/new-relic-mobile-ios/get-started/new-relic-ios-compatibility-requirements)
 * [Android native requirements](/docs/mobile-monitoring/new-relic-mobile-android/get-started/new-relic-android-compatibility-requirements)
@@ -147,6 +199,10 @@ If you need to install the agent manually, follow these steps:
     NewRelic.setJSAppVersion(version);
     AppRegistry.registerComponent(name, () => App);
     ```
+
+    Pass the configuration object to `NewRelic.startAgent()` as in the sample. Settings you omit use their defaults, and settings take effect only at startup. For the full list of options and their defaults, see [Configure mobile monitoring settings](/docs/mobile-monitoring/new-relic-mobile/mobile-sdk/configure-settings/#react).
+
+    Call [`NewRelic.setJSAppVersion()`](/docs/mobile-monitoring/new-relic-mobile/mobile-sdk/set-application-version/#react) right after `startAgent()`. The agent attaches this value to JavaScript errors as the `JSBundleId`, so the version you pass must match the `jsBundleId` of your uploaded [source maps](/docs/mobile-monitoring/new-relic-monitoring-react-native/react-native-agent-js-error-reporting#retrieve-bundle-id).
   </Step>
 
   <Step>
@@ -176,7 +232,7 @@ If you need to install the agent manually, follow these steps:
           plugins {
               id "com.android.application"
               id "kotlin-android"
-              id "com.newrelic.agent.android" version "7.5.1"  //<-- include this
+              id "com.newrelic.agent.android" version "7.8.3"  //<-- include this
           }
           ```
 
@@ -190,7 +246,7 @@ If you need to install the agent manually, follow these steps:
             }
             dependencies {
               ...
-              classpath "com.newrelic.agent.android:agent-gradle-plugin:7.5.1"
+              classpath "com.newrelic.agent.android:agent-gradle-plugin:7.8.3"
             }
           }
           ```
