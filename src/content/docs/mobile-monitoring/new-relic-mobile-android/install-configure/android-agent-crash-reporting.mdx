@@ -87,6 +87,13 @@ NewRelic
       .start(this.getApplication());
 ```
 
+```kotlin
+NewRelic
+      .withApplicationToken("<appToken>")
+      .withCrashReportingEnabled(true)
+      .start(this.application)
+```
+
 ## Disable crash reporting [#disable]
 
 If you want to use another crash reporting tool, you can disable crash reporting by calling `NewRelic.disableFeature(FeatureFlag.CrashReporting)` prior to agent initialization. For example:
@@ -96,6 +103,13 @@ NewRelic.disableFeature(FeatureFlag.CrashReporting);
 NewRelic
       .withApplicationToken("<appToken>")
       .start(this.getApplication());
+```
+
+```kotlin
+NewRelic.disableFeature(FeatureFlag.CrashReporting)
+NewRelic
+      .withApplicationToken("<appToken>")
+      .start(this.application)
 ```
 
 ## Debug the crash reporter [#debug]

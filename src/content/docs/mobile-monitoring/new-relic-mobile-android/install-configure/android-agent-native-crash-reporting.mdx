@@ -54,15 +54,29 @@ NewRelic
       .start(this.getApplication());
 ```
 
+```kotlin
+NewRelic.enableFeature(FeatureFlag.NativeReporting)
+NewRelic
+      .withApplicationToken("APP_TOKEN")
+      .start(this.application)
+```
+
 ## Disable native crash reporting [#disable-crash-reporting]
 
-If you want to use another native crash reporting tool, disable native crash reporting by calling `NewRelic.disableFeature(FeatureFlag/NativeReporting)` prior to agent initialization. For example:
+If you want to use another native crash reporting tool, disable native crash reporting by calling `NewRelic.disableFeature(FeatureFlag.NativeReporting)` prior to agent initialization. For example:
 
 ```java
 NewRelic.disableFeature(FeatureFlag.NativeReporting);
 NewRelic
       .withApplicationToken("APP_TOKEN")
       .start(this.getApplication());
+```
+
+```kotlin
+NewRelic.disableFeature(FeatureFlag.NativeReporting)
+NewRelic
+      .withApplicationToken("APP_TOKEN")
+      .start(this.application)
 ```
 
 ## Debug the native crash reporter [#debug-native-crash-reporter]

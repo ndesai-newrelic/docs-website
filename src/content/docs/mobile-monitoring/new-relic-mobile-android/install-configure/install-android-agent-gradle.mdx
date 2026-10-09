@@ -174,6 +174,10 @@ In your main `Activity` class within the `onCreate` method, add this import stat
 import com.newrelic.agent.android.NewRelic;
 ```
 
+```kotlin
+import com.newrelic.agent.android.NewRelic
+```
+
 Note: You must add this import statement to the `Activity` class. We don’t support starting the agent in other classes.
 </Step>
 
@@ -182,6 +186,10 @@ In the `onCreate` method, add the following line, making sure to replace `GENERA
 
 ```java
 NewRelic.withApplicationToken("GENERATED_TOKEN").start(this.getApplicationContext());
+```
+
+```kotlin
+NewRelic.withApplicationToken("GENERATED_TOKEN").start(this.applicationContext)
 ```
 
 </Step>
@@ -194,8 +202,8 @@ If you use ProGuard or Dexguard for code shrinking, follow these steps:
 1. Create a `newrelic.properties` file in your app-level directory (ex: `/projectname/app/newrelic.properties`).
 2. In this new file, add the following line, replacing `GENERATED_TOKEN ` with your actual token:
 
-    ```java
-    com.newrelic.application_token=GENERATED_TOKEN 
+    ```properties
+    com.newrelic.application_token=GENERATED_TOKEN
     ```
   <Callout variant="important">
     New Relic automatically adds the proguard rules for agent version 7.6.8 and later.

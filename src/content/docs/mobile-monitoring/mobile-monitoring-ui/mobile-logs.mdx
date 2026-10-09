@@ -111,6 +111,13 @@ Keep in mind that when you use the logging APIs, you should only use the debug l
 
     <TabsPages>
         <TabsPageItem id="android">
+### Requirements [#requirements]
+
+* Android agent v7.4.0 or higher.
+* The `LogReporting` feature flag is enabled (the default). See [Configure mobile monitoring settings](/docs/mobile-monitoring/new-relic-mobile/mobile-sdk/configure-settings#logging).
+
+The `LogLevel` enum is in the `com.newrelic.agent.android.logging` package. It is separate from the `AgentLog` constants that control the agent's own log output.
+
 ### Syntax [#syntax]
 
 
@@ -118,45 +125,45 @@ Keep in mind that when you use the logging APIs, you should only use the debug l
 #### Java [#java]
 
 ```java
-NewRelic.logInfo(String message)
+NewRelic.logInfo(String message);
 
-NewRelic.logWarning(String message)
+NewRelic.logWarning(String message);
 
-NewRelic.logDebug(String message)
+NewRelic.logDebug(String message);
 
-NewRelic.logVerbose(String message)
+NewRelic.logVerbose(String message);
 
-NewRelic.logError(String message)
+NewRelic.logError(String message);
 
-NewRelic.log(LogLevel logLevel, String message)
+NewRelic.log(LogLevel logLevel, String message);
 
-NewRelic.logThrowable(LogLevel logLevel, String message, Throwable throwable)
+NewRelic.logThrowable(LogLevel logLevel, String message, Throwable throwable);
 
-NewRelic.logAttributes(Map<String, Object> attributes)
+NewRelic.logAttributes(Map<String, Object> attributes);
 
-NewRelic.logAll(Throwable throwable, Map<String, Object> attributes)
+NewRelic.logAll(Throwable throwable, Map<String, Object> attributes);
 ```
 
 #### Kotlin [#kotlin]
 
 ```kotlin
-NewRelic.logInfo(String message)
+NewRelic.logInfo(message: String)
 
-NewRelic.logWarning(String message)
+NewRelic.logWarning(message: String)
 
-NewRelic.logDebug(String message)
+NewRelic.logDebug(message: String)
 
-NewRelic.logVerbose(String message)
+NewRelic.logVerbose(message: String)
 
-NewRelic.logError(String message)
+NewRelic.logError(message: String)
 
-NewRelic.log(LogLevel logLevel, String message)
+NewRelic.log(logLevel: LogLevel, message: String)
 
-NewRelic.logThrowable(LogLevel logLevel, String message, Throwable throwable)
+NewRelic.logThrowable(logLevel: LogLevel, message: String, throwable: Throwable)
 
-NewRelic.logAttributes(Map<String, Object> attributes)
+NewRelic.logAttributes(attributes: Map<String, Any>)
 
-NewRelic.logAll(Throwable throwable, Map<String, Object> attributes)
+NewRelic.logAll(throwable: Throwable, attributes: Map<String, Any>)
 ```
 
 ### Example [#example]
@@ -234,6 +241,13 @@ try {
 // Log attributes
 val attributes = mapOf("key1" to "value1", "key2" to 123)
 NewRelic.logAttributes(attributes)
+
+// Log all with throwable and attributes
+try {
+    throw Exception("This is another test exception")
+} catch (e: Exception) {
+    NewRelic.logAll(e, attributes)
+}
 ```
 
 </TabsPageItem>
