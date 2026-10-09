@@ -804,7 +804,7 @@ NewRelic.recordCustomEvent("mobileClothes", "pants", {"pantsColor": "blue","pant
       ## Syntax [#syntax]
 
 ```csharp
-RecordCustomEvent(string name, Dictionary<string, object> attributes): bool;
+NewRelicAgent.RecordCustomEvent(string eventName, Dictionary<string, object> attributes) : bool;
 ```
 
       ## Description [#description]
@@ -833,7 +833,7 @@ RecordCustomEvent(string name, Dictionary<string, object> attributes): bool;
         <tbody>
           <tr>
             <td>
-              `name`
+              `eventName`
             </td>
 
             <td>
@@ -841,7 +841,7 @@ RecordCustomEvent(string name, Dictionary<string, object> attributes): bool;
             </td>
 
             <td>
-              Use this parameter to name the event. Using this parameter is equivalent to creating a `name` parameter.
+              Required. The name of the custom event (its event type).
             </td>
           </tr>
 
@@ -855,82 +855,7 @@ RecordCustomEvent(string name, Dictionary<string, object> attributes): bool;
             </td>
 
             <td>
-              Optional. A dictionary of key-value pairs that can be used to provide additional information about the custom event.
-            </td>
-          </tr>
-        </tbody>
-      </table>
-
-      ## Return values [#return-values]
-
-      Returns `true` if the event is recorded successfully, or `false` if not.
-
-      ## Example [#example]
-
-```csharp
-Dictionary<string, object> dic = new Dictionary<string, object>();
-dic.Add("Unity Custom Attribute", "Data2");
-
-NewRelicAgent.RecordCustomEvent("Unity Custom Event Example", dic);
-```
-    </TabsPageItem>
-
-    <TabsPageItem id="unity">
-      ## Syntax [#syntax]
-
-```csharp
-RecordCustomEvent(string name, Dictionary<string, object> attributes): bool;
-```
-
-      ## Description [#description]
-
-      Creates and records a [custom event](/docs/insights/new-relic-insights/adding-querying-data/custom-attributes-events-new-relic-mobile#What-are-events-in-New-Relic-Mobile), for use in NRQL.
-
-      ## Parameters [#parameters]
-
-      <table>
-        <thead>
-          <tr>
-            <th width="30%">
-              Parameter
-            </th>
-
-            <th width={200}>
-              Type
-            </th>
-
-            <th>
-              Description
-            </th>
-          </tr>
-        </thead>
-
-        <tbody>
-          <tr>
-            <td>
-              `name`
-            </td>
-
-            <td>
-              `string`
-            </td>
-
-            <td>
-              Use this parameter to name the event. Using this parameter is equivalent to creating a `name` parameter.
-            </td>
-          </tr>
-
-          <tr>
-            <td>
-              `attributes`
-            </td>
-
-            <td>
-              `Dictionary<string, object>`
-            </td>
-
-            <td>
-              Optional. A dictionary of key-value pairs that can be used to provide additional information about the custom event.
+              Required. A dictionary of key-value pairs that provides additional information about the custom event. Attribute values can be strings, numbers, or booleans.
             </td>
           </tr>
         </tbody>

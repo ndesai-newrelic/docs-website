@@ -1012,16 +1012,16 @@ NewRelic.recordMetric('RNCustomMetricName', 'RNCustomMetricCategory', 13, NewRel
       ## Syntax [#syntax]
 
 ```csharp
-RecordMetricWithName(string name, string category) : void;
-RecordMetricWithName(string name, string category, double value) : void;
-RecordMetricWithName(string name, string category, double value, MetricUnit countUnit, MetricUnit valueUnit) : void;
+NewRelicAgent.RecordMetricWithName(string name, string category) : void;
+NewRelicAgent.RecordMetricWithName(string name, string category, double value) : void;
+NewRelicAgent.RecordMetricWithName(string name, string category, double value, NewRelicAgent.MetricUnit valueUnits, NewRelicAgent.MetricUnit countUnits) : void;
 ```
 
       ## Description [#description]
 
-      Records custom metrics (arbitrary numerical data), where `countUnit` is the measurement unit of the metric count and `valueUnit` is the measurement unit for the metric value. If you use `countUnit` or `valueUnit`, then you must set all three: `value`, `countUnit`, and `valueUnit`.
+      Records custom metrics (arbitrary numerical data), where `valueUnits` is the measurement unit for the metric value and `countUnits` is the measurement unit of the metric count. Without a `value`, the metric is recorded with a value of 1 and no units. If you use `valueUnits` or `countUnits`, then you must set all of `value`, `valueUnits`, and `countUnits`.
 
-      Supported measurements for `countUnit` and `valueUnit` are:
+      The units are members of the `NewRelicAgent.MetricUnit` enum. Supported measurements for `valueUnits` and `countUnits` are:
 
       * `PERCENT`
       * `BYTES`
@@ -1073,7 +1073,7 @@ RecordMetricWithName(string name, string category, double value, MetricUnit coun
             </td>
 
             <td>
-              Required. The metric category name, either custom or using a predefined [metric category](/docs/mobile-monitoring/new-relic-mobile-android/install-configure/work-android-sdk-api#cat).
+              Required. A descriptive category name for the metric.
             </td>
           </tr>
 
@@ -1083,7 +1083,7 @@ RecordMetricWithName(string name, string category, double value, MetricUnit coun
             </td>
 
             <td>
-              `number`
+              `double`
             </td>
 
             <td>
@@ -1093,29 +1093,29 @@ RecordMetricWithName(string name, string category, double value, MetricUnit coun
 
           <tr>
             <td>
-              `countUnit`
+              `valueUnits`
             </td>
 
             <td>
-              `string`
+              `NewRelicAgent.MetricUnit`
             </td>
 
             <td>
-              Required. The unit of measurement for the count.
+              Required for the five-argument overload. The unit of measurement for `value`.
             </td>
           </tr>
 
           <tr>
             <td>
-              `valueUnit`
+              `countUnits`
             </td>
 
             <td>
-              `string`
+              `NewRelicAgent.MetricUnit`
             </td>
 
             <td>
-              Required. The unit of measurement for the count.
+              Required for the five-argument overload. The unit of measurement for the metric count.
             </td>
           </tr>
         </tbody>
@@ -1124,9 +1124,9 @@ RecordMetricWithName(string name, string category, double value, MetricUnit coun
       ## Example [#example]
 
 ```csharp
-NewRelicAgent.RecordMetricWithName('UnityCustomMetricName', 'UnityCustomMetricCategory');
-NewRelicAgent.RecordMetricWithName('UnityCustomMetricName', 'UnityCustomMetricCategory', 12);
-NewRelicAgent.RecordMetricWithName('UnityCustomMetricName', 'UnityCustomMetricCategory', 13, NewRelicAgent.MetricUnit.PERCENT, NewRelicAgent.MetricUnit.SECONDS);
+NewRelicAgent.RecordMetricWithName("UnityCustomMetricName", "UnityCustomMetricCategory");
+NewRelicAgent.RecordMetricWithName("UnityCustomMetricName", "UnityCustomMetricCategory", 12);
+NewRelicAgent.RecordMetricWithName("UnityCustomMetricName", "UnityCustomMetricCategory", 13, NewRelicAgent.MetricUnit.PERCENT, NewRelicAgent.MetricUnit.OPERATIONS);
 ```
     </TabsPageItem>
   </TabsPages>

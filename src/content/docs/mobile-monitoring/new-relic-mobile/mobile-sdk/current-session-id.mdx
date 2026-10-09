@@ -250,7 +250,7 @@ let sessionId = await NewRelic.currentSessionId();
       ## Syntax [#syntax]
 
 ```csharp
-currentSessionId() : string;
+NewRelicAgent.CurrentSessionId() : string;
 ```
 
       ## Description [#description]
@@ -259,7 +259,7 @@ currentSessionId() : string;
 
       ## Return values [#return-values]
 
-      Returns ID string for the current session.
+      Returns the ID string for the current session, or `null` if the agent has not started (for example, when running in the Unity Editor).
 
       ## Example [#example]
 

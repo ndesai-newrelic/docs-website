@@ -514,8 +514,12 @@ NewRelic.setMaxOfflineStorageSize(200);
       ## Syntax [#syntax]
 
 ```csharp
-SetMaxOfflineStorageSize(int maxOfflineStorageSize): void;
+NewRelicAgent.SetMaxOfflineStorageSize(uint megabytes) : void;
 ```
+
+      ## Description [#description]
+
+      Sets the maximum size of total data that can be stored for offline storage. By default, mobile monitoring can collect a maximum of 100 megabytes of offline storage. When a data payload fails to send because the device doesn't have an internet connection, it can be stored in the file system until an internet connection has been made.
 
       ## Parameters [#parameters]
 
@@ -539,11 +543,11 @@ SetMaxOfflineStorageSize(int maxOfflineStorageSize): void;
         <tbody>
           <tr>
             <td>
-              `maxOfflineStorageSize`
+              `megabytes`
             </td>
 
             <td>
-              `int`
+              `uint`
             </td>
 
             <td>

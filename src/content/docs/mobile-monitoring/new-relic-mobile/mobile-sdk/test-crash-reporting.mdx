@@ -477,12 +477,12 @@ NewRelic.crashNow("New Relic example crash message");
       ## Syntax [#syntax]
 
 ```csharp
-CrashNow(string message = "") : void;
+NewRelicAgent.CrashNow(string message) : void;
 ```
 
       ## Description [#description]
 
-      Throws a demo run-time exception on Unity to test New Relic crash reporting.
+      Throws a demo run-time exception on Unity to test New Relic crash reporting. On Android this throws a `SystemException`; on iOS it causes a native crash. This method does nothing when you run your game in the Unity Editor or on platforms other than Android and iOS.
 
       ## Parameters [#parameters]
 
@@ -514,7 +514,7 @@ CrashNow(string message = "") : void;
             </td>
 
             <td>
-              Optional. A message attached to the exception.
+              Required. A message attached to the exception.
             </td>
           </tr>
         </tbody>

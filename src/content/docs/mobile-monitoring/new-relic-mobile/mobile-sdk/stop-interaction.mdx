@@ -559,12 +559,12 @@ const badApiLoad = async () => {
       ## Syntax [#syntax]
 
 ```csharp
-StopCurrentInteraction(string interactionId): void;
+NewRelicAgent.StopCurrentInteraction(string interactionIdentifier) : void;
 ```
 
       ## Description [#description]
 
-      This uses the string ID for the interaction you want to end. This string is returned when you use [`startInteraction()`](/docs/mobile-monitoring/new-relic-mobile/mobile-sdk/start-interaction).
+      This uses the string ID for the interaction you want to end. This string is returned when you use [`StartInteractionWithName()`](/docs/mobile-monitoring/new-relic-mobile/mobile-sdk/start-interaction).
 
       ## Parameters [#parameters]
 
@@ -588,7 +588,7 @@ StopCurrentInteraction(string interactionId): void;
         <tbody>
           <tr>
             <td>
-              `interactionId`
+              `interactionIdentifier`
             </td>
 
             <td>
@@ -596,7 +596,7 @@ StopCurrentInteraction(string interactionId): void;
             </td>
 
             <td>
-              Required. The value returned by `startInteraction`.
+              Required. The value returned by `StartInteractionWithName`.
               It is required to pass this string to manually complete the interaction trace.
             </td>
           </tr>

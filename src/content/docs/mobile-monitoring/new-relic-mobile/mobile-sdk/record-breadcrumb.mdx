@@ -653,7 +653,7 @@ NewRelic.recordBreadcrumb("shoe", {"shoeColor": "blue","shoesize": 9,"shoeLaces"
       ## Syntax [#syntax]
 
 ```csharp
-RecordBreadcrumb(string name, Dictionary<string, object> attributes): bool;
+NewRelicAgent.RecordBreadCrumb(string name, Dictionary<string, object> attributes) : bool;
 ```
 
       ## Description [#description]
@@ -698,15 +698,15 @@ RecordBreadcrumb(string name, Dictionary<string, object> attributes): bool;
 
           <tr>
             <td>
-              `Attributes`
+              `attributes`
             </td>
 
             <td>
-              `Dictionary`
+              `Dictionary<string, object>`
             </td>
 
             <td>
-              Optional. A map that includes a list of attributes of the breadcrumb event. Create attributes for any event descriptors you think will be useful.
+              Required. A dictionary of attributes for the breadcrumb event. Attribute values can be strings, numbers, or booleans. Create attributes for any event descriptors you think will be useful.
             </td>
           </tr>
         </tbody>

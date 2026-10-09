@@ -345,12 +345,12 @@ RecordException(System.Exception exception) : void;
       ## Syntax [#unity-syntax]
 
 ```csharp
-RecordException(System.Exception exception) : void;
+NewRelicAgent.RecordException(System.Exception exception) : void;
 ```
 
       ## Description [#unity-description]
 
-      Records a handled exception. Optionally takes map with additional attributes showing context.
+      Records a handled exception, including its stack trace. This method takes only the exception; it does not accept additional attributes.
 
       ## Parameters [#unity-parameters]
 
@@ -390,7 +390,7 @@ RecordException(System.Exception exception) : void;
 
       ## Return values [#unity-return-values]
 
-      Returns `true` if the event is recorded successfully, or `false` if not.
+      None. This method returns `void`.
 
       ## Example [#unity-example]
 
@@ -398,7 +398,7 @@ RecordException(System.Exception exception) : void;
 try {
   some_code_that_throws_error();
 } catch(Exception ex) {
-  NewRelicAgent.RecordException(e);
+  NewRelicAgent.RecordException(ex);
 }
 ```
     </TabsPageItem>

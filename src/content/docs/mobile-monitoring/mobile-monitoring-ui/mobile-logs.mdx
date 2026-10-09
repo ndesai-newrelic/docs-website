@@ -101,7 +101,7 @@ Keep in mind that when you use the logging APIs, you should only use the debug l
         <TabsBarItem id="xamarin">
             Xamarin
         </TabsBarItem>
-         <TabsBarItem id="Unity">
+         <TabsBarItem id="unity">
             Unity
         </TabsBarItem>
                 <TabsBarItem id="unreal">
@@ -636,7 +636,7 @@ CrossNewRelicClient.Current.LogAttributes(new Dictionary<string, object>()
 );
 ```
  </TabsPageItem>
- <TabsPageItem id="Unity">
+ <TabsPageItem id="unity">
 ### Syntax [#syntax]
 
 ```csharp
@@ -650,7 +650,7 @@ NewRelicAgent.LogWarning(String message) : void
 
 NewRelicAgent.LogDebug(String message) : void
 
-NewRelicAgent.Log(LogLevel level, String message) : void
+NewRelicAgent.Log(NewRelicAgent.AgentLogLevel level, String message) : void
 
 NewRelicAgent.LogAttributes(Dictionary<string, object> attributes) : void
 ```
@@ -669,7 +669,7 @@ NewRelicAgent.LogWarning("This is a warning message");
 
 NewRelicAgent.LogDebug("This is a debug message");
 
-NewRelicAgent.Log(LogLevel.Info, "This is an informational message");
+NewRelicAgent.Log(NewRelicAgent.AgentLogLevel.INFO, "This is an informational message");
 
 NewRelicAgent.LogAttributes(new Dictionary<string, object>()
         {

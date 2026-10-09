@@ -495,11 +495,11 @@ SetAttribute(string name, bool value) : bool;
             </td>
 
             <td>
-              `string`, `double`, or `bool`
+              `string` or `double`
             </td>
 
             <td>
-              Required. The value of the attribute.
+              Required. The value of the attribute. Boolean values are not supported; use a `string` or a numeric value instead.
             </td>
           </tr>
         </tbody>
@@ -654,9 +654,8 @@ NewRelic.setAttribute('RNCustomAttrNumber', 37);
       ## Syntax [#syntax]
 
 ```csharp
-setAttribute(string name, string value) : bool;
-setAttribute(string name, double value) : bool;
-setAttribute(string name, bool value) : bool;
+NewRelicAgent.SetAttribute(string name, string value) : bool;
+NewRelicAgent.SetAttribute(string name, double value) : bool;
 ```
 
       ## Description [#description]
@@ -716,9 +715,8 @@ setAttribute(string name, bool value) : bool;
       ## Example [#example]
 
 ```csharp
-NewRelicAgent.SetAttribute("UnityBoolCustomAttr", false);
 NewRelicAgent.SetAttribute("UnityStringCustomAttr", "Cat");
-NewRelicAgent.SetAttribute('UnityCustomAttrNumber', 37);
+NewRelicAgent.SetAttribute("UnityCustomAttrNumber", 37);
 ```
     </TabsPageItem>
 

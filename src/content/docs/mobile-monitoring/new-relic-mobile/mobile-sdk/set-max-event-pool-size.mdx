@@ -497,7 +497,7 @@ NewRelic.setMaxEventPoolSize(2000);
       ## Syntax [#syntax]
 
 ```csharp
-SetMaxEventPoolSize(int maxPoolSize): void;
+NewRelicAgent.SetMaxEventPoolSize(uint size) : void;
 ```
 
       ## Description [#description]
@@ -526,11 +526,11 @@ SetMaxEventPoolSize(int maxPoolSize): void;
         <tbody>
           <tr>
             <td>
-              `maxPoolSize`
+              `size`
             </td>
 
             <td>
-              `int`
+              `uint`
             </td>
 
             <td>
@@ -547,7 +547,7 @@ NewRelicAgent.SetMaxEventPoolSize(1500);
 ```
     </TabsPageItem>
 
-    <TabsPageItem id="unity">
+    <TabsPageItem id="unreal">
       ## Syntax [#syntax]
 
 ```cpp
