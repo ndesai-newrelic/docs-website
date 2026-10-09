@@ -640,23 +640,25 @@ NewRelic.disableFeature(FeatureFlag.OfflineStorage)
     </TabsPageItem>
 
     <TabsPageItem id="ios">
-      New Relic's iOS agent provides configuration settings to change the default behavior of the agent. If you make any changes to the default settings, make sure to add the feature flags just after calling the app token. For example:
+      New Relic's iOS agent provides configuration settings to change the default behavior of the agent. If you make any changes to the default settings, make sure to add the feature flags before you start the agent with the app token. For example:
 
       * Objective-C:
 
 ```objectivec
-+ [NewRelic startWithApplicationToken:]
+[NewRelic enableFeatures:NRFeatureFlag_SwiftInteractionTracing];
+[NewRelic startWithApplicationToken:@"APP_TOKEN"];
 ```
 
       * Swift:
 
 ```swift
-NewRelic.start(withApplicationToken:)
+NewRelic.enableFeatures(NRMAFeatureFlags.NRFeatureFlag_SwiftInteractionTracing)
+NewRelic.start(withApplicationToken: "APP_TOKEN")
 ```
 
       ## Enable or disable feature flags [#ios-feature-flags]
 
-      To configure feature flags, use the following method defined in `NewRelic.h:`
+      To configure feature flags, use the following methods defined in `NewRelic.h`:
 
       <table>
         <thead>
@@ -683,24 +685,24 @@ NewRelic.start(withApplicationToken:)
               Enable a feature flag:
 
 ```objectivec
-+[NewRelic enableFeatures:(NRMAFeatureFlags)flags];
++ (void)enableFeatures:(NRMAFeatureFlags)featureFlags;
 ```
 
               Disable a feature flag:
 
 ```objectivec
-+[NewRelic disableFeatures:(NRMAFeatureFlags)flags];
++ (void)disableFeatures:(NRMAFeatureFlags)featureFlags;
 ```
 
               Here is an example where:
 
-              * Interaction tracing and experimental networking instrumentation are enabled.
+              * Swift interaction tracing and FedRAMP endpoints are enabled.
               * `NSURLSession` instrumentation and crash reporting are disabled.
 
 ```objectivec
 [NewRelic enableFeatures:NRFeatureFlag_SwiftInteractionTracing | NRFeatureFlag_FedRampEnabled];
 [NewRelic disableFeatures:NRFeatureFlag_NSURLSessionInstrumentation | NRFeatureFlag_CrashReporting];
-[NewRelic startWithApplicationToken:...];
+[NewRelic startWithApplicationToken:@"APP_TOKEN"];
 ```
             </td>
           </tr>
@@ -728,6 +730,14 @@ NewRelic.disableFeatures(NRMAFeatureFlags.[NRMAFeatureFlag])
 ```swift
 NewRelic.disableFeatures(NRMAFeatureFlags.NRFeatureFlag_DefaultInteractions)
 ```
+
+              Example that matches the Objective-C example:
+
+```swift
+NewRelic.enableFeatures([NRMAFeatureFlags.NRFeatureFlag_SwiftInteractionTracing, NRMAFeatureFlags.NRFeatureFlag_FedRampEnabled])
+NewRelic.disableFeatures([NRMAFeatureFlags.NRFeatureFlag_NSURLSessionInstrumentation, NRMAFeatureFlags.NRFeatureFlag_CrashReporting])
+NewRelic.start(withApplicationToken: "APP_TOKEN")
+```
             </td>
           </tr>
         </tbody>
@@ -751,20 +761,28 @@ NewRelic.disableFeatures(NRMAFeatureFlags.NRFeatureFlag_DefaultInteractions)
         <tbody>
           <tr>
             <td>
-              Enable or disable crash reporting, which appears on the [<DNT>**Crash analysis**</DNT> page](/docs/mobile-monitoring/mobile-monitoring-ui/crashes/crash-analysis-group-filter-your-crashes).
-
               Specifies the URI authority component of the harvest data upload endpoint. This endpoint is also used for handled exception uploads.
 
-              To replace data endpoint the agent will use when reporting data harvests, add `andCollectorAddress:` to your `NewRelic.start(withApplicationToken:)` method call.
+              To replace the data endpoint the agent will use when reporting data harvests, use the `NewRelic.start(withApplicationToken:andCollectorAddress:andCrashCollectorAddress:)` method.
 
               Default value is `mobile-collector.newrelic.com`.
             </td>
 
             <td>
+              Swift:
+
 ```swift
-NewRelic.start(withApplicationToken:YOUR_APP_TOKEN
-        andCollectorAddress:"harvest-upload.domain.com"
-        andCrashCollectorAddress:"crash-upload.domain.com");
+NewRelic.start(withApplicationToken: "APP_TOKEN",
+               andCollectorAddress: "harvest-upload.domain.com",
+               andCrashCollectorAddress: "crash-upload.domain.com")
+```
+
+              Objective-C:
+
+```objectivec
+[NewRelic startWithApplicationToken:@"APP_TOKEN"
+                andCollectorAddress:@"harvest-upload.domain.com"
+           andCrashCollectorAddress:@"crash-upload.domain.com"];
 ```
             </td>
           </tr>
@@ -773,16 +791,26 @@ NewRelic.start(withApplicationToken:YOUR_APP_TOKEN
             <td>
               Specifies the authority component of the crash data upload URI.
 
-              To replace data endpoint the agent will use when reporting crashes, add `andCrashCollectorAddress:` to your `NewRelic.start(withApplicationToken:)` method call.
+              To replace the data endpoint the agent will use when reporting crashes, set the `andCrashCollectorAddress:` parameter of the `NewRelic.start(withApplicationToken:andCollectorAddress:andCrashCollectorAddress:)` method.
 
               Default value is `mobile-crash.newrelic.com`.
             </td>
 
             <td>
+              Swift:
+
 ```swift
-NewRelic.start(withApplicationToken:YOUR_APP_TOKEN
-      andCollectorAddress:"harvest-upload.domain.com"
-      andCrashCollectorAddress:"crash-upload.domain.com");
+NewRelic.start(withApplicationToken: "APP_TOKEN",
+               andCollectorAddress: "harvest-upload.domain.com",
+               andCrashCollectorAddress: "crash-upload.domain.com")
+```
+
+              Objective-C:
+
+```objectivec
+[NewRelic startWithApplicationToken:@"APP_TOKEN"
+                andCollectorAddress:@"harvest-upload.domain.com"
+           andCrashCollectorAddress:@"crash-upload.domain.com"];
 ```
             </td>
           </tr>
@@ -791,7 +819,7 @@ NewRelic.start(withApplicationToken:YOUR_APP_TOKEN
 
       ## Crash and error reporting feature flag [#ios-crashes]
 
-      If you modify any of crash and error reporting settings below, be sure to call the feature flag before the iOS agent start call.
+      If you modify any of the crash and error reporting settings below, be sure to call the feature flag before the iOS agent start call.
 
       <table>
         <thead>
@@ -811,16 +839,32 @@ NewRelic.start(withApplicationToken:YOUR_APP_TOKEN
             <td>
               Enable or disable crash reporting, which appears on the [**Crash analysis** page](/docs/mobile-monitoring/mobile-monitoring-ui/crashes/crash-analysis-group-filter-your-crashes).
 
-              Specifies the URI authority component of the harvest data upload endpoint. This endpoint is also used for handled exception uploads.
-
-              To replace data endpoint the agent will use when reporting data harvests, add `.usingCollectorAddress()` to your `NewRelic.withApplicationToken()` method call.
+              You can also enable or disable crash reporting with `+ (void)enableCrashReporting:(BOOL)enabled`. Like feature flags, call this method before the iOS agent start call.
 
               Default value is `true`.
             </td>
 
             <td>
+              Swift:
+
 ```swift
 NewRelic.disableFeatures(NRMAFeatureFlags.NRFeatureFlag_CrashReporting)
+```
+
+              Objective-C:
+
+```objectivec
+[NewRelic disableFeatures:NRFeatureFlag_CrashReporting];
+```
+
+              Or, use `enableCrashReporting`:
+
+```swift
+NewRelic.enableCrashReporting(false)
+```
+
+```objectivec
+[NewRelic enableCrashReporting:NO];
 ```
             </td>
           </tr>
@@ -833,8 +877,38 @@ NewRelic.disableFeatures(NRMAFeatureFlags.NRFeatureFlag_CrashReporting)
             </td>
 
             <td>
+              Swift:
+
 ```swift
 NewRelic.disableFeatures(NRMAFeatureFlags.NRFeatureFlag_HandledExceptionEvents)
+```
+
+              Objective-C:
+
+```objectivec
+[NewRelic disableFeatures:NRFeatureFlag_HandledExceptionEvents];
+```
+            </td>
+          </tr>
+
+          <tr>
+            <td>
+              Enable or disable the recording of JavaScript error events (`MobileJSError`) reported to the agent.
+
+              Default value is `true`.
+            </td>
+
+            <td>
+              Swift:
+
+```swift
+NewRelic.disableFeatures(NRMAFeatureFlags.NRFeatureFlag_JSErrorEvents)
+```
+
+              Objective-C:
+
+```objectivec
+[NewRelic disableFeatures:NRFeatureFlag_JSErrorEvents];
 ```
             </td>
           </tr>
@@ -865,8 +939,16 @@ NewRelic.disableFeatures(NRMAFeatureFlags.NRFeatureFlag_HandledExceptionEvents)
             </td>
 
             <td>
+              Swift:
+
 ```swift
 NewRelic.disableFeatures(NRMAFeatureFlags.NRFeatureFlag_DistributedTracing)
+```
+
+              Objective-C:
+
+```objectivec
+[NewRelic disableFeatures:NRFeatureFlag_DistributedTracing];
 ```
             </td>
           </tr>
@@ -875,7 +957,7 @@ NewRelic.disableFeatures(NRMAFeatureFlags.NRFeatureFlag_DistributedTracing)
 
       ## Interactions feature flags [#ios-interactions]
 
-      If you modify any of crash and error reporting settings below, be sure to call the feature flag just before the New Relic iOS agent start call.
+      If you modify any of the interaction settings below, be sure to call the feature flag just before the New Relic iOS agent start call.
 
       <table>
         <thead>
@@ -893,14 +975,22 @@ NewRelic.disableFeatures(NRMAFeatureFlags.NRFeatureFlag_DistributedTracing)
         <tbody>
           <tr>
             <td>
-              Enable or disable interaction tracing only for default instrumented classes and methods. Custom interactions will be reported. The traces will appear on the [<DNT>**Interactions**</DNT> page](/docs/mobile-monitoring/mobile-monitoring-ui/mobile-app-pages/interactions-page).
+              Enable or disable interaction tracing only for default instrumented classes and methods. Custom interactions will be reported. The traces will appear on the [<DNT>**Interactions**</DNT> page](/docs/mobile-monitoring/mobile-monitoring-ui/mobile-app-pages/interactions-page). Default interactions are started when a view controller is displayed and are named `Display <ViewControllerName>`.
 
               Default value is `true`.
             </td>
 
             <td>
+              Swift:
+
 ```swift
 NewRelic.disableFeatures(NRMAFeatureFlags.NRFeatureFlag_DefaultInteractions)
+```
+
+              Objective-C:
+
+```objectivec
+[NewRelic disableFeatures:NRFeatureFlag_DefaultInteractions];
 ```
             </td>
           </tr>
@@ -915,8 +1005,16 @@ NewRelic.disableFeatures(NRMAFeatureFlags.NRFeatureFlag_DefaultInteractions)
             </td>
 
             <td>
+              Swift:
+
 ```swift
 NewRelic.disableFeatures(NRMAFeatureFlags.NRFeatureFlag_InteractionTracing)
+```
+
+              Objective-C:
+
+```objectivec
+[NewRelic disableFeatures:NRFeatureFlag_InteractionTracing];
 ```
             </td>
           </tr>
@@ -924,17 +1022,25 @@ NewRelic.disableFeatures(NRMAFeatureFlags.NRFeatureFlag_InteractionTracing)
           <tr>
             <td>
               <Callout variant="caution">
-                Before enabling this feature, see [Enable Swift interaction traces](/docs/mobile-monitoring/new-relic-mobile-ios/install-configure/enable-swift-interaction-traces). If proper steps are not taken, enabling this feature may cause instability.
+                Before enabling this feature, see [Enable Swift interaction traces](/docs/mobile-monitoring/new-relic-mobile-ios/configuration/enable-swift-interaction-traces). If proper steps are not taken, enabling this feature may cause instability.
               </Callout>
 
-              Enable or disable interaction tracing for Swift code. The traces appear on the [<DNT>**Interactions**</DNT> page](/docs/mobile-monitoring/mobile-monitoring-ui/mobile-app-pages/interactions-page). This feature will always be disabled if [`NRFeatureFlag_InteractionTracing`](#interactionTracing) is disabled.
+              Enable or disable interaction tracing for Swift code. The traces appear on the [<DNT>**Interactions**</DNT> page](/docs/mobile-monitoring/mobile-monitoring-ui/mobile-app-pages/interactions-page). This feature will always be disabled if `NRFeatureFlag_InteractionTracing` is disabled.
 
               Default value is `false`.
             </td>
 
             <td>
+              Swift:
+
 ```swift
 NewRelic.enableFeatures(NRMAFeatureFlags.NRFeatureFlag_SwiftInteractionTracing)
+```
+
+              Objective-C:
+
+```objectivec
+[NewRelic enableFeatures:NRFeatureFlag_SwiftInteractionTracing];
 ```
             </td>
           </tr>
@@ -947,8 +1053,16 @@ NewRelic.enableFeatures(NRMAFeatureFlags.NRFeatureFlag_SwiftInteractionTracing)
             </td>
 
             <td>
+              Swift:
+
 ```swift
 NewRelic.disableFeatures(NRMAFeatureFlags.NRFeatureFlag_WebViewInstrumentation)
+```
+
+              Objective-C:
+
+```objectivec
+[NewRelic disableFeatures:NRFeatureFlag_WebViewInstrumentation];
 ```
             </td>
           </tr>
@@ -965,8 +1079,16 @@ NewRelic.disableFeatures(NRMAFeatureFlags.NRFeatureFlag_WebViewInstrumentation)
             </td>
 
             <td>
+              Swift:
+
 ```swift
 NewRelic.enableFeatures(NRMAFeatureFlags.NRFeatureFlag_GestureInstrumentation)
+```
+
+              Objective-C:
+
+```objectivec
+[NewRelic enableFeatures:NRFeatureFlag_GestureInstrumentation];
 ```
             </td>
           </tr>
@@ -975,7 +1097,7 @@ NewRelic.enableFeatures(NRMAFeatureFlags.NRFeatureFlag_GestureInstrumentation)
 
       ## Networking feature flags [#ios-networking]
 
-      If you modify any of settings below, be sure to call the feature flag before the New Relic iOS agent start call.
+      If you modify any of the settings below, be sure to call the feature flag before the New Relic iOS agent start call.
 
       <table>
         <thead>
@@ -1003,8 +1125,16 @@ NewRelic.enableFeatures(NRMAFeatureFlags.NRFeatureFlag_GestureInstrumentation)
             </td>
 
             <td>
+              Swift:
+
 ```swift
 NewRelic.enableFeatures(NRMAFeatureFlags.NRFeatureFlag_ExperimentalNetworkingInstrumentation)
+```
+
+              Objective-C:
+
+```objectivec
+[NewRelic enableFeatures:NRFeatureFlag_ExperimentalNetworkingInstrumentation];
 ```
             </td>
           </tr>
@@ -1017,8 +1147,16 @@ NewRelic.enableFeatures(NRMAFeatureFlags.NRFeatureFlag_ExperimentalNetworkingIns
             </td>
 
             <td>
+              Swift:
+
 ```swift
 NewRelic.disableFeatures(NRMAFeatureFlags.NRFeatureFlag_NSURLSessionInstrumentation)
+```
+
+              Objective-C:
+
+```objectivec
+[NewRelic disableFeatures:NRFeatureFlag_NSURLSessionInstrumentation];
 ```
             </td>
           </tr>
@@ -1031,8 +1169,16 @@ NewRelic.disableFeatures(NRMAFeatureFlags.NRFeatureFlag_NSURLSessionInstrumentat
             </td>
 
             <td>
+              Swift:
+
 ```swift
 NewRelic.disableFeatures(NRMAFeatureFlags.NRFeatureFlag_NetworkRequestEvents)
+```
+
+              Objective-C:
+
+```objectivec
+[NewRelic disableFeatures:NRFeatureFlag_NetworkRequestEvents];
 ```
             </td>
           </tr>
@@ -1045,8 +1191,16 @@ NewRelic.disableFeatures(NRMAFeatureFlags.NRFeatureFlag_NetworkRequestEvents)
             </td>
 
             <td>
+              Swift:
+
 ```swift
 NewRelic.disableFeatures(NRMAFeatureFlags.NRFeatureFlag_RequestErrorEvents)
+```
+
+              Objective-C:
+
+```objectivec
+[NewRelic disableFeatures:NRFeatureFlag_RequestErrorEvents];
 ```
             </td>
           </tr>
@@ -1059,8 +1213,16 @@ NewRelic.disableFeatures(NRMAFeatureFlags.NRFeatureFlag_RequestErrorEvents)
             </td>
 
             <td>
+              Swift:
+
 ```swift
 NewRelic.disableFeatures(NRMAFeatureFlags.NRFeatureFlag_HttpResponseBodyCapture)
+```
+
+              Objective-C:
+
+```objectivec
+[NewRelic disableFeatures:NRFeatureFlag_HttpResponseBodyCapture];
 ```
             </td>
           </tr>
@@ -1073,8 +1235,16 @@ NewRelic.disableFeatures(NRMAFeatureFlags.NRFeatureFlag_HttpResponseBodyCapture)
             </td>
 
             <td>
+              Swift:
+
 ```swift
 NewRelic.enableFeatures(NRMAFeatureFlags.NRFeatureFlag_SwiftAsyncURLSessionSupport)
+```
+
+              Objective-C:
+
+```objectivec
+[NewRelic enableFeatures:NRFeatureFlag_SwiftAsyncURLSessionSupport];
 ```
             </td>
           </tr>
@@ -1116,8 +1286,16 @@ NewRelic.enableFeatures(NRMAFeatureFlags.NRFeatureFlag_SwiftAsyncURLSessionSuppo
             </td>
 
             <td>
+              Swift:
+
 ```swift
 NewRelic.enableFeatures(NRMAFeatureFlags.NRFeatureFlag_AppStartMetrics)
+```
+
+              Objective-C:
+
+```objectivec
+[NewRelic enableFeatures:NRFeatureFlag_AppStartMetrics];
 ```
             </td>
           </tr>
@@ -1148,8 +1326,56 @@ NewRelic.enableFeatures(NRMAFeatureFlags.NRFeatureFlag_AppStartMetrics)
             </td>
 
             <td>
+              Swift:
+
 ```swift
 NewRelic.enableFeatures(NRMAFeatureFlags.NRFeatureFlag_FedRampEnabled)
+```
+
+              Objective-C:
+
+```objectivec
+[NewRelic enableFeatures:NRFeatureFlag_FedRampEnabled];
+```
+            </td>
+          </tr>
+        </tbody>
+      </table>
+
+      ## Event system [#ios-event-system]
+
+      <table>
+        <thead>
+          <tr>
+            <th style={{ width: "800px" }}>
+              Description
+            </th>
+
+            <th>
+              Example
+            </th>
+          </tr>
+        </thead>
+
+        <tbody>
+          <tr>
+            <td>
+              Enable or disable the new event system for the iOS agent. This flag was added in agent version 7.4.8.
+
+              Default value is `false`.
+            </td>
+
+            <td>
+              Swift:
+
+```swift
+NewRelic.enableFeatures(NRMAFeatureFlags.NRFeatureFlag_NewEventSystem)
+```
+
+              Objective-C:
+
+```objectivec
+[NewRelic enableFeatures:NRFeatureFlag_NewEventSystem];
 ```
             </td>
           </tr>
@@ -1175,13 +1401,23 @@ NewRelic.enableFeatures(NRMAFeatureFlags.NRFeatureFlag_FedRampEnabled)
           <tr>
             <td>
               Enable or disable offline data storage when no internet connection is available. When an event is added while the internet is not reachable by the app an [`offline` attribute](/attribute-dictionary/?event=MobileSession&attribute=offline) is added to the event. To configure the amount of offline storage, see [Set max offline storage size](/docs/mobile-monitoring/new-relic-mobile/mobile-sdk/set-max-offline-storage/#ios).
+
+              Default value is `false`.
             </td>
 
             <td>
               Offline storage is disabled by default. To enable it, add the following feature flag:
 
+              Swift:
+
 ```swift
 NewRelic.enableFeatures(NRMAFeatureFlags.NRFeatureFlag_OfflineStorage)
+```
+
+              Objective-C:
+
+```objectivec
+[NewRelic enableFeatures:NRFeatureFlag_OfflineStorage];
 ```
             </td>
           </tr>
@@ -1207,13 +1443,23 @@ NewRelic.enableFeatures(NRMAFeatureFlags.NRFeatureFlag_OfflineStorage)
           <tr>
             <td>
               Enable or disable background reporting when application goes to the background state. When enabled, the agent reports data captured while the app is in the background, and the [`background` attribute](/attribute-dictionary/?event=MobileSession&attribute=background) is added to session attributes.
+
+              Default value is `false`.
             </td>
 
             <td>
               Background reporting is disabled by default. To enable it, add the following feature flag:
 
+              Swift:
+
 ```swift
-NewRelic.enableFeatures([NRMAFeatureFlags.NRFeatureFlag_BackgroundReporting])
+NewRelic.enableFeatures(NRMAFeatureFlags.NRFeatureFlag_BackgroundReporting)
+```
+
+              Objective-C:
+
+```objectivec
+[NewRelic enableFeatures:NRFeatureFlag_BackgroundReporting];
 ```
 
               Prerequisites in your iOS app project to use background instrumentation:
@@ -1228,7 +1474,7 @@ NewRelic.enableFeatures([NRMAFeatureFlags.NRFeatureFlag_BackgroundReporting])
         </tbody>
       </table>
 
-      ## Automatic log collection [#ios-log-collection]
+      ## Logging [#ios-log-collection]
 
       <table>
         <thead>
@@ -1246,16 +1492,52 @@ NewRelic.enableFeatures([NRMAFeatureFlags.NRFeatureFlag_BackgroundReporting])
         <tbody>
           <tr>
             <td>
+              Enable or disable forwarding of logs that you send with the `NewRelic.log*` APIs to New Relic.
+
+              Log forwarding is controlled by the **Mobile Logs** setting in the New Relic UI. When the agent receives its configuration from New Relic, it enables or disables `NRFeatureFlag_LogReporting` at runtime based on that setting, and overwrites any value that you set in your code. For details, see [Mobile logs](/docs/mobile-monitoring/mobile-monitoring-ui/mobile-logs).
+            </td>
+
+            <td>
+              You typically do not need to set this flag. If you need to, add the following feature flag before the iOS agent start call:
+
+              Swift:
+
+```swift
+NewRelic.enableFeatures(NRMAFeatureFlags.NRFeatureFlag_LogReporting)
+```
+
+              Objective-C:
+
+```objectivec
+[NewRelic enableFeatures:NRFeatureFlag_LogReporting];
+```
+            </td>
+          </tr>
+
+          <tr>
+            <td>
               Enable or disable the collection of `stdout` & `stderr` for remote logging.
+
+              The agent does not collect these logs while the Xcode debugger is attached.
+
+              Default value is `false`.
             </td>
 
             <td>
               Log collection is disabled by default. To enable it, add the following feature flag:
 
+              Swift:
+
 ```swift
-NewRelic.disableFeatures([NRMAFeatureFlags.NRFeatureFlag_AutoCollectLogs])
+NewRelic.enableFeatures(NRMAFeatureFlags.NRFeatureFlag_AutoCollectLogs)
 ```
-For more information, see [iOS agent logging](/docs/mobile-monitoring/new-relic-mobile-ios/configuration/ios-remote-logging).
+
+              Objective-C:
+
+```objectivec
+[NewRelic enableFeatures:NRFeatureFlag_AutoCollectLogs];
+```
+              For more information, see [iOS agent logging](/docs/mobile-monitoring/new-relic-mobile-ios/configuration/ios-remote-logging).
             </td>
           </tr>
         </tbody>
