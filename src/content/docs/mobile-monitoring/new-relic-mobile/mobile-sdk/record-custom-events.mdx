@@ -605,7 +605,7 @@ CrossNewRelic.Current.RecordCustomEvent(string eventType, string eventName, Dict
             </td>
 
             <td>
-              Required. A dictionary of key-value pairs that can be used to provide additional information about the custom event. Pass an empty dictionary if you have no attributes.
+              Required. A dictionary of key-value pairs that can be used to provide additional information about the custom event. Pass an empty dictionary if you have no attributes. On Android, the plugin records boolean values as booleans, numeric values as numbers, and converts all other values to strings.
             </td>
           </tr>
         </tbody>

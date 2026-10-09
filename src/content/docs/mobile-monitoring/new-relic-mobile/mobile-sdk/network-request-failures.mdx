@@ -554,6 +554,24 @@ CrossNewRelic.Current.NoticeNetworkFailure(
   NetworkFailure.Unknown
 );
 ```
+
+      Here's an example of recording a failure in a `catch` block:
+
+```csharp
+string url = "https://fakewebsite.com";
+HttpClient client = new HttpClient();
+long startTime = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds();
+
+try
+{
+  await client.GetAsync(url);
+}
+catch (HttpRequestException)
+{
+  long endTime = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds();
+  CrossNewRelic.Current.NoticeNetworkFailure(url, "GET", startTime, endTime, NetworkFailure.CannotConnectToHost);
+}
+```
     </TabsPageItem>
 
     <TabsPageItem id="flutter">

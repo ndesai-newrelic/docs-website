@@ -478,7 +478,7 @@ CrossNewRelic.Current.RecordBreadcrumb(string name, Dictionary<string, object> a
             </td>
 
             <td>
-              Required. A dictionary of attributes for the breadcrumb event. Create attributes for any event descriptors you think will be useful. Pass an empty dictionary if you have no attributes.
+              Required. A dictionary of attributes for the breadcrumb event. Create attributes for any event descriptors you think will be useful. Pass an empty dictionary if you have no attributes. On Android, the plugin records boolean values as booleans, numeric values as numbers, and converts all other values to strings.
             </td>
           </tr>
         </tbody>

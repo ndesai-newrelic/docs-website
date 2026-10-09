@@ -448,6 +448,14 @@ CrossNewRelic.Current.LogAttributes(Dictionary<string, object> attributes) : voi
 ```
 
 
+### Details [#details]
+
+* Log forwarding must be enabled in your mobile application's entity settings page for the logs to appear in New Relic.
+* `LogLevel` is the `NewRelic.MAUI.Plugin.LogLevel` enum, with the members `ERROR`, `WARNING`, `INFO`, `VERBOSE`, `AUDIT`, and `DEBUG`.
+* If you pass an empty or null message to a log method, or an empty or null dictionary to `LogAttributes`, the plugin doesn't send it and writes a message to the console instead of throwing an exception.
+* On Android, `Log` maps `AUDIT` and `DEBUG` to the debug level of the native agent. On iOS, `Log` sends the message with the `Message` and `logLevel` attributes, where `logLevel` is the name of the enum member you passed.
+
+
 ### Example [#example]
 
 

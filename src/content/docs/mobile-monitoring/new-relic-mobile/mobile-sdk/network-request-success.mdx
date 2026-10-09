@@ -859,6 +859,10 @@ CrossNewRelic.Current.NoticeHttpTransaction(string url, string httpMethod, int s
 
       Tracks network requests manually. You can use this method to record HTTP transactions, with an option to also send a response body.
 
+      <Callout variant="important">
+        On iOS, the plugin ignores the `responseBody` parameter and doesn't send the response body to New Relic. On Android, the plugin sends it.
+      </Callout>
+
       ## Parameters [#parameters]
 
       <table>
@@ -996,15 +1000,23 @@ CrossNewRelic.Current.NoticeHttpTransaction(string url, string httpMethod, int s
       ## Example [#example]
 
 ```csharp
+string url = "https://newrelic.com";
+HttpClient client = new HttpClient();
+
+long startTime = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds();
+HttpResponseMessage response = await client.GetAsync(url);
+string body = await response.Content.ReadAsStringAsync();
+long endTime = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds();
+
 CrossNewRelic.Current.NoticeHttpTransaction(
-  "https://newrelic.com",
+  url,
   "GET",
-  200,
-  DateTimeOffset.Now.ToUnixTimeMilliseconds(),
-  DateTimeOffset.Now.ToUnixTimeMilliseconds() + 100,
-  0,
-  1000,
-  ""
+  (int)response.StatusCode,
+  startTime,
+  endTime,
+  0,            // bytesSent
+  body.Length,  // bytesReceived
+  body          // responseBody (ignored on iOS)
 );
 ```
     </TabsPageItem>

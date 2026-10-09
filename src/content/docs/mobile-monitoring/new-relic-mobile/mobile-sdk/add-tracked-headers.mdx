@@ -367,6 +367,8 @@ CrossNewRelic.Current.GetHTTPHeadersTrackingFor(): List<string>;
 
       This API allows you to add any header field strings to a list that gets recorded as attributes with networking request events. After header fields have been added using this function, if the headers are in a network call they will be included in networking events in the New Relic platform.
 
+      The headers must be present on the request for the agent to record them. On Android, the agent records the tracked headers for requests that you send through the handler from [`GetHttpMessageHandler()`](/docs/mobile-monitoring/new-relic-mobile-maui-dotnet/monitor-your-net-maui-application/#http-message-handler).
+
       ## Parameters [#parameters]
 
       <table>
