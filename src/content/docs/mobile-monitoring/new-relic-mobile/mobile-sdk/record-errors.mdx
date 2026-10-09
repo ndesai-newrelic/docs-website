@@ -43,27 +43,29 @@ freshnessValidatedDate: 2023-07-26
     <TabsPageItem id="ios">
       ## Syntax [#syntax]
 
-      ### Objective-c
+      ### Objective-C [#objc]
 
 ```objectivec
-recordError:(NSError* _Nonnull)error attributes:(NSDictionary* _Nullable)attributes;
++ (void)recordError:(NSError *)error;
++ (void)recordError:(NSError *)error attributes:(NSDictionary * _Nullable)attributes;
 ```
 
       ### Swift [#swift]
 
 ```swift
-NewRelic.recordError(error: $Error, map $eventAttributes);
+NewRelic.recordError(_ error: Error)
+NewRelic.recordError(_ error: Error, attributes: [AnyHashable: Any]?)
 ```
 
       ## Description [#description]
 
       You can use the `recordError` API call for crash analysis. Review the captured events to help you understand how often your app is throwing errors and under what conditions. In addition to any [custom attributes](/docs/mobile-monitoring/new-relic-mobile/maintenance/add-custom-data-new-relic-mobile) that you added, the events will also have associated [session attributes](/docs/insights/insights-data-sources/default-attributes/mobile-default-attributes-insights).
 
-      This API takes an instance of an error and an optional attribute dictionary, then creates a `recordHandledException` event. You can view event data in the <InlinePopover type="mobile"/> UI in places like the [<DNT>**Handled exceptions**</DNT> page](/docs/mobile-monitoring/mobile-monitoring-ui/crashes/handled-exceptions-analyze-trends-prevent-crashes) and the [<DNT>**Crash events**</DNT> trail](/docs/mobile-monitoring/mobile-monitoring-ui/crashes/mobile-crash-event-trail). You can also query this data with NRQL, and chart it in New Relic dashboards.
+      This API takes an instance of an error and an optional attribute dictionary, then creates a handled exception event. In Swift you can pass any `Error`, and in Objective-C you pass an `NSError`. The error is presented alongside handled exceptions. You can view event data in the <InlinePopover type="mobile"/> UI in places like the [<DNT>**Handled exceptions**</DNT> page](/docs/mobile-monitoring/mobile-monitoring-ui/crashes/handled-exceptions-analyze-trends-prevent-crashes) and the [<DNT>**Crash events**</DNT> trail](/docs/mobile-monitoring/mobile-monitoring-ui/crashes/mobile-crash-event-trail). You can also query this data with NRQL, and chart it in New Relic dashboards.
+
+      To record an `NSException` instead, see [Record handled exceptions](/docs/mobile-monitoring/new-relic-mobile/mobile-sdk/record-handled-exceptions).
 
       ## Parameters [#parameters]
-
-      ### Objective-c
 
       <table>
         <thead>
@@ -85,25 +87,25 @@ NewRelic.recordError(error: $Error, map $eventAttributes);
         <tbody>
           <tr>
             <td>
-              `$error`, `error`
+              `error`
             </td>
 
             <td>
-              `error`, `NSerror`
+              `NSError` / `Error`
             </td>
 
             <td>
-              Required. The exception to be recorded.
+              Required. The error to be recorded.
             </td>
           </tr>
 
           <tr>
             <td>
-              `attributes`, `$eventAttributes`
+              `attributes`
             </td>
 
             <td>
-              `NSDictionary`, `[AnyHashable, Any]?`
+              `NSDictionary` / `[AnyHashable: Any]?`
             </td>
 
             <td>
@@ -115,27 +117,26 @@ NewRelic.recordError(error: $Error, map $eventAttributes);
 
       ## Examples [#examples]
 
-      ### Objective-C
+      ### Objective-C [#obj-c]
 
       Here's an example of a recording a simple error:
 
 ```objectivec
-@try {
-  @throw [NSException exceptionWithName:@"versionException"
-                                 reason:@"App version no longer supported"
-                               userInfo:nil];
-} @catch (NSException* e) {
-  [NewRelic recordHandledException:e];
+NSError *error = nil;
+id json = [NSJSONSerialization JSONObjectWithData:data options:0 error:&error];
+if (error) {
+  [NewRelic recordError:error];
 }
 ```
 
       Here's another example of recording an error with a dictionary:
 
 ```objectivec
-[NSJSONSerialization JSONObjectWithData:data options:opt error:error];
+NSError *error = nil;
+id json = [NSJSONSerialization JSONObjectWithData:data options:0 error:&error];
 if (error) {
   [NewRelic recordError:error
-         withAttributes:@{@"int" : @1, @"Test Group" : @"A | B"}];
+             attributes:@{@"int" : @1, @"Test Group" : @"A | B"}];
 }
 ```
 

@@ -179,16 +179,16 @@ NewRelic.recordBreadcrumb("user tapped sign in button", attributes)
     <TabsPageItem id="ios">
       ## Syntax [#syntax]
 
-      ### Objective-c [#objc]
+      ### Objective-C [#objc]
 
 ```objectivec
-recordBreadcrumb:(NSString* __nonnull)name attributes:(NSDictionary* __nullable)attributes;
++ (BOOL)recordBreadcrumb:(NSString *)name attributes:(NSDictionary * _Nullable)attributes;
 ```
 
       ### Swift [#swift]
 
 ```swift
-NewRelic.recordBreadcrumb(string $Name, map $eventAttributes)
+NewRelic.recordBreadcrumb(_ name: String, attributes: [AnyHashable: Any]?) -> Bool
 ```
 
       ## Description [#description]
@@ -199,8 +199,7 @@ NewRelic.recordBreadcrumb(string $Name, map $eventAttributes)
 
       Using this call has the same result as using the [`recordCustomEvent` call](/docs/mobile-monitoring/new-relic-mobile/mobile-sdk/record-custom-events/) with `MobileBreadcrumb` as the event type. For context on how to use this API, read about sending custom attributes and events:
 
-      * [Objective-C](/docs/mobile-monitoring/new-relic-mobile/mobile-sdk/mobile-sdk-api-guide#objc-custom-att-events)
-      * [Swift](/docs/mobile-monitoring/new-relic-mobile/mobile-sdk/mobile-sdk-api-guide#swift-custom-att-events)
+      * [Custom attributes and events](/docs/mobile-monitoring/new-relic-mobile/mobile-sdk/mobile-sdk-api-guide#custom-att-events)
 
       ## Parameters [#parameters]
 
@@ -224,11 +223,11 @@ NewRelic.recordBreadcrumb(string $Name, map $eventAttributes)
         <tbody>
           <tr>
             <td>
-              `$Name`
+              `name`
             </td>
 
             <td>
-              `string`
+              `NSString` / `String`
             </td>
 
             <td>
@@ -238,15 +237,15 @@ NewRelic.recordBreadcrumb(string $Name, map $eventAttributes)
 
           <tr>
             <td>
-              `$eventAttributes`
+              `attributes`
             </td>
 
             <td>
-              `dictionary`
+              `NSDictionary` / `[AnyHashable: Any]`
             </td>
 
             <td>
-              Optional. A map that includes a list of attributes of the breadcrumb event. Create attributes for any event descriptors you think will be useful.
+              Nullable. A dictionary that includes a list of attributes of the breadcrumb event. Attributes should have string keys and string or number values; boolean values are supported with `NSNumber` (`@YES` or `@NO`) in Objective-C, or `Bool` in Swift. Create attributes for any event descriptors you think will be useful.
             </td>
           </tr>
         </tbody>
@@ -254,7 +253,7 @@ NewRelic.recordBreadcrumb(string $Name, map $eventAttributes)
 
       ## Return values [#return-values]
 
-      Returns `true` if the event is recorded successfully, or `false` if not.
+      Returns `YES` (`true` in Swift) if the event is recorded successfully, or `NO` (`false` in Swift) if not. The reason for a failure is written to the agent log.
 
       ## Examples [#examples]
 

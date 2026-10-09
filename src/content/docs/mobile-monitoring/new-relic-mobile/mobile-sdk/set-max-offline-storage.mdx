@@ -136,7 +136,7 @@ NewRelic.setMaxOfflineStorageSize(1000)
 
 ```swift
 NewRelic.enableFeatures(NRMAFeatureFlags.NRFeatureFlag_OfflineStorage)
-  ```
+```
 
         For details on adding feature flags, see [Configure mobile monitoring settings](/docs/mobile-monitoring/new-relic-mobile/mobile-sdk/configure-settings/#ios).
       </Callout>
@@ -146,14 +146,20 @@ NewRelic.enableFeatures(NRMAFeatureFlags.NRFeatureFlag_OfflineStorage)
       ### Objective-C [#objc]
 
 ```objectivec
-+ (void) setMaxOfflineStorageSize:(unsigned int)size;
++ (void)setMaxOfflineStorageSize:(unsigned int)megabytes;
 ```
 
       ### Swift [#swift]
 
 ```swift
-NewRelic.setMaxOfflineStorageSize(unsigned int $size)
+NewRelic.setMaxOfflineStorageSize(_ megabytes: UInt32)
 ```
+
+      ## Description [#description]
+
+      Sets the maximum amount of data, in megabytes, that the agent stores in the local file system when the device is offline. By default, the agent stores up to 100 MB of offline payloads. Once the limit is reached, the agent stops storing offline payloads until more room is available.
+
+      Offline storage requires the `NRFeatureFlag_OfflineStorage` feature flag, and is available in agent version 7.4.9 and higher. This method returns `void`.
 
       ## Parameters [#parameters]
 
@@ -177,15 +183,15 @@ NewRelic.setMaxOfflineStorageSize(unsigned int $size)
         <tbody>
           <tr>
             <td>
-              `$megaBytes`
+              `megabytes`
             </td>
 
             <td>
-              `unsigned int`
+              `unsigned int` / `UInt32`
             </td>
 
             <td>
-              Required. Maximum size in megaBytes that can be stored in the file system.
+              Required. Maximum size in megabytes that can be stored in the file system. Default is 100.
             </td>
           </tr>
         </tbody>
@@ -196,13 +202,13 @@ NewRelic.setMaxOfflineStorageSize(unsigned int $size)
       ### Objective-C [#obj-c]
 
 ```objectivec
-BOOL poolSizeSet = [NewRelic setMaxOfflineStorageSize:1000];
+[NewRelic setMaxOfflineStorageSize:200];
 ```
 
       ### Swift [#swift]
 
 ```swift
-let poolSizeSet = NewRelic.setMaxOfflineStorageSize(1000)
+NewRelic.setMaxOfflineStorageSize(200)
 ```
     </TabsPageItem>
 

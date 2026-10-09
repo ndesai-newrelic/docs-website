@@ -426,13 +426,13 @@ The table below lists the automatically instrumented classes and methods in iOS 
 
 When [reporting custom attributes and events](/docs/insights/new-relic-insights/adding-querying-data/custom-attributes-events-new-relic-mobile), use the SDK methods within the `NewRelic` object.
 
-Methods that return `BOOL` results return `YES` if they succeed, or `NO` if the operation did not complete. These methods are available in versions 5.0.0 or higher of the New Relic iOS agent.
+Methods that return `BOOL` results (`Bool` in Swift) return `YES` (`true`) if they succeed, or `NO` (`false`) if the operation did not complete. The reason for a failure is written to the agent log.
 
-The SDK can store up to 128 user-defined [custom attributes](/docs/insights/insights-data-sources/custom-events/insert-custom-events-attributes-mobile-data#event-definition) at a time. If you attempt to store more than 128 attributes, the SDK returns `NO`.
+The SDK can store up to 128 user-defined [custom attributes](/docs/insights/insights-data-sources/custom-events/insert-custom-events-attributes-mobile-data#event-definition) at a time. If you attempt to store more than 128 attributes, the SDK returns `NO`. Attribute names can be up to 256 characters, and attribute values must be smaller than 4096 bytes.
 
 When naming custom attributes, we recommend that you use the simplest format needed, such as using single word attributes and no spaces. For example, `My Custom Attribute` should be formatted to `myCustomAttribute`.
 
 When naming custom metrics:
 
-* Avoid using the characters `/` `]` `[` `|` `*` when naming things.
+* Use only letters, numbers, underscores, and spaces in metric names and categories. Metrics with other characters, such as `/` `]` `[` `|` `*`, are not recorded.
 * Avoid multi-byte characters.

@@ -96,7 +96,7 @@ val attributesRemoved = NewRelic.removeAllAttributes()
       ### Objective-c [#objc]
 
 ```objectivec
-+ (BOOL) removeAllAttributes();
++ (BOOL)removeAllAttributes;
 ```
 
       ### Swift [#swift]
@@ -107,18 +107,18 @@ NewRelic.removeAllAttributes() -> Bool
 
       ## Description [#description]
 
-      This method removes all attributes from a session. If you want to remove a single session attribute, see [Remove an attribute](/docs/mobile-monitoring/new-relic-mobile/mobile-sdk/remove-all-attributes).
+      This method removes all custom attributes. Removing attributes also removes them from all events that were recorded but not yet sent to New Relic. If you want to remove a single attribute, see [Remove an attribute](/docs/mobile-monitoring/new-relic-mobile/mobile-sdk/remove-attribute).
 
       ## Return values [#return-values]
 
-      Returns `true` if recorded successfully, and `false` if it doesn't.
+      Returns `YES` (`true` in Swift) if the attributes were removed successfully, and `NO` (`false` in Swift) if they weren't.
 
       ## Examples [#examples]
 
       ### Objective-C [#obj-c]
 
 ```objectivec
-BOOL attributesRemoved = NewRelic.removeAllAttributes();
+BOOL attributesRemoved = [NewRelic removeAllAttributes];
 ```
 
       ### Swift [#swift]

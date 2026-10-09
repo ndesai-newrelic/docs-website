@@ -180,19 +180,20 @@ class MainActivity : AppCompatActivity() {
     <TabsPageItem id="ios">
       ## Syntax [#ios-syntax]
 
-      ### Objective-c
+      ### Objective-C
 
 ```objectivec
-recordHandledException:(NSException* __nonnull)exception withAttributes:(NSDictionary* __nullable)attributes;
++ (void)recordHandledException:(NSException *)exception;
++ (void)recordHandledException:(NSException *)exception withAttributes:(NSDictionary * _Nullable)attributes;
 ```
 
       ## Description [#ios-description]
 
-      Records a handled exception (Objective-c only). Optionally takes a map with additional attributes showing context.
+      Records a handled exception (Objective-C only). Optionally takes a map with additional attributes showing context.
 
       The `recordHandledException` API is useful for crash analysis; the captured events will help you understand how often your application is throwing exceptions and under what conditions. In addition to associated custom attributes, the events will also have associated [session attributes](/docs/insights/insights-data-sources/default-attributes/mobile-default-attributes-insights).
 
-      This API takes an instance of an `NSException` and an optional `NSDictionary` attribute dictionary, then creates a `recordHandledException` event. You can view event data in the [Crash event trail UI](/docs/mobile-monitoring/mobile-monitoring-ui/crashes/mobile-crash-event-trail), and query them with NRQL.
+      This API takes an instance of an `NSException` and an optional `NSDictionary` attribute dictionary, then creates a handled exception event. You can view event data in the [Crash event trail UI](/docs/mobile-monitoring/mobile-monitoring-ui/crashes/mobile-crash-event-trail), and query them with NRQL.
 
       <Callout variant="important">
         This function should not be used with Swift code. Please use [`recordError`](/docs/mobile-monitoring/new-relic-mobile/mobile-sdk/record-errors/) to track handled errors in Swift code.
@@ -234,7 +235,7 @@ recordHandledException:(NSException* __nonnull)exception withAttributes:(NSDicti
 
           <tr>
             <td>
-              `attributes​`
+              `attributes`
             </td>
 
             <td>
@@ -248,16 +249,12 @@ recordHandledException:(NSException* __nonnull)exception withAttributes:(NSDicti
         </tbody>
       </table>
 
-      ## Return values [#ios-return-values]
-
-      Returns `true` if the event is recorded successfully, or `false` if not.
-
       ## Examples [#ios-examples]
 
       Here's an example of a simple handled exception:
 
 ```objectivec
-try {
+@try {
   @throw [NSException exceptionWithName:@"versionException"
                                  reason:@"App version no longer supported"
                                userInfo:nil];
@@ -266,7 +263,7 @@ try {
 }
 ```
 
-      Here's another example or a handled exception with a dictionary:
+      Here's another example of a handled exception with a dictionary:
 
 ```objectivec
 NSException* exception = [NSException exceptionWithName:@"MyException"

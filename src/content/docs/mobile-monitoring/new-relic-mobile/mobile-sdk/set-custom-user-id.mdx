@@ -153,23 +153,23 @@ val userIdWasSet = NewRelic.setUserId("SampleUserName")
     <TabsPageItem id="ios">
       ## Syntax [#syntax]
 
-      ### Objective-c
+      ### Objective-C [#objc]
 
 ```objectivec
-+ (BOOL) setUserId:(NSString*)userId;
++ (BOOL)setUserId:(NSString * _Nullable)userId;
 ```
 
       ### Swift [#swift]
 
 ```swift
-NewRelic.setUserId(userId: String!) -> Bool
+NewRelic.setUserId(_ userId: String?) -> Bool
 ```
 
       ## Description [#description]
 
       Set a custom user identifier value to associate user sessions with analytics events and attributes.
 
-      This method sets a custom user identifier value to associate all events from a mobile user's session with a specific user ID. This method can be called anytime after the New Relic iOS agent starts.
+      This method sets a custom user identifier value to associate all events from a mobile user's session with a specific user ID. This method can be called anytime after the New Relic iOS agent starts. Pass `nil` to clear the user identifier.
 
       A user identifier is useful for several reasons. Using the [Crash analysis UI](/docs/mobile-monitoring/mobile-monitoring-ui/crashes/crash-analysis-group-filter-your-crashes), you can:
 
@@ -181,9 +181,9 @@ NewRelic.setUserId(userId: String!) -> Bool
       <Callout variant="important">
         The following enhancements were added in iOS agent v7.5.0:
 
-        * When `setUserId(value: string|null)` is called, if `userId` was previously null and new value is not null, the current session continues and a new `userId` will be set.
+        * When `setUserId` is called, if `userId` was previously `nil` and the new value is not `nil`, the current session continues and a new `userId` will be set.
 
-        * When `setUserId(value: string|null)` is called, if `userId` was previously not null and new `userId` is different (including `null`), the current session will be ended and a harvest will be performed. A new session will be created with the new `userId`.
+        * When `setUserId` is called, if `userId` was previously not `nil` and the new `userId` is different (including `nil`), the current session will be ended and a harvest will be performed. A new session will be created with the new `userId`.
       </Callout>
 
       ## Parameters [#parameters]
@@ -208,15 +208,15 @@ NewRelic.setUserId(userId: String!) -> Bool
         <tbody>
           <tr>
             <td>
-              `userID`
+              `userId`
             </td>
 
             <td>
-              `NSString`
+              `NSString` / `String?`
             </td>
 
             <td>
-              Required. The user ID to be associated with the current session.
+              Nullable. The user ID to be associated with the current session. Pass `nil` to clear the user ID, which ends the current session if a user ID was previously set.
             </td>
           </tr>
         </tbody>
@@ -224,7 +224,7 @@ NewRelic.setUserId(userId: String!) -> Bool
 
       ## Return values [#return-values]
 
-      Returns `true` if it succeeds, or `false` if it doesn't.
+      Returns `YES` (`true` in Swift) if it succeeds, or `NO` (`false` in Swift) if it doesn't.
 
       ## Example [#example]
 

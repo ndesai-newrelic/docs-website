@@ -34,7 +34,6 @@ After you've installed the agent, see the instructions below for using either [`
    class WatchAppDelegate: NSObject, WKApplicationDelegate {
        func applicationDidFinishLaunching() {
            NewRelic.start(withApplicationToken: "APP_TOKEN")
-           return true
        }
    }
    ```
@@ -56,13 +55,12 @@ After you've installed the agent, see the instructions below for using either [`
 3. As close to the start of `applicationDidFinishLaunching` as possible, add `NewRelic.start(withApplicationToken: "APP_TOKEN")` replacing `APP_TOKEN` with your [application token](/docs/mobile-apps/viewing-your-application-token). Your code might look like this:
 
    ```swift
-   import WatckKit
+   import WatchKit
    import NewRelic
        
    class ExtensionDelegate: NSObject, WKExtensionDelegate {
        func applicationDidFinishLaunching() {
            NewRelic.start(withApplicationToken: "APP_TOKEN")
-           return true
        }
    }
    ```

@@ -102,15 +102,18 @@ class MainActivity : AppCompatActivity() {
     <TabsPageItem id="ios">
       ## Syntax [#syntax]
 
-      ### Objective-c [#objc]
-```objective-c
-      [NewRelic recordReplay];
+      ### Objective-C [#objc]
+
+```objectivec
++ (BOOL)recordReplay;
 ```
 
       ### Swift [#swift]
+
 ```swift
-      NewRelic.recordReplay()
+NewRelic.recordReplay() -> Bool
 ```
+
       ## Requirements
 
       * iOS agent v7.6.1 or higher.
@@ -122,6 +125,10 @@ class MainActivity : AppCompatActivity() {
       * Account is entitled to record replays
 
       If a replay is already in progress, or not all of the above criteria are met, this API method will have no effect.
+
+      ## Return values [#return-values]
+
+      Returns `YES` (`true` in Swift) if recording started, or `NO` (`false` in Swift) if a replay is already recording or session replay is disabled.
 
       For information about pausing and resuming a replay, refer to [`NewRelic.pauseReplay()`](/docs/mobile-monitoring/new-relic-mobile/mobile-sdk/pause-replay)
 

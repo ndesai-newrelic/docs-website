@@ -33,4 +33,4 @@ Your app launch time is reported in milliseconds with the metrics `AppLaunch/Col
    ```
 3. Click <DNT>**Add to dashboard**</DNT> and either add it to an existing dashboard or create a new one.
 
-If no data appears, review your `logcat` output for errors.
+If no data appears, review the Xcode console output for errors. To see more detail from the agent, increase the agent log level by calling `NRLogger.setLogLevels(NRLogLevelALL.rawValue)` (Swift) or `[NRLogger setLogLevels:NRLogLevelALL]` (Objective-C) before you start the agent.

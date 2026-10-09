@@ -284,32 +284,60 @@ NewRelic.recordMetric("Agent start", "Lifecycle", 5, 10.11, 1.23, MetricUnit.OPE
     <TabsPageItem id="ios">
       ## Syntax [#syntax]
 
-      ### Objective-c [#objc]
+      ### Objective-C [#objc]
 
 ```objectivec
-[NewRelic recordMetricWithName:(NSString *)name  category:(NSString *)category  value:(NSNumber *)value];
++ (void)recordMetricWithName:(NSString *)name
+                    category:(NSString *)category;
+
++ (void)recordMetricWithName:(NSString *)name
+                    category:(NSString *)category
+                       value:(NSNumber *)value;
+
++ (void)recordMetricWithName:(NSString *)name
+                    category:(NSString *)category
+                       value:(NSNumber *)value
+                  valueUnits:(NRMetricUnit * _Nullable)valueUnits;
+
++ (void)recordMetricWithName:(NSString *)name
+                    category:(NSString *)category
+                       value:(NSNumber *)value
+                  valueUnits:(NRMetricUnit * _Nullable)valueUnits
+                  countUnits:(NRMetricUnit * _Nullable)countUnits;
 ```
 
       ### Swift [#swift]
 
 ```swift
-NewRelic.recordMetric(withName: String!, category: String!, value: NSNumber!)
+NewRelic.recordMetric(withName: String, category: String)
+NewRelic.recordMetric(withName: String, category: String, value: NSNumber)
+NewRelic.recordMetric(withName: String, category: String, value: NSNumber, valueUnits: String?)
+NewRelic.recordMetric(withName: String, category: String, value: NSNumber, valueUnits: String?, countUnits: String?)
 ```
 
       ## Description [#description]
 
-      With this method, you can record arbitrary [custom metrics](/docs/accounts-partnerships/education/getting-started-new-relic/glossary#custom-metric) to give more detail about app activity that is not tracked by New Relic automatically. The call accepts several sets of parameters for optional levels of detail.
+      With this method, you can record arbitrary [custom metrics](/docs/accounts-partnerships/education/getting-started-new-relic/glossary#custom-metric) to give more detail about app activity that is not tracked by New Relic automatically. The call accepts several sets of parameters for optional levels of detail:
 
-      This method will record a metric of the form `Custom/[Category]/[Name]`, with a count of 1 and a total value equal to the value passed in. Multiple calls will aggregate the count and value according to standard [metric aggregation rules for <InlinePopover type="mobile"/>](/docs/mobile-monitoring/new-relic-mobile/getting-started/mobile-data-retention).
+      * `name` and `category` only: records a metric with a value of 1.
+      * Adds a `value`: records the metric with that value.
+      * Adds `valueUnits`: records the metric with the units that describe the value, for example `sec` or `bytes`.
+      * Adds `countUnits`: records the metric with the units that describe the metric itself (the count), for example `op` or `load`.
+
+      This method will record a metric of the form `Custom/[Category]/[Name]`, with a count of 1 and a total value equal to the value passed in. When you pass units, the metric name takes the form `Custom/[Category]/[Name][valueUnits|countUnits]`. For example, `Custom/ViewLoadingPerformance/MyView[sec|load]` could represent the load time of `MyView` in seconds, where each recorded metric represents one view load. Multiple calls will aggregate the count and value according to standard [metric aggregation rules for <InlinePopover type="mobile"/>](/docs/mobile-monitoring/new-relic-mobile/getting-started/mobile-data-retention).
 
       To get the most out of your metrics, follow these guidelines to create clear, concise metric names:
 
       * Use case and whitespace characters appropriate for display in the user interface. Metric names are rendered as-is.
       * Capitalize the metric name.
-      * Avoid using the characters `/` `]` `[` `|` `*` when naming metrics.
+      * Names and categories can contain only letters, numbers, underscores, and spaces. Metrics with other characters are not recorded.
+      * Unit names can contain only letters, numbers, spaces, and the `_`, `%`, and `/` characters.
+      * Avoid using variable strings, such as GUIDs, in names and categories to avoid [metric grouping issues](/docs/new-relic-solutions/solve-common-issues/troubleshooting/metric-grouping-issues).
       * Avoid multi-byte characters.
 
-      The `category` is also required; it is displayed in the UI and is useful for organizing custom metrics if you have many of them. It can be a custom category or it can be a predefined category using the `MetricCategory` enum.
+      The `category` is also required; it is a free-form string that is displayed in the UI and is useful for organizing custom metrics if you have many of them.
+
+      The agent provides some common unit constants in `NRConstants.h` for Objective-C: `kNRMetricUnitPercent` (`%`), `kNRMetricUnitBytes` (`bytes`), `kNRMetricUnitSeconds` (`sec`), `kNRMetricUnitsBytesPerSecond` (`bytes/second`), and `kNRMetricUnitsOperations` (`op`). In Swift, pass the unit as a string.
 
       ## Parameters [#parameters]
 
@@ -337,7 +365,7 @@ NewRelic.recordMetric(withName: String!, category: String!, value: NSNumber!)
             </td>
 
             <td>
-              `NSString`
+              `NSString` / `String`
             </td>
 
             <td>
@@ -351,11 +379,11 @@ NewRelic.recordMetric(withName: String!, category: String!, value: NSNumber!)
             </td>
 
             <td>
-              `NSString`
+              `NSString` / `String`
             </td>
 
             <td>
-              Required. The metric category name, either custom or using a predefined [metric category](/docs/mobile-monitoring/new-relic-mobile-android/install-configure/work-android-sdk-api#cat).
+              Required. The metric category name. This is a free-form string that you choose.
             </td>
           </tr>
 
@@ -369,7 +397,35 @@ NewRelic.recordMetric(withName: String!, category: String!, value: NSNumber!)
             </td>
 
             <td>
-              Required. The value of the metric.
+              Required for the overloads that take a value. The value of the metric, handled as a double. Use a value greater than 0.
+            </td>
+          </tr>
+
+          <tr>
+            <td>
+              `valueUnits`
+            </td>
+
+            <td>
+              `NRMetricUnit` (`NSString`) / `String`
+            </td>
+
+            <td>
+              Optional. The units of the `value`, for example `sec`.
+            </td>
+          </tr>
+
+          <tr>
+            <td>
+              `countUnits`
+            </td>
+
+            <td>
+              `NRMetricUnit` (`NSString`) / `String`
+            </td>
+
+            <td>
+              Optional. The units of the metric itself, for example `load`.
             </td>
           </tr>
         </tbody>
@@ -382,9 +438,34 @@ NewRelic.recordMetric(withName: String!, category: String!, value: NSNumber!)
       Here's an example of creating a metric in milliseconds:
 
 ```objectivec
-[NewRelic recordMetricWithName:(NSString *)@"My Important Metric"
-                      category:(NSString *)@"Important Metrics" 
-                         value:(NSNumber *)145.67];
+[NewRelic recordMetricWithName:@"My Important Metric"
+                      category:@"Important Metrics"
+                         value:@145.67];
+```
+
+      Here's an example of recording a metric with a value of 1:
+
+```objectivec
+[NewRelic recordMetricWithName:@"Checkout Started" category:@"Usage"];
+```
+
+      Here's an example of recording a metric with value units:
+
+```objectivec
+[NewRelic recordMetricWithName:@"Image Download"
+                      category:@"Performance"
+                         value:@2.35
+                    valueUnits:kNRMetricUnitSeconds];
+```
+
+      Here's an example of recording a metric with value and count units:
+
+```objectivec
+[NewRelic recordMetricWithName:@"MyView"
+                      category:@"ViewLoadingPerformance"
+                         value:@0.42
+                    valueUnits:kNRMetricUnitSeconds
+                    countUnits:(NRMetricUnit *)@"load"];
 ```
 
       ### Swift [#swift]
@@ -393,6 +474,24 @@ NewRelic.recordMetric(withName: String!, category: String!, value: NSNumber!)
 
 ```swift
 NewRelic.recordMetric(withName: "My Important Metric", category: "Important Metrics", value: 145.67)
+```
+
+      Here's an example of recording a metric with a value of 1:
+
+```swift
+NewRelic.recordMetric(withName: "Checkout Started", category: "Usage")
+```
+
+      Here's an example of recording a metric with value units:
+
+```swift
+NewRelic.recordMetric(withName: "Image Download", category: "Performance", value: 2.35, valueUnits: "sec")
+```
+
+      Here's an example of recording a metric with value and count units:
+
+```swift
+NewRelic.recordMetric(withName: "MyView", category: "ViewLoadingPerformance", value: 0.42, valueUnits: "sec", countUnits: "load")
 ```
     </TabsPageItem>
 

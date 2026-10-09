@@ -262,34 +262,52 @@ class CustomInterceptor : Interceptor {
     <TabsPageItem id="ios">
       ## Syntax [#syntax]
 
-      ### Objective-c [#objc]
+      ### Objective-C [#objc]
 
 ```objectivec
-+ (void)noticeNetworkRequestForURL:(NSURL*)url
-                        httpMethod:(NSString*)httpMethod
-                         withTimer:(NRTimer*)timer
-                   responseHeaders:(NSDictionary*)headers
++ (void)noticeNetworkRequestForURL:(NSURL *)url
+                        httpMethod:(NSString *)httpMethod
+                         withTimer:(NRTimer *)timer
+                   responseHeaders:(NSDictionary *)headers
                         statusCode:(NSInteger)httpStatusCode
                          bytesSent:(NSUInteger)bytesSent
                      bytesReceived:(NSUInteger)bytesReceived
                       responseData:(NSData *)responseData
-                      traceHeaders:(NSDictionary<NSString*,NSString*>* _Nullable)traceHeaders
+                      traceHeaders:(NSDictionary<NSString *, NSString *> * _Nullable)traceHeaders
+                         andParams:(NSDictionary * _Nullable)params;
+
++ (void)noticeNetworkRequestForURL:(NSURL *)url
+                        httpMethod:(NSString *)httpMethod
+                         startTime:(double)startTime
+                           endTime:(double)endTime
+                   responseHeaders:(NSDictionary *)headers
+                        statusCode:(NSInteger)httpStatusCode
+                         bytesSent:(NSUInteger)bytesSent
+                     bytesReceived:(NSUInteger)bytesReceived
+                      responseData:(NSData *)responseData
+                      traceHeaders:(NSDictionary * _Nullable)traceHeaders
                          andParams:(NSDictionary * _Nullable)params;
 ```
 
       ### Swift [#swift]
 
 ```swift
-func noticeNetworkRequest(for: URL, httpMethod: String, with: NRTimer, responseHeaders: [AnyHashable : Any], statusCode: Int, bytesSent: UInt, bytesReceived: UInt, responseData: Data, traceHeaders: [String : String], andParams: [AnyHashable : Any])
+NewRelic.noticeNetworkRequest(for: URL, httpMethod: String, with: NRTimer, responseHeaders: [AnyHashable: Any], statusCode: Int, bytesSent: UInt, bytesReceived: UInt, responseData: Data, traceHeaders: [String: String]?, andParams: [AnyHashable: Any]?)
+
+NewRelic.noticeNetworkRequest(for: URL, httpMethod: String, startTime: Double, endTime: Double, responseHeaders: [AnyHashable: Any], statusCode: Int, bytesSent: UInt, bytesReceived: UInt, responseData: Data, traceHeaders: [AnyHashable: Any]?, andParams: [AnyHashable: Any]?)
 ```
 
       ## Description [#description]
 
+      Manually records an HTTP-like network request that completed. Use this method for requests that the agent doesn't instrument automatically.
+
       New Relic will track the URL, response time, status code, and data sent and received.
+
+      You can identify the duration of the request in one of two ways: pass an `NRTimer` (the first overload), or pass the `startTime` and `endTime` of the request (the second overload).
 
       If the response header's dictionary contains a `X-NewRelic-AppData` header, New Relic will track the association between the mobile app and the web server, and the New Relic UI will display the correlation and comparison of server vs. network vs. queue time.
 
-      If the HTTP status code indicates an error (400 and above), New Relic will also track this request as an error. The request header's dictionary and the response body data will be encoded as a server error in the New Relic UI.
+      If the HTTP status code indicates an error (400 and above), New Relic will also track this request as an error. New Relic will capture the response type and encoding from the response headers dictionary, and the response body data, as a server error in the New Relic UI.
 
       ## Parameters [#parameters]
 
@@ -313,11 +331,11 @@ func noticeNetworkRequest(for: URL, httpMethod: String, with: NRTimer, responseH
         <tbody>
           <tr>
             <td>
-              `$url`
+              `url`
             </td>
 
             <td>
-              `NSURL`
+              `NSURL` / `URL`
             </td>
 
             <td>
@@ -327,11 +345,11 @@ func noticeNetworkRequest(for: URL, httpMethod: String, with: NRTimer, responseH
 
           <tr>
             <td>
-              `$httpMethod`
+              `httpMethod`
             </td>
 
             <td>
-              `string`
+              `NSString` / `String`
             </td>
 
             <td>
@@ -341,7 +359,7 @@ func noticeNetworkRequest(for: URL, httpMethod: String, with: NRTimer, responseH
 
           <tr>
             <td>
-              `$timer`
+              `timer`
             </td>
 
             <td>
@@ -349,13 +367,13 @@ func noticeNetworkRequest(for: URL, httpMethod: String, with: NRTimer, responseH
             </td>
 
             <td>
-              Required. A timer that captures the start and end of the request.
+              Required for the timer overload. A timer that captures the start and end of the request.
             </td>
           </tr>
 
           <tr>
             <td>
-              `$startTime`
+              `startTime`
             </td>
 
             <td>
@@ -363,14 +381,14 @@ func noticeNetworkRequest(for: URL, httpMethod: String, with: NRTimer, responseH
             </td>
 
             <td>
-              Optional. A double that captures the end time of the request.
+              Required for the start and end time overload. A double that captures the start time of the request, in milliseconds since the Unix epoch.
               `startTime` and `endTime` can be used as an alternative to `timer`.
             </td>
           </tr>
 
           <tr>
             <td>
-              `$endTime`
+              `endTime`
             </td>
 
             <td>
@@ -378,14 +396,14 @@ func noticeNetworkRequest(for: URL, httpMethod: String, with: NRTimer, responseH
             </td>
 
             <td>
-              Optional. A double that captures the end time of the request.
+              Required for the start and end time overload. A double that captures the end time of the request, in milliseconds since the Unix epoch.
               (`startTime` and `endTime` can be used as an alternative to `timer`)
             </td>
           </tr>
 
           <tr>
             <td>
-              `$responseHeaders`
+              `responseHeaders`
             </td>
 
             <td>
@@ -399,11 +417,11 @@ func noticeNetworkRequest(for: URL, httpMethod: String, with: NRTimer, responseH
 
           <tr>
             <td>
-              `$httpStatusCode`
+              `statusCode`
             </td>
 
             <td>
-              `NSUInteger`
+              `NSInteger`
             </td>
 
             <td>
@@ -413,7 +431,7 @@ func noticeNetworkRequest(for: URL, httpMethod: String, with: NRTimer, responseH
 
           <tr>
             <td>
-              `$bytesSent`
+              `bytesSent`
             </td>
 
             <td>
@@ -427,7 +445,7 @@ func noticeNetworkRequest(for: URL, httpMethod: String, with: NRTimer, responseH
 
           <tr>
             <td>
-              `$bytesReceived`
+              `bytesReceived`
             </td>
 
             <td>
@@ -441,7 +459,7 @@ func noticeNetworkRequest(for: URL, httpMethod: String, with: NRTimer, responseH
 
           <tr>
             <td>
-              `$responseData`
+              `responseData`
             </td>
 
             <td>
@@ -455,7 +473,7 @@ func noticeNetworkRequest(for: URL, httpMethod: String, with: NRTimer, responseH
 
           <tr>
             <td>
-              `$traceHeaders`
+              `traceHeaders`
             </td>
 
             <td>
@@ -463,13 +481,13 @@ func noticeNetworkRequest(for: URL, httpMethod: String, with: NRTimer, responseH
             </td>
 
             <td>
-              Nullable. Used for distributed tracing.
+              Nullable. Used for distributed tracing. Pass the headers you added to the request, for example the result of `generateDistributedTracingHeaders`.
             </td>
           </tr>
 
           <tr>
             <td>
-              `$params`
+              `params`
             </td>
 
             <td>
@@ -495,10 +513,14 @@ func noticeNetworkRequest(for: URL, httpMethod: String, with: NRTimer, responseH
                         responseData:[NSData data] traceHeaders:nil andParams:nil];
 ```
 
-      Here's an example with start and end times:
+      Here's an example with start and end times, in milliseconds since the Unix epoch:
 
 ```objectivec
-[NewRelic noticeNetworkRequestForURL:[NSURL URLWithString:@"https://www.newrelic.com"] httpMethod:@"GET" startTime:0.0 endTime:0.1
+double startTime = [[NSDate date] timeIntervalSince1970] * 1000;
+// ... perform the request ...
+double endTime = [[NSDate date] timeIntervalSince1970] * 1000;
+
+[NewRelic noticeNetworkRequestForURL:[NSURL URLWithString:@"https://www.newrelic.com"] httpMethod:@"GET" startTime:startTime endTime:endTime
                      responseHeaders:@{} statusCode:200 bytesSent:1024 bytesReceived:52
                         responseData:[NSData data] traceHeaders:nil andParams:nil];
 ```
@@ -512,10 +534,14 @@ NewRelic.noticeNetworkRequest(for: URL(string: "https://www.newrelic.com"), http
                               statusCode: 200, bytesSent: 1000, bytesReceived: 1000, responseData: Data(), traceHeaders: nil, andParams: nil)
 ```
 
-      Here's an example with start and end times:
+      Here's an example with start and end times, in milliseconds since the Unix epoch:
 
 ```swift
-NewRelic.noticeNetworkRequest(for: URL(string: "https://www.newrelic.com"), httpMethod: "GET", startTime: 0.0, endTime: 0.1, responseHeaders: [:],
+let startTime = Date().timeIntervalSince1970 * 1000
+// ... perform the request ...
+let endTime = Date().timeIntervalSince1970 * 1000
+
+NewRelic.noticeNetworkRequest(for: URL(string: "https://www.newrelic.com"), httpMethod: "GET", startTime: startTime, endTime: endTime, responseHeaders: [:],
                               statusCode: 200, bytesSent: 1000, bytesReceived: 1000, responseData: Data(), traceHeaders: nil, andParams: nil)
 ```
     </TabsPageItem>

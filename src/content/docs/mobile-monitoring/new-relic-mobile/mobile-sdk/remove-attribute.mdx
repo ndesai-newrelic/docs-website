@@ -138,18 +138,18 @@ val attributeRemoved = NewRelic.removeAttribute("rate")
       ### Objective-c [#objc]
 
 ```objectivec
-removeAttribute:(NSString*)name;
++ (BOOL)removeAttribute:(NSString *)name;
 ```
 
       ### Swift [#swift]
 
 ```swift
-NewRelic.removeAttribute(_ name: : String!)-> Bool
+NewRelic.removeAttribute(_ name: String) -> Bool
 ```
 
       ## Description [#description]
 
-      This method removes the attribute specified by the name string from the session. If you want to remove all custom attributes, see [Remove all attributes](/docs/mobile-monitoring/new-relic-mobile/mobile-sdk/remove-all-attributes).
+      This method removes the custom attribute specified by the name string. Removing an attribute also removes it from all events that were recorded but not yet sent to New Relic. If you want to remove all custom attributes, see [Remove all attributes](/docs/mobile-monitoring/new-relic-mobile/mobile-sdk/remove-all-attributes).
 
       ## Parameters [#parameters]
 
@@ -189,24 +189,24 @@ NewRelic.removeAttribute(_ name: : String!)-> Bool
 
       ## Return values [#return-values]
 
-      Returns `true` if recorded successfully, and `false` if it doesn't.
+      Returns `YES` (`true` in Swift) if the attribute was removed successfully, and `NO` (`false` in Swift) if it wasn't. The reason for a failure is written to the agent log.
 
       ## Examples [#examples]
 
       ### Objective-C [#obj-c]
 
-      Here's an example to remove the session attribute specified by a `NSString*` named `rate`:
+      Here's an example to remove the attribute specified by a `NSString*` named `rate`:
 
 ```objectivec
-BOOL attributeRemoved = [NewRelic removedAttribute@"rate"];
+BOOL attributeRemoved = [NewRelic removeAttribute:@"rate"];
 ```
 
       ### Swift [#swift]
 
-      Here's an example to remove the session attribute specified by a `string` named `rate`:
+      Here's an example to remove the attribute specified by a `String` named `rate`:
 
 ```swift
-let attributeRemoved = NewRelic.removedAttribute("rate")
+let attributeRemoved = NewRelic.removeAttribute("rate")
 ```
 
     </TabsPageItem>

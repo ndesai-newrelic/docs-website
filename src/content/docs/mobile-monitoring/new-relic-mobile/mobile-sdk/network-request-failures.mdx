@@ -210,25 +210,56 @@ NewRelic.noticeNetworkFailure(
     <TabsPageItem id="ios">
       ## Syntax [#syntax]
 
-      ### Objective-c [#objc]
+      ### Objective-C [#objc]
 
 ```objectivec
-+ (void)noticeNetworkFailureForURL:(NSURL*)url
-                        httpMethod:(NSString*)httpMethod
-                         withTimer:(NRTimer*)timer
++ (void)noticeNetworkFailureForURL:(NSURL *)url
+                        httpMethod:(NSString *)httpMethod
+                         withTimer:(NRTimer *)timer
+                    andFailureCode:(NSInteger)iOSFailureCode;
+
++ (void)noticeNetworkFailureForURL:(NSURL *)url
+                        httpMethod:(NSString *)httpMethod
+                         startTime:(double)startTime
+                           endTime:(double)endTime
+                    andFailureCode:(NSInteger)iOSFailureCode;
+
+// Agent version 7.7.8 and higher
++ (void)noticeNetworkFailureForURL:(NSURL *)url
+                        httpMethod:(NSString *)httpMethod
+                         withTimer:(NRTimer *)timer
+                      traceHeaders:(NSDictionary * _Nullable)traceHeaders
+                    andFailureCode:(NSInteger)iOSFailureCode;
+
++ (void)noticeNetworkFailureForURL:(NSURL *)url
+                        httpMethod:(NSString *)httpMethod
+                         startTime:(double)startTime
+                           endTime:(double)endTime
+                      traceHeaders:(NSDictionary * _Nullable)traceHeaders
                     andFailureCode:(NSInteger)iOSFailureCode;
 ```
 
       ### Swift [#swift]
 
 ```swift
-func noticeNetworkFailure(for: URL, httpMethod: String, with: NRTimer, andFailureCode: Int)
+NewRelic.noticeNetworkFailure(for: URL, httpMethod: String, with: NRTimer, andFailureCode: Int)
+
+NewRelic.noticeNetworkFailure(for: URL, httpMethod: String, startTime: Double, endTime: Double, andFailureCode: Int)
+
+// Agent version 7.7.8 and higher
+NewRelic.noticeNetworkFailure(for: URL, httpMethod: String, with: NRTimer, traceHeaders: [AnyHashable: Any]?, andFailureCode: Int)
+
+NewRelic.noticeNetworkFailure(for: URL, httpMethod: String, startTime: Double, endTime: Double, traceHeaders: [AnyHashable: Any]?, andFailureCode: Int)
 ```
 
       ## Description [#description]
 
-      Failed requests are requests that fail to receive a complete response from
+      Manually records a failed network request. Failed requests are requests that fail to receive a complete response from
       the server caused by things like TCP timeouts, SSL failures, connection closures, and more.
+
+      You can identify the duration of the request in one of two ways: pass an `NRTimer`, or pass the `startTime` and `endTime` of the request.
+
+      The overloads that take `traceHeaders` (agent version 7.7.8 and higher) report the failure against a distributed trace that you own. Pass the dictionary returned by `generateDistributedTracingContext` so that the resulting `MobileRequestError` event is reported against that trace instead of one that the agent generates. Cross-platform agents that both make and report the request use these overloads. Native instrumentation does not need them.
 
       ## Parameters [#parameters]
 
@@ -252,11 +283,11 @@ func noticeNetworkFailure(for: URL, httpMethod: String, with: NRTimer, andFailur
         <tbody>
           <tr>
             <td>
-              `$url`
+              `url`
             </td>
 
             <td>
-              `NSURL`
+              `NSURL` / `URL`
             </td>
 
             <td>
@@ -266,11 +297,11 @@ func noticeNetworkFailure(for: URL, httpMethod: String, with: NRTimer, andFailur
 
           <tr>
             <td>
-              `$httpMethod`
+              `httpMethod`
             </td>
 
             <td>
-              `string`
+              `NSString` / `String`
             </td>
 
             <td>
@@ -280,7 +311,7 @@ func noticeNetworkFailure(for: URL, httpMethod: String, with: NRTimer, andFailur
 
           <tr>
             <td>
-              `$timer`
+              `timer`
             </td>
 
             <td>
@@ -288,13 +319,55 @@ func noticeNetworkFailure(for: URL, httpMethod: String, with: NRTimer, andFailur
             </td>
 
             <td>
-              Required. A timer that captures the start and end of the request.
+              Required for the timer overloads. A timer that captures the start and end of the request.
             </td>
           </tr>
 
           <tr>
             <td>
-              `$iOSFailureCode`
+              `startTime`
+            </td>
+
+            <td>
+              `double`
+            </td>
+
+            <td>
+              Required for the start and end time overloads. The start time of the request, in milliseconds since the Unix epoch.
+            </td>
+          </tr>
+
+          <tr>
+            <td>
+              `endTime`
+            </td>
+
+            <td>
+              `double`
+            </td>
+
+            <td>
+              Required for the start and end time overloads. The end time of the request, in milliseconds since the Unix epoch.
+            </td>
+          </tr>
+
+          <tr>
+            <td>
+              `traceHeaders`
+            </td>
+
+            <td>
+              `NSDictionary`
+            </td>
+
+            <td>
+              Nullable. Required for the `traceHeaders` overloads. The distributed trace context returned by `generateDistributedTracingContext`. The W3C headers `traceparent` and `tracestate` are also accepted.
+            </td>
+          </tr>
+
+          <tr>
+            <td>
+              `iOSFailureCode`
             </td>
 
             <td>
@@ -313,6 +386,8 @@ func noticeNetworkFailure(for: URL, httpMethod: String, with: NRTimer, andFailur
 
       ### Objective-C [#obj-c]
 
+      Here's an example that uses a timer:
+
 ```objectivec
 [NewRelic noticeNetworkFailureForURL:[NSURL URLWithString:@"https://www.newrelic.com"]
                           httpMethod:@"GET"
@@ -320,11 +395,38 @@ func noticeNetworkFailure(for: URL, httpMethod: String, with: NRTimer, andFailur
                       andFailureCode:NSURLErrorTimedOut];
 ```
 
-      ### Swift
+      Here's an example with start and end times, in milliseconds since the Unix epoch:
+
+```objectivec
+double startTime = [[NSDate date] timeIntervalSince1970] * 1000;
+// ... the request fails ...
+double endTime = [[NSDate date] timeIntervalSince1970] * 1000;
+
+[NewRelic noticeNetworkFailureForURL:[NSURL URLWithString:@"https://www.newrelic.com"]
+                          httpMethod:@"GET"
+                           startTime:startTime
+                             endTime:endTime
+                      andFailureCode:NSURLErrorTimedOut];
+```
+
+      ### Swift [#swift]
+
+      Here's an example that uses a timer:
 
 ```swift
 NewRelic.noticeNetworkFailure(for: URL(string: "https://www.newrelic.com"), httpMethod: "GET",
                               with: NRTimer(), andFailureCode: NSURLErrorTimedOut)
+```
+
+      Here's an example with start and end times, in milliseconds since the Unix epoch:
+
+```swift
+let startTime = Date().timeIntervalSince1970 * 1000
+// ... the request fails ...
+let endTime = Date().timeIntervalSince1970 * 1000
+
+NewRelic.noticeNetworkFailure(for: URL(string: "https://www.newrelic.com"), httpMethod: "GET",
+                              startTime: startTime, endTime: endTime, andFailureCode: NSURLErrorTimedOut)
 ```
     </TabsPageItem>
 

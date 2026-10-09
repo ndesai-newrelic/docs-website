@@ -125,10 +125,10 @@ NewRelic.setInteractionName("Display MyCustomInteraction")
     <TabsPageItem id="ios">
       ## Syntax [#syntax]
 
-      ### Objective-c [#objc]
+      ### Objective-C [#objc]
 
 ```objectivec
-- (NSString*) customNewRelicInteractionName;
+- (NSString *)customNewRelicInteractionName;
 ```
 
       ### Swift [#swift]
@@ -141,7 +141,7 @@ NewRelic.setInteractionName("Display MyCustomInteraction")
 
       Sets the name to rename default interaction names reported to New Relic.
 
-      If you implement this method in your `UIViewController`, New Relic will call this method before starting an interaction (from `-viewDidLoad` or `-viewDidAppear`) and rename the interaction with the string returned (instead of the default name of `display <ViewControllerName>`).
+      If you implement this method in your `UIViewController`, New Relic will call this method before starting an interaction (from `-viewDidLoad` or `-viewDidAppear`) and rename the interaction with the string returned (instead of the default name of `Display <ViewControllerName>`).
 
       ## Parameters [#parameters]
 
@@ -169,7 +169,7 @@ NewRelic.setInteractionName("Display MyCustomInteraction")
             </td>
 
             <td>
-              `string`
+              `NSString` / `String`
             </td>
 
             <td>

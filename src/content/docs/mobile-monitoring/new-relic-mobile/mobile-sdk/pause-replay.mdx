@@ -100,15 +100,18 @@ class MainActivity : AppCompatActivity() {
     <TabsPageItem id="ios">
       ## Syntax [#syntax]
 
-      ### Objective-c [#objc]
-```objective-c
-      [NewRelic pauseReplay];
+      ### Objective-C [#objc]
+
+```objectivec
++ (BOOL)pauseReplay;
 ```
 
       ### Swift [#swift]
+
 ```swift
-      NewRelic.pauseReplay()
+NewRelic.pauseReplay() -> Bool
 ```
+
       ## Requirements
 
       * iOS agent v7.6.1 or higher.
@@ -117,9 +120,13 @@ class MainActivity : AppCompatActivity() {
 
       `NewRelic.pauseReplay()` can be called to manually force a replay to pause recording.
 
-      If a replay is not already in progress, this API method will have no effect.
+      If a replay is not already in progress, this API method will have no effect. Pausing stops frame collection regardless of the sampling mode, including error-only sampling.
 
-      If the mobile session is still valid, you can resume a paused replay by calling the [`newrelic.recordReplay()`](/docs/mobile-monitoring/new-relic-mobile/mobile-sdk/record-replay) API method.
+      If the mobile session is still valid, you can resume a paused replay by calling the [`NewRelic.recordReplay()`](/docs/mobile-monitoring/new-relic-mobile/mobile-sdk/record-replay) API method.
+
+      ## Return values [#return-values]
+
+      Returns `YES` (`true` in Swift) if recording was paused, or `NO` (`false` in Swift) if a replay was not recording or session replay is disabled.
 
       ## Use Cases
 

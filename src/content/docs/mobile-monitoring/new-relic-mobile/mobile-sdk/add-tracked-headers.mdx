@@ -147,16 +147,16 @@ val request: Request = Builder()
     <TabsPageItem id="ios">
       ## Syntax [#syntax]
 
-      ### Objective-c
+      ### Objective-C [#objc]
 
 ```objectivec
-(void)addHTTPHeaderTrackingFor:(NSArray<NSString*>*_Nonnull)headers;
++ (void)addHTTPHeaderTrackingFor:(NSArray<NSString *> *)headers;
 ```
 
       ### Swift [#swift]
 
 ```swift
-func addHTTPHeaderTracking(for: [String])
+NewRelic.addHTTPHeaderTracking(for headers: [String])
 ```
 
       ## Description [#description]
@@ -190,7 +190,7 @@ func addHTTPHeaderTracking(for: [String])
             </td>
 
             <td>
-              `NSArray<NSString*>*_Nonnull`
+              `NSArray<NSString *>` / `[String]`
             </td>
 
             <td>
@@ -205,23 +205,23 @@ func addHTTPHeaderTracking(for: [String])
       Here's an example of adding some HTTP header fields:
 
 ```objectivec
-[NewRelic addHTTPHeadersTrackingFor:@[@"Example", @"Example2"]];
+[NewRelic addHTTPHeaderTrackingFor:@[@"Example", @"Example2"]];
 
 NSURLRequest *request = [NSURLRequest requestWithURL:[NSURL URLWithString:@"https://www.newrelic.com"]];
 NSMutableURLRequest *mutableRequest = [request mutableCopy];
 [mutableRequest addValue:@"Test" forHTTPHeaderField:@"Example"];
 [mutableRequest addValue:@"Test2" forHTTPHeaderField:@"Example2"];
 request = [mutableRequest copy];
-[[NSURLSession sharedSession] dataTaskWithRequest:request];
+[[[NSURLSession sharedSession] dataTaskWithRequest:request] resume];
 ```
 
 ```swift
-NewRelic.addHTTPHeadersTracking(for:["Example", "Example2"])
+NewRelic.addHTTPHeaderTracking(for: ["Example", "Example2"])
 
 var request = URLRequest(url: URL(string:"https://www.newrelic.com")!)
 request.addValue("Test", forHTTPHeaderField: "Example")
 request.addValue("Test2", forHTTPHeaderField: "Example2")
-URLSession.shared.dataTask(with: request)
+URLSession.shared.dataTask(with: request).resume()
 ```
     </TabsPageItem>
 

@@ -164,23 +164,27 @@ val incremented: Boolean = NewRelic.incrementAttribute("rate", 9999.99)
     <TabsPageItem id="ios">
       ## Syntax [#syntax]
 
-      ### Objective-c [#objc]
+      ### Objective-C [#objc]
 
 ```objectivec
-incrementAttribute:(NSString*)name value:(NSNumber*)amount;
++ (BOOL)incrementAttribute:(NSString *)name;
++ (BOOL)incrementAttribute:(NSString *)name value:(NSNumber *)amount;
 ```
 
       ### Swift [#swift]
 
 ```swift
-NewRelic.incrementAttribute(string $name[, float $value])
+NewRelic.incrementAttribute(_ name: String) -> Bool
+NewRelic.incrementAttribute(_ name: String, value: NSNumber) -> Bool
 ```
 
       ## Description [#description]
 
-      Increments the count of a session attribute. Overwrites previous value and type each time called.
+      Increments the value of a numeric custom attribute.
 
-      When passed with only a name value, this method increments the count for the specified session attribute by 1. If the attribute does not exist, it creates the attribute with a value of 1. When passed an optional float value, it increments the count for the specified attribute by the float value.
+      When passed with only a name, this method increments the value of the named attribute by 1. If the attribute does not exist, it creates the attribute with a value of 1. When passed an `amount`, it increments the attribute by that amount, and creates the attribute with the value of `amount` if it does not exist.
+
+      Calling this method on an attribute that has a string value is an error. The agent does not change the attribute, logs an error, and returns `NO` (`false` in Swift).
 
       ## Parameters [#parameters]
 
@@ -208,7 +212,7 @@ NewRelic.incrementAttribute(string $name[, float $value])
             </td>
 
             <td>
-              `string`
+              `NSString` / `String`
             </td>
 
             <td>
@@ -218,11 +222,11 @@ NewRelic.incrementAttribute(string $name[, float $value])
 
           <tr>
             <td>
-              `amount`
+              `amount` (`value:` label)
             </td>
 
             <td>
-              `number`
+              `NSNumber`
             </td>
 
             <td>
@@ -234,19 +238,19 @@ NewRelic.incrementAttribute(string $name[, float $value])
 
       ## Return values [#return-values]
 
-      Returns `true` if the event is recorded successfully, or `false` if not.
+      Returns `YES` (`true` in Swift) if the attribute was modified successfully, or `NO` (`false` in Swift) if not.
 
       ## Examples [#examples]
 
       ### Objective-C [#obj-c]
 
-      Here's an example to increment the count for the specified session attribute by 1. If the attribute does not exist, it creates the attribute with a value of 1:
+      Here's an example to increment the count for the specified attribute by 1. If the attribute does not exist, it creates the attribute with a value of 1:
 
 ```objectivec
-BOOL incremented = [NewRelic incrementAttribute@"rate"];
+BOOL incremented = [NewRelic incrementAttribute:@"rate"];
 ```
 
-      Here's another example to increment the count for the specified session attribute by the amount specified in `NSNumber*`:
+      Here's another example to increment the count for the specified attribute by the amount specified in `NSNumber*`:
 
 ```objectivec
 BOOL incremented = [NewRelic incrementAttribute:@"rate" value:@1];
@@ -254,16 +258,16 @@ BOOL incremented = [NewRelic incrementAttribute:@"rate" value:@1];
 
       ### Swift [#swift]
 
-      Here's an example to increment the count for the specified session attribute by 1. If the attribute does not exist, it creates the attribute with a value of 1:
+      Here's an example to increment the count for the specified attribute by 1. If the attribute does not exist, it creates the attribute with a value of 1:
 
 ```swift
 let incremented = NewRelic.incrementAttribute("rate")
 ```
 
-      Here's another example to increment the count for the specified session attribute by the amount specified in `NSNumber!`:
+      Here's another example to increment the count for the specified attribute by the amount specified in `NSNumber`:
 
 ```swift
-let incremented = NewRelic.incrementAttribute(name: String!, value: NSNumber!)
+let incremented = NewRelic.incrementAttribute("rate", value: 1)
 ```
     </TabsPageItem>
 

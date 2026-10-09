@@ -128,23 +128,25 @@ dNewRelic.crashNow("This is my test message")
     <TabsPageItem id="ios">
       ## Syntax [#syntax]
 
-      ### Objective-c [#objc]
+      ### Objective-C [#objc]
 
 ```objectivec
-+ (void) crashNow:(NSString* __nullable)message;
++ (void)crashNow;
++ (void)crashNow:(NSString * _Nullable)message;
 ```
 
       ### Swift [#swift]
 
 ```swift
 NewRelic.crashNow()
+NewRelic.crashNow(_ message: String?)
 ```
 
       ## Description [#description]
 
       Throws a demo run-time exception named  `NewRelicDemoException` to test New Relic crash reporting.
 
-      With this method, you can throw a demo run-time exception named `NewRelicDemoException` with a message. This crash will appear in [the Crash analysis page](/docs/mobile-monitoring/mobile-monitoring-ui/crashes/crash-analysis-group-filter-your-crashes).
+      With this method, you can throw a demo run-time exception named `NewRelicDemoException`, optionally with a message. Call `crashNow` with no arguments to throw the exception without a message. This crash will appear in [the Crash analysis page](/docs/mobile-monitoring/mobile-monitoring-ui/crashes/crash-analysis-group-filter-your-crashes).
 
       ## Parameters [#parameters]
 
@@ -172,7 +174,7 @@ NewRelic.crashNow()
             </td>
 
             <td>
-              `string`
+              `NSString` / `String?`
             </td>
 
             <td>
@@ -186,11 +188,27 @@ NewRelic.crashNow()
 
       ### Objective-C [#obj-c]
 
+      Throw the demo exception without a message:
+
+```objectivec
+[NewRelic crashNow];
+```
+
+      Throw the demo exception with a message:
+
 ```objectivec
 [NewRelic crashNow:@"This is a test crash"];
 ```
 
       ### Swift [#swift]
+
+      Throw the demo exception without a message:
+
+```swift
+NewRelic.crashNow()
+```
+
+      Throw the demo exception with a message:
 
 ```swift
 NewRelic.crashNow("This is a test crash")

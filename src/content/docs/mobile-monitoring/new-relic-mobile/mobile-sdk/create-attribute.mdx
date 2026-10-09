@@ -190,23 +190,25 @@ val attributeSet = NewRelic.setAttribute("rate", 9999.99)
     </TabsPageItem>
 
     <TabsPageItem id="ios">
-      ## Syntax [#syntax][#syntax]
+      ## Syntax [#syntax]
 
-      ### Objective-c [#objc]
+      ### Objective-C [#objc]
 
 ```objectivec
-setAttribute:(NSString*)name value:(id) value;
++ (BOOL)setAttribute:(NSString *)name value:(id)value;
 ```
 
       ### Swift [#swift]
 
 ```swift
-NewRelic.setAttribute(string $name, string or float $value)
+NewRelic.setAttribute(_ name: String, value: Any) -> Bool
 ```
 
       ## Description [#description]
 
-      This static method creates a session-level custom [attribute](/docs/insights/explore-data/custom-events/insert-custom-attributes-events-new-relic-mobile#attribute-definition) with a specified name and value. When called, it overwrites its previous value and type. The created attribute is shared by multiple [Mobile monitoring event types](/docs/insights/insights-data-sources/default-data/mobile-events).
+      This static method creates a custom [attribute](/docs/insights/explore-data/custom-events/insert-custom-attributes-events-new-relic-mobile#attribute-definition) with a specified name and value. When called, it overwrites its previous value and type. The attribute is added to all events recorded in this app install, and it persists across sessions until you remove or change it. The created attribute is shared by multiple [Mobile monitoring event types](/docs/insights/insights-data-sources/default-data/mobile-events).
+
+      The agent limits attribute names to 256 characters, attribute values to less than 4096 bytes, and the number of attributes to 128. Calls that exceed these limits fail, return `NO` (`false` in Swift), and log an error.
 
       You can override any of the [MobileSession default attributes](/docs/insights/insights-data-sources/default-attributes/mobile-default-attributes-insights) except:
 
@@ -233,7 +235,7 @@ NewRelic.setAttribute(string $name, string or float $value)
       * `type`
       * `upgradeFrom`
       * `uuid`
-      * Anything prefixed with `NewRelic`
+      * Anything prefixed with `NewRelic` or `nr.`
 
       ## Parameters [#parameters]
 
@@ -257,29 +259,29 @@ NewRelic.setAttribute(string $name, string or float $value)
         <tbody>
           <tr>
             <td>
-              `$name`
+              `name`
             </td>
 
             <td>
-              `string`
+              `NSString` / `String`
             </td>
 
             <td>
-              Required. Name of the session attribute.
+              Required. Name of the attribute.
             </td>
           </tr>
 
           <tr>
             <td>
-              `$value`
+              `value`
             </td>
 
             <td>
-              `string` or `float`
+              `NSString` or `NSNumber` / `String`, `Double`, `Int`, or `Bool`
             </td>
 
             <td>
-              Required. The second parameter passed can be either a `string` value or a `float` value.
+              Required. The value of the attribute. Can be a string or a number. Boolean values are supported by passing an `NSNumber` (`@YES` or `@NO`) in Objective-C, or a `Bool` in Swift.
             </td>
           </tr>
         </tbody>
@@ -287,7 +289,7 @@ NewRelic.setAttribute(string $name, string or float $value)
 
       ## Return values [#return-values]
 
-      Returns `true` if recorded successfully, and `false` if it doesn't.
+      Returns `YES` (`true` in Swift) if the attribute was set, and `NO` (`false` in Swift) if it wasn't. A `NO` return means attribute validation failed (for example, the name is reserved or a limit was exceeded), and the reason is written to the agent log.
 
       ## Examples [#examples]
 
@@ -295,7 +297,8 @@ NewRelic.setAttribute(string $name, string or float $value)
 
 ```objectivec
 BOOL attributeSet = [NewRelic setAttribute:@"buildConfiguration" value:@"AppStore-release"];
-BOOL attributeSet = [NewRelic setAttribute:@"rate" value:@9999.99];
+attributeSet = [NewRelic setAttribute:@"rate" value:@9999.99];
+attributeSet = [NewRelic setAttribute:@"isSubscriber" value:@YES];
 ```
 
       ### Swift [#swift]
@@ -303,6 +306,7 @@ BOOL attributeSet = [NewRelic setAttribute:@"rate" value:@9999.99];
 ```swift
 var attributeSet = NewRelic.setAttribute("buildConfiguration", value: "AppStore-release")
 attributeSet = NewRelic.setAttribute("rate", value: 9999.99)
+attributeSet = NewRelic.setAttribute("isSubscriber", value: true)
 ```
     </TabsPageItem>
 

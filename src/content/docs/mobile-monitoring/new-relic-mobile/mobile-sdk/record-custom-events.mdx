@@ -224,32 +224,26 @@ NewRelic.recordCustomEvent("Car", "Ford Model T", attributes);
     </TabsPageItem>
 
     <TabsPageItem id="ios">
-      <Callout variant="important">
-        As of New Relic [iOS agent version 5.12.0](/docs/release-notes/mobile-release-notes/ios-release-notes/ios-agent-5120), the `recordEvent` method is deprecated and replaced with `recordCustomEvent`. The `recordEvent` method will continue to work for an unspecified period of time, but if your app contains `recordEvent` methods, New Relic recommends you replace them.
-
-        Updating these methods will affect any queries and dashboards that use the deprecated event types. Be sure to adjust your NRQL queries and dashboards as needed.
-      </Callout>
-
       ## Syntax [#syntax]
 
-      ### Objective-c [#objc]
+      ### Objective-C [#objc]
 
 ```objectivec
-+ (BOOL) recordCustomEvent:(NSString*)eventType attributes:(NSDictionary*)attributes;
++ (BOOL)recordCustomEvent:(NSString *)eventType attributes:(NSDictionary * _Nullable)attributes;
 ```
 
 ```objectivec
-+ (BOOL) recordCustomEvent:(NSString*)eventType name:(NSString*)name attributes:(NSDictionary*)attributes;
++ (BOOL)recordCustomEvent:(NSString *)eventType name:(NSString * _Nullable)name attributes:(NSDictionary * _Nullable)attributes;
 ```
 
       ### Swift [#swift]
 
 ```swift
-NewRelic.recordCustomEvent(eventType: String!, attributes:[NSObject : AnyObject]!) -> Bool
+NewRelic.recordCustomEvent(_ eventType: String, attributes: [AnyHashable: Any]?) -> Bool
 ```
 
 ```swift
-NewRelic.recordCustomEvent(eventType: String!, name: String!, attributes:[NSObject : AnyObject]!) -> Bool
+NewRelic.recordCustomEvent(_ eventType: String, name: String?, attributes: [AnyHashable: Any]?) -> Bool
 ```
 
       ## Description [#description]
@@ -285,25 +279,25 @@ NewRelic.recordCustomEvent(eventType: String!, name: String!, attributes:[NSObje
         <tbody>
           <tr>
             <td>
-              `$eventType`
+              `eventType`
             </td>
 
             <td>
-              `string`
+              `NSString` / `String`
             </td>
 
             <td>
-              Required. The type of event. Do not use `$eventType` to name your custom events; use a custom attribute or the optional `name` parameter.
+              Required. The type of event. Do not use `eventType` to name your custom events; use a custom attribute or the optional `name` parameter.
             </td>
           </tr>
 
           <tr>
             <td>
-              `$eventName`
+              `name`
             </td>
 
             <td>
-              `string`
+              `NSString` / `String`
             </td>
 
             <td>
@@ -313,17 +307,17 @@ NewRelic.recordCustomEvent(eventType: String!, name: String!, attributes:[NSObje
 
           <tr>
             <td>
-              `$eventAttributes`
+              `attributes`
             </td>
 
             <td>
-              `dictionary`
+              `NSDictionary` / `[AnyHashable: Any]`
             </td>
 
             <td>
-              Optional. A map that includes a list of attributes that further designate subcategories to the `$eventType`. The elements of the attributes object must be of the type NSString or NSNumber.
+              Nullable. A dictionary that includes a list of attributes that further designate subcategories to the `eventType`. The keys must be strings, and the values must be of the type `NSString` or `NSNumber` (boolean values are supported with `NSNumber`, using `@YES` or `@NO`).
 
-              You can create attributes for any event descriptors you think will be useful. To name your custom events, create a `name` attribute or use the `eventName` parameter.
+              You can create attributes for any event descriptors you think will be useful. To name your custom events, create a `name` attribute or use the `name` parameter.
 
               <Callout variant="important">
                 When setting the key for your custom attributes, be aware that there are [default attributes that cannot be overridden](/docs/mobile-monitoring/new-relic-mobile/mobile-sdk/create-attribute/).
@@ -335,7 +329,7 @@ NewRelic.recordCustomEvent(eventType: String!, name: String!, attributes:[NSObje
 
       ## Return values [#return-values]
 
-      Returns `true` if the event is recorded successfully, or `false` if not.
+      Returns `YES` (`true` in Swift) if the event is recorded successfully, or `NO` (`false` in Swift) if not. The reason for a failure is written to the agent log.
 
       ## Examples [#examples]
 

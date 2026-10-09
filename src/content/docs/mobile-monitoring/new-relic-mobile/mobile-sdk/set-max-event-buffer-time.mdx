@@ -145,16 +145,16 @@ NewRelic.setMaxEventBufferTime(300)
     <TabsPageItem id="ios">
       ## Syntax [#syntax]
 
-      ### Objective-c [#objc]
+      ### Objective-C [#objc]
 
 ```objectivec
-+ (void) setMaxEventBufferTime:(unsigned int)seconds;
++ (void)setMaxEventBufferTime:(unsigned int)seconds;
 ```
 
       ### Swift [#swift]
 
 ```swift
-NewRelic.setMaxEventBufferTime:(unsigned int)seconds;
+NewRelic.setMaxEventBufferTime(_ seconds: UInt32)
 ```
 
       ## Description [#description]
@@ -162,10 +162,14 @@ NewRelic.setMaxEventBufferTime:(unsigned int)seconds;
       Sets the event harvest cycle length. Default is 60 seconds.
 
       This method sets the maximum time in seconds that the New Relic iOS agent will store events in memory before including the buffered event to be sent to New Relic in the next [harvest cycle](/docs/accounts-partnerships/education/getting-started-new-relic/glossary#harvest-cycle).
-      In other words, when the oldest event timestamp exceeds this custom configured time, the agent transmits the buffered content at the harvest cycle between each connection from a New Relic agent to the collector. You must set this value after `Agent.start()` is called.
+      In other words, when the oldest event timestamp exceeds this custom configured time, the agent transmits the buffered content at the harvest cycle between each connection from a New Relic agent to the collector. Call this method after you start the agent with `startWithApplicationToken`; calls made before the agent starts have no effect.
 
       * Default is 60 seconds (1 minute).
-      * Minimum value cannot be less than 60 seconds.
+      * Minimum value is 60 seconds.
+      * Maximum value is 600 seconds (10 minutes).
+      * Values outside this range are reset to the nearest bound, and the agent logs a warning.
+
+      This method returns `void`.
 
       See also [`setMaxEventPoolSize()`](/docs/mobile-monitoring/new-relic-mobile/mobile-sdk/set-max-event-pool-size/), which lets you change the maximum size of the event pool.
 
@@ -195,7 +199,7 @@ NewRelic.setMaxEventBufferTime:(unsigned int)seconds;
             </td>
 
             <td>
-              `unsigned int`
+              `unsigned int` / `UInt32`
             </td>
 
             <td>
@@ -210,13 +214,15 @@ NewRelic.setMaxEventBufferTime:(unsigned int)seconds;
       ### Objective-C [#obj-c]
 
 ```objectivec
-BOOL fiveMinuteLimitSet = [NewRelic setMaxEventBufferTime:600];
+// Buffer events for up to five minutes before sending them
+[NewRelic setMaxEventBufferTime:300];
 ```
 
       ### Swift [#swift]
 
 ```swift
-let fiveMinuteLimitSet = NewRelic.setMaxEventBufferTime(600)
+// Buffer events for up to five minutes before sending them
+NewRelic.setMaxEventBufferTime(300)
 ```
     </TabsPageItem>
 

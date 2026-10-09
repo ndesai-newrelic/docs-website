@@ -109,21 +109,21 @@ NewRelic.withApplicationToken("").withApplicationBuild("1").start(applicationCon
     <TabsPageItem id="ios">
       ## Syntax [#syntax]
 
-      ### Objective-c [#objc]
+      ### Objective-C [#objc]
 
 ```objectivec
-setApplicationBuild:(NSString *_Nonnull)versionString;
++ (void)setApplicationBuild:(NSString *)buildNumber;
 ```
 
       ### Swift [#swift]
 
 ```swift
-NewRelic.setApplicationBuild:(NSString*)versionString;
+NewRelic.setApplicationBuild(_ buildNumber: String)
 ```
 
       ## Description [#description]
 
-      By default, New Relic uses the `CFBundleVersion` when reporting the build number. But you can override the reported build number by calling this method (before calling `startWithApplicationToken`).
+      By default, New Relic uses the `CFBundleVersion` when reporting the build number. But you can override the reported build number by calling this method before you start the agent with `startWithApplicationToken`.
 
       ## Parameters [#parameters]
 
@@ -147,11 +147,11 @@ NewRelic.setApplicationBuild:(NSString*)versionString;
         <tbody>
           <tr>
             <td>
-              `versionString`
+              `buildNumber`
             </td>
 
             <td>
-              `NSString`
+              `NSString` / `String`
             </td>
 
             <td>

@@ -143,16 +143,16 @@ public class MainActivity extends Activity {
     <TabsPageItem id="ios">
       ## Syntax [#syntax]
 
-      ### Objective-c [#objc]
+      ### Objective-C [#objc]
 
 ```objectivec
-+ (void) stopCurrentInteraction:(NSString*)interactionIdentifier;
++ (void)stopCurrentInteraction:(NSString *)interactionIdentifier;
 ```
 
       ### Swift [#swift]
 
 ```swift
-NewRelic.stopInteraction(string: "myInteractionName")
+NewRelic.stopCurrentInteraction(_ interactionIdentifier: String)
 ```
 
       ## Description [#description]
@@ -185,7 +185,7 @@ NewRelic.stopInteraction(string: "myInteractionName")
             </td>
 
             <td>
-              `string`
+              `NSString` / `String`
             </td>
 
             <td>

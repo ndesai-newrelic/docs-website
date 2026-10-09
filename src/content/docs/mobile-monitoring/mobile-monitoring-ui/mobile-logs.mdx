@@ -241,40 +241,45 @@ NewRelic.logAttributes(attributes)
 
 ### Syntax [#syntax]
 
-#### Objective-c
+#### Objective-C [#objc]
 
 ```objectivec
-(void) logInfo:(NSString* __nonnull) message;
-(void) logError:(NSString* __nonnull) message;
-(void) logVerbose:(NSString* __nonnull) message;
-(void) logWarning:(NSString* __nonnull) message;
-(void) logAudit:(NSString* __nonnull) message;
-(void) logDebug:(NSString* __nonnull) message;
-(void) log:(NSString* __nonnull) message level:(NRLogLevels)level;
-(void) logAll:(NSDictionary* __nonnull) dict;
-(void) logAttributes:(NSDictionary* __nonnull) dict;
-(void) logErrorObject:(NSError* __nonnull) error;
++ (void)logInfo:(NSString *)message;
++ (void)logError:(NSString *)message;
++ (void)logVerbose:(NSString *)message;
++ (void)logWarning:(NSString *)message;
++ (void)logAudit:(NSString *)message;
++ (void)logDebug:(NSString *)message;
++ (void)log:(NSString *)message level:(NRLogLevels)level;
++ (void)logAll:(NSDictionary *)dict;
++ (void)logAttributes:(NSDictionary *)dict;
++ (void)logErrorObject:(NSError *)error;
 ```
 
 #### Swift [#swift]
 
 ```swift
-func logInfo(_ message: String)
-func logError(_ message: String)
-func logVerbose(_ message: String)
-func logWarning(_ message: String)
-func logAudit(_ message: String)
-func logDebug(_ message: String)
-func log(_ message: String, level: NRLogLevels)
-func logAll(_ dict: [String: Any])
-func logAttributes(_ dict: [String: Any])
-func logErrorObject(_ error: NSError)
+NewRelic.logInfo(_ message: String)
+NewRelic.logError(_ message: String)
+NewRelic.logVerbose(_ message: String)
+NewRelic.logWarning(_ message: String)
+NewRelic.logAudit(_ message: String)
+NewRelic.logDebug(_ message: String)
+NewRelic.log(_ message: String, level: NRLogLevels)
+NewRelic.logAll(_ dict: [AnyHashable: Any])
+NewRelic.logAttributes(_ dict: [AnyHashable: Any])
+NewRelic.logErrorObject(_ error: Error)
 ```
 
+### Description [#description]
+
+* `log:level:` accepts a single `NRLogLevels` value: `NRLogLevelError`, `NRLogLevelWarning`, `NRLogLevelInfo`, `NRLogLevelVerbose`, `NRLogLevelAudit`, or `NRLogLevelDebug`. You can't combine multiple levels in one call.
+* `logAll:` and `logAttributes:` read the `message` and `logLevel` keys from the dictionary you pass. `logLevel` must be one of `ERROR`, `WARN`, `INFO`, `VERBOSE`, `AUDIT`, or `DEBUG`; any other value is treated as `ERROR`. `logAttributes:` sends all other keys in the dictionary as attributes on the log.
+* `logErrorObject:` logs the error's localized description at the error level. It also triggers an error-mode [session replay](/docs/mobile-monitoring/mobile-monitoring-ui/mobile-session-replay/introduction) transition, if session replay is enabled.
 
 ### Example [#example]
 
-#### Objective-c [#objective-c]
+#### Objective-C [#objective-c]
 
 ```objectivec
 [NewRelic logInfo:@"This is an info message"];
@@ -289,12 +294,15 @@ func logErrorObject(_ error: NSError)
 
 [NewRelic logDebug:@"This is a debug message"];
 
-[NewRelic log:@"This is a custom log level message" level:NRLogLevelsCustom];
+[NewRelic log:@"This is a message with an explicit level" level:NRLogLevelWarning];
 
-NSDictionary *logDict = @{@"key1": @"value1", @"key2": @"value2"};
+NSDictionary *logDict = @{@"logLevel": @"WARN", @"message": @"This is a test message for the New Relic logging system."};
 [NewRelic logAll:logDict];
 
-NSDictionary *attributesDict = @{@"attribute1": @"value1", @"attribute2": @"value2"};
+NSDictionary *attributesDict = @{@"logLevel": @"WARN",
+                                 @"message": @"This is a test message for the New Relic logging system.",
+                                 @"attribute1": @"value1",
+                                 @"attribute2": @"value2"};
 [NewRelic logAttributes:attributesDict];
 
 NSError *error = [NSError errorWithDomain:@"com.example" code:100 userInfo:@{NSLocalizedDescriptionKey: @"This is an error description"}];
@@ -304,7 +312,7 @@ NSError *error = [NSError errorWithDomain:@"com.example" code:100 userInfo:@{NSL
 #### Swift [#swift]
 
 ```swift
-NewRelic.logError("Encountered error=error=\(error.localizedDescription).")
+NewRelic.logError("Encountered error=\(error.localizedDescription).")
 
 NewRelic.logWarning("Warning text.")
 
@@ -313,6 +321,10 @@ NewRelic.logInfo("Info text.")
 NewRelic.logVerbose("NewRelic.start was called.")
 
 NewRelic.logDebug("Debug text.")
+
+NewRelic.logAudit("Audit text.")
+
+NewRelic.log("This is a message with an explicit level", level: NRLogLevelWarning)
 
 do {
     try errorMethod()

@@ -145,13 +145,13 @@ NewRelic.setMaxEventPoolSize(1000)
       ### Objective-C [#objc]
 
 ```objectivec
-+ (void) setMaxEventPoolSize:(unsigned int)size;
++ (void)setMaxEventPoolSize:(unsigned int)size;
 ```
 
       ### Swift [#swift]
 
 ```swift
-NewRelic.setMaxEventPoolSize(unsigned int $size)
+NewRelic.setMaxEventPoolSize(_ size: UInt32)
 ```
 
       ## Description [#description]
@@ -160,7 +160,7 @@ NewRelic.setMaxEventPoolSize(unsigned int $size)
 
       By default, the iOS agent collects a maximum of 1000 events per [harvest cycle](/docs/accounts-partnerships/education/getting-started-new-relic/glossary#harvest-cycle).
       This method controls the maximum size of the event pool stored in the memory until the next harvest cycle. When the pool size limit is reached, the New Relic iOS agent will begin [sampling events](/docs/agents/manage-apm-agents/agent-data/new-relic-events-limits-sampling), discarding some old and some new events, until the pool of events are transmitted with the next harvest cycle.
-      This method lets you override the maximum size of that event pool. You must set this value after `Agent.start()` is called.
+      This method lets you override the maximum size of that event pool. Call this method after you start the agent with `startWithApplicationToken`; calls made before the agent starts have no effect. This method returns `void`.
 
       <Callout variant="important">
         The minimum allowed value for `size` is `64`. If you pass a lower value, the agent resets it to `64` and logs a warning.
@@ -194,11 +194,11 @@ NewRelic.setMaxEventPoolSize(unsigned int $size)
         <tbody>
           <tr>
             <td>
-              `$size`
+              `size`
             </td>
 
             <td>
-              `unsigned int`
+              `unsigned int` / `UInt32`
             </td>
 
             <td>
@@ -213,13 +213,13 @@ NewRelic.setMaxEventPoolSize(unsigned int $size)
       ### Objective-C [#obj-c]
 
 ```objectivec
-BOOL poolSizeSet = [NewRelic setMaxEventPoolSize:1000];
+[NewRelic setMaxEventPoolSize:1000];
 ```
 
       ### Swift [#swift]
 
 ```swift
-let poolSizeSet = NewRelic.setMaxEventPoolSize(1000)
+NewRelic.setMaxEventPoolSize(1000)
 ```
     </TabsPageItem>
 

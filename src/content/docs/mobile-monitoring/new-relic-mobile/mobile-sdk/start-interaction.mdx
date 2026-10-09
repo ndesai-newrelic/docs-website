@@ -169,23 +169,23 @@ class MainActivity : AppCompatActivity() {
     <TabsPageItem id="ios">
       ## Syntax [#syntax]
 
-      ### Objective-c [#objc]
+      ### Objective-C [#objc]
 
 ```objectivec
-+ (NSString*) startInteractionWithName:(NSString*)interactionName;
++ (NSString *)startInteractionWithName:(NSString *)interactionName;
 ```
 
       ### Swift [#swift]
 
 ```swift
-NewRelic.startInteraction(string: "myInteractionName")
+NewRelic.startInteraction(withName: String) -> String!
 ```
 
       ## Description [#description]
 
       This method will start an interaction trace using `interactionName` as the name. The interaction will record all instrumented methods until a timeout occurs or `stopCurrentInteraction` is called.
 
-      To name an interaction that already exists and is already being tracked, see [`setInteractionName()`](/docs/mobile-monitoring/new-relic-mobile/mobile-sdk/name-interaction/#ios).
+      To name an interaction that already exists and is already being tracked, see [`customNewRelicInteractionName`](/docs/mobile-monitoring/new-relic-mobile/mobile-sdk/name-interaction/#ios).
 
       <Callout variant="tip">
         If you use these methods, the instrumented interactions will not show up on the [Interactions](/docs/mobile-monitoring/mobile-monitoring-ui/mobile-app-pages/interactions-page) page, but they can be still found with a NRQL query, such as:
@@ -221,7 +221,7 @@ NewRelic.startInteraction(string: "myInteractionName")
             </td>
 
             <td>
-              `string`
+              `NSString` / `String`
             </td>
 
             <td>
