@@ -109,10 +109,6 @@ pages:
         pages:
           - title: Overview
             path: /docs/mobile-monitoring/new-relic-mobile-ionic-capacitor/get-started/introduction-new-relic-ionic-capacitor
-          - title: Enable or disable agent features at runtime
-            path: /docs/mobile-monitoring/new-relic-mobile-ionic-capacitor/capacitor-sdk-api/toggle-agent-features
-          - title: Get the agent configuration
-            path: /docs/mobile-monitoring/new-relic-mobile-ionic-capacitor/capacitor-sdk-api/get-agent-configuration
           - title: Generate distributed tracing headers
             path: /docs/mobile-monitoring/new-relic-mobile-ionic-capacitor/capacitor-sdk-api/generate-distributed-tracing-headers
       - title: Cordova
@@ -223,6 +219,8 @@ pages:
         path: /docs/mobile-monitoring/new-relic-mobile/get-started/mobile-monitoring-alert-information
       - title: Network request settings
         path: /docs/mobile-monitoring/new-relic-mobile/maintenance/configure-network-request-settings
+      - title: Capacitor - enable or disable agent features at runtime
+        path: /docs/mobile-monitoring/new-relic-mobile-ionic-capacitor/capacitor-sdk-api/toggle-agent-features
       - title: Delete a mobile app
         path: /docs/mobile-monitoring/new-relic-mobile/maintenance/deleting-mobile-app
   - title: Mobile SDK
