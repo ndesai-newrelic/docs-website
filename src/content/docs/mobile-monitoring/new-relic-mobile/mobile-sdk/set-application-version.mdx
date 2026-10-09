@@ -29,6 +29,10 @@ freshnessValidatedDate: 2023-07-21
     <TabsBarItem id="ios">
       iOS
     </TabsBarItem>
+
+    <TabsBarItem id="unity">
+      Unity
+    </TabsBarItem>
   </TabsBar>
 
   <TabsPages>
@@ -169,6 +173,64 @@ NewRelic.setApplicationVersion:(NSString*)versionString;
 
 ```swift
 NewRelic.setApplicationVersion("1.2.3")
+```
+    </TabsPageItem>
+
+    <TabsPageItem id="unity">
+      ## Syntax [#unity-syntax]
+
+```csharp
+NewRelicAgent.SetApplicationVersion(string version) : void;
+```
+
+      ## Description [#unity-description]
+
+      By default, the Unity agent reports the app version that Unity sets for your app. This method lets you override that value. The app version is displayed as a dropdown in the New Relic UI, and you can use it to sort interactions. You can also set the version with the **applicationVersion** option in the Unity Inspector, which the agent applies when it starts. See [Configure mobile monitoring settings](/docs/mobile-monitoring/new-relic-mobile/mobile-sdk/configure-settings/#unity).
+
+      <Callout variant="important">
+        The agent runs only in Android and iOS builds. In the Unity Editor and on other platforms, this method does nothing.
+      </Callout>
+
+      ## Parameters [#unity-parameters]
+
+      <table>
+        <thead>
+          <tr>
+            <th width={200}>
+              Parameter
+            </th>
+
+            <th width={200}>
+              Type
+            </th>
+
+            <th>
+              Description
+            </th>
+          </tr>
+        </thead>
+
+        <tbody>
+          <tr>
+            <td>
+              `version`
+            </td>
+
+            <td>
+              `string`
+            </td>
+
+            <td>
+              Required. The string to display as this application's version.
+            </td>
+          </tr>
+        </tbody>
+      </table>
+
+      ## Example [#unity-example]
+
+```csharp
+NewRelicAgent.SetApplicationVersion("1.2.3");
 ```
     </TabsPageItem>
   </TabsPages>

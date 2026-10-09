@@ -44,6 +44,10 @@ freshnessValidatedDate: 2023-07-19
     <TabsBarItem id="xamarin">
       Xamarin
     </TabsBarItem>
+
+    <TabsBarItem id="unity">
+      Unity
+    </TabsBarItem>
   </TabsBar>
 
   <TabsPages>
@@ -896,6 +900,178 @@ CrossNewRelicClient.Current.NoticeNetworkFailure(
   DateTimeOffset.Now.ToUnixTimeMilliseconds(),
   DateTimeOffset.Now.ToUnixTimeMilliseconds() + 100,
   NetworkFailure.Unknown
+);
+```
+    </TabsPageItem>
+
+    <TabsPageItem id="unity">
+      ## Syntax [#unity-syntax]
+
+```csharp
+NewRelicAgent.NoticeNetworkFailure(string url, string httpMethod, long startTime, long endTime, NewRelicAgent.NetworkFailureCode failureCode, string message) : void;
+NewRelicAgent.NoticeNetworkFailure(string url, string httpMethod, NewRelic.Timer timer, NewRelicAgent.NetworkFailureCode failureCode, string message) : void;
+```
+
+      ## Description [#unity-description]
+
+      Records a failed network transaction. Use the `startTime` and `endTime` overload, which takes timestamps in milliseconds, if you might call this method from a background thread. Use the `timer` overload if you want to time the request with a `NewRelic.Timer`. Create the timer just before you send the request, and call `Stop()` on it before you call `NoticeNetworkFailure`.
+
+      <Callout variant="important">
+        The agent runs only in Android and iOS builds. In the Unity Editor and on other platforms, this method does nothing.
+      </Callout>
+
+      ## Parameters [#unity-parameters]
+
+      <table>
+        <thead>
+          <tr>
+            <th width={200}>
+              Parameter
+            </th>
+
+            <th width={200}>
+              Type
+            </th>
+
+            <th>
+              Description
+            </th>
+          </tr>
+        </thead>
+
+        <tbody>
+          <tr>
+            <td>
+              `url`
+            </td>
+
+            <td>
+              `string`
+            </td>
+
+            <td>
+              Required. The URL of the request.
+            </td>
+          </tr>
+
+          <tr>
+            <td>
+              `httpMethod`
+            </td>
+
+            <td>
+              `string`
+            </td>
+
+            <td>
+              Required. The HTTP method of the request.
+            </td>
+          </tr>
+
+          <tr>
+            <td>
+              `startTime`
+            </td>
+
+            <td>
+              `long`
+            </td>
+
+            <td>
+              Required for the timestamp overload. The start time of the request in milliseconds since the Unix epoch.
+            </td>
+          </tr>
+
+          <tr>
+            <td>
+              `endTime`
+            </td>
+
+            <td>
+              `long`
+            </td>
+
+            <td>
+              Required for the timestamp overload. The end time of the request in milliseconds since the Unix epoch.
+            </td>
+          </tr>
+
+          <tr>
+            <td>
+              `timer`
+            </td>
+
+            <td>
+              `NewRelic.Timer`
+            </td>
+
+            <td>
+              Required for the timer overload. A timer created when the request started and stopped when it failed.
+            </td>
+          </tr>
+
+          <tr>
+            <td>
+              `failureCode`
+            </td>
+
+            <td>
+              `NewRelicAgent.NetworkFailureCode`
+            </td>
+
+            <td>
+              Required. The value that best describes the failure. Supported values are: `Unknown`, `Cancelled`, `BadURL`, `TimedOut`, `UnsupportedURL`, `CannotFindHost`, `CannotConnectToHost`, `DataLengthExceedsMaximum`, `NetworkConnectionLost`, `DNSLookupFailed`, `HTTPTooManyRedirects`, `ResourceUnavailable`, `NotConnectedToInternet`, `RedirectToNonExistentLocation`, `BadServerResponse`, `UserCancelledAuthentication`, `UserAuthenticationRequired`, `ZeroByteResource`, `CannotDecodeRawData`, `CannotDecodeContentData`, `CannotParseResponse`, `InternationalRoamingOff`, `CallIsActive`, `DataNotAllowed`, `RequestBodyStreamExhausted`, `FileDoesNotExist`, `FileIsDirectory`, `NoPermissionsToReadFile`, `SecureConnectionFailed`, `ServerCertificateHasBadDate`, `ServerCertificateUntrusted`, `ServerCertificateHasUnknownRoot`, `ServerCertificateNotYetValid`, `ClientCertificateRejected`, `ClientCertificateRequired`, `CannotLoadFromNetwork`, `CannotCreateFile`, `CannotOpenFile`, `CannotCloseFile`, `CannotWriteToFile`, `CannotRemoveFile`, `CannotMoveFile`, `DownloadDecodingFailedMidStream`, `DownloadDecodingFailedToComplete`.
+            </td>
+          </tr>
+
+          <tr>
+            <td>
+              `message`
+            </td>
+
+            <td>
+              `string`
+            </td>
+
+            <td>
+              Required. A descriptive message about the failure. The iOS agent ignores this value.
+            </td>
+          </tr>
+        </tbody>
+      </table>
+
+      ## Example [#unity-example]
+
+```csharp
+// Using timestamps
+long startTime = DateTimeOffset.Now.ToUnixTimeMilliseconds();
+try
+{
+    // ... send the request ...
+}
+catch (Exception e)
+{
+    long endTime = DateTimeOffset.Now.ToUnixTimeMilliseconds();
+    NewRelicAgent.NoticeNetworkFailure(
+        "https://fakewebsite.com",
+        "GET",
+        startTime,
+        endTime,
+        NewRelicAgent.NetworkFailureCode.Unknown,
+        e.Message
+    );
+}
+
+// Using a timer
+NewRelic.Timer timer = new NewRelic.Timer();
+// ... send the request and detect the failure ...
+timer.Stop();
+NewRelicAgent.NoticeNetworkFailure(
+    "https://fakewebsite.com",
+    "GET",
+    timer,
+    NewRelicAgent.NetworkFailureCode.TimedOut,
+    "The request timed out"
 );
 ```
     </TabsPageItem>

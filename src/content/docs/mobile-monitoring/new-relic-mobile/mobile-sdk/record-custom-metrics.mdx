@@ -1014,12 +1014,13 @@ NewRelic.recordMetric('RNCustomMetricName', 'RNCustomMetricCategory', 13, NewRel
 ```csharp
 NewRelicAgent.RecordMetricWithName(string name, string category) : void;
 NewRelicAgent.RecordMetricWithName(string name, string category, double value) : void;
+NewRelicAgent.RecordMetricWithName(string name, string category, double value, NewRelicAgent.MetricUnit valueUnits) : void;
 NewRelicAgent.RecordMetricWithName(string name, string category, double value, NewRelicAgent.MetricUnit valueUnits, NewRelicAgent.MetricUnit countUnits) : void;
 ```
 
       ## Description [#description]
 
-      Records custom metrics (arbitrary numerical data), where `valueUnits` is the measurement unit for the metric value and `countUnits` is the measurement unit of the metric count. Without a `value`, the metric is recorded with a value of 1 and no units. If you use `valueUnits` or `countUnits`, then you must set all of `value`, `valueUnits`, and `countUnits`.
+      Records custom metrics (arbitrary numerical data), where `valueUnits` is the measurement unit for the metric value and `countUnits` is the measurement unit of the metric count. Without a `value`, the metric is recorded with a value of 1 and no units. To set units, use the four-argument overload to set `valueUnits` only, or the five-argument overload to set both `valueUnits` and `countUnits`. In either case you must also pass `value`.
 
       The units are members of the `NewRelicAgent.MetricUnit` enum. Supported measurements for `valueUnits` and `countUnits` are:
 
@@ -1101,7 +1102,7 @@ NewRelicAgent.RecordMetricWithName(string name, string category, double value, N
             </td>
 
             <td>
-              Required for the five-argument overload. The unit of measurement for `value`.
+              Required for the four- and five-argument overloads. The unit of measurement for `value`.
             </td>
           </tr>
 
@@ -1126,6 +1127,7 @@ NewRelicAgent.RecordMetricWithName(string name, string category, double value, N
 ```csharp
 NewRelicAgent.RecordMetricWithName("UnityCustomMetricName", "UnityCustomMetricCategory");
 NewRelicAgent.RecordMetricWithName("UnityCustomMetricName", "UnityCustomMetricCategory", 12);
+NewRelicAgent.RecordMetricWithName("UnityCustomMetricName", "UnityCustomMetricCategory", 13, NewRelicAgent.MetricUnit.PERCENT);
 NewRelicAgent.RecordMetricWithName("UnityCustomMetricName", "UnityCustomMetricCategory", 13, NewRelicAgent.MetricUnit.PERCENT, NewRelicAgent.MetricUnit.OPERATIONS);
 ```
     </TabsPageItem>

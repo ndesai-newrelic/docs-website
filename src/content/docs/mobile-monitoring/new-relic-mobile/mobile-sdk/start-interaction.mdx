@@ -648,7 +648,123 @@ for(int i = 0; i < 4; i++)
 
 NewRelicAgent.StopCurrentInteraction(interActionId);
 ```
-    </TabsPageItem>
+    
+
+      ## Trace methods within an interaction [#unity-trace-methods]
+
+      Use `StartTracingMethod` and `EndTracingMethodWithTimer` to add a method trace to the interaction that is currently running. If no interaction is running, these methods do nothing.
+
+      ### Syntax [#unity-trace-syntax]
+
+```csharp
+NewRelicAgent.StartTracingMethod(string methodName, string className, NewRelic.Timer timer, NewRelicAgent.NRTraceType category) : void;
+NewRelicAgent.EndTracingMethodWithTimer(NewRelic.Timer timer) : void;
+```
+
+      ### Description [#unity-trace-description]
+
+      Call `StartTracingMethod` at the beginning of the method you want to trace. Create the `NewRelic.Timer` just before that call; it starts timing when you create it. Keep the timer in memory until you pass it to `EndTracingMethodWithTimer` at the end of the method. Call `Stop()` on the timer before you call `EndTracingMethodWithTimer`. If you don't call `EndTracingMethodWithTimer`, the running interaction times out as an unhealthy trace.
+
+      On Android, the agent uses the `className` and `methodName` to name the trace, and ignores the `timer` and `category` values. On iOS, the agent uses all of them.
+
+      ### Parameters [#unity-trace-parameters]
+
+      <table>
+        <thead>
+          <tr>
+            <th width={200}>
+              Parameter
+            </th>
+
+            <th width={200}>
+              Type
+            </th>
+
+            <th>
+              Description
+            </th>
+          </tr>
+        </thead>
+
+        <tbody>
+          <tr>
+            <td>
+              `methodName`
+            </td>
+
+            <td>
+              `string`
+            </td>
+
+            <td>
+              Required. The name of the method you are tracing.
+            </td>
+          </tr>
+
+          <tr>
+            <td>
+              `className`
+            </td>
+
+            <td>
+              `string`
+            </td>
+
+            <td>
+              Required. The name of the class that owns the method.
+            </td>
+          </tr>
+
+          <tr>
+            <td>
+              `timer`
+            </td>
+
+            <td>
+              `NewRelic.Timer`
+            </td>
+
+            <td>
+              Required. A timer created just before you call `StartTracingMethod`. Pass the same timer to `EndTracingMethodWithTimer`.
+            </td>
+          </tr>
+
+          <tr>
+            <td>
+              `category`
+            </td>
+
+            <td>
+              `NewRelicAgent.NRTraceType`
+            </td>
+
+            <td>
+              Required. The category of the trace. Values are `None`, `ViewLoading`, `Layout`, `Database`, `Images`, `Json`, and `Network`.
+            </td>
+          </tr>
+        </tbody>
+      </table>
+
+      ### Example [#unity-trace-example]
+
+```csharp
+void LoadLevelData()
+{
+    NewRelic.Timer timer = new NewRelic.Timer();
+    NewRelicAgent.StartTracingMethod("LoadLevelData", "LevelLoader", timer, NewRelicAgent.NRTraceType.Database);
+
+    try
+    {
+        // ... the work you want to trace ...
+    }
+    finally
+    {
+        timer.Stop();
+        NewRelicAgent.EndTracingMethodWithTimer(timer);
+    }
+}
+```
+</TabsPageItem>
 
     <TabsPageItem id="unreal">
       ## Syntax [#syntax]

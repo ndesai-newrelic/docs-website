@@ -29,6 +29,10 @@ freshnessValidatedDate: 2023-07-21
     <TabsBarItem id="ios">
       iOS
     </TabsBarItem>
+
+    <TabsBarItem id="unity">
+      Unity
+    </TabsBarItem>
   </TabsBar>
 
   <TabsPages>
@@ -173,6 +177,64 @@ NewRelic.setApplicationBuild:(NSString*)versionString;
 
 ```swift
 NewRelic.setApplicationBuild("42")
+```
+    </TabsPageItem>
+
+    <TabsPageItem id="unity">
+      ## Syntax [#unity-syntax]
+
+```csharp
+NewRelicAgent.SetApplicationBuild(string buildNumber) : void;
+```
+
+      ## Description [#unity-description]
+
+      By default, the Unity agent reports the build number that Unity sets for your app. This method lets you override that value with a custom build identifier string that appears next to the application version in the [Crash report page](/docs/mobile-monitoring/mobile-monitoring-ui/crashes/mobile-apps-crash-report-dashboard#details). You can also set the build number with the **applicationBuild** option in the Unity Inspector, which the agent applies when it starts. See [Configure mobile monitoring settings](/docs/mobile-monitoring/new-relic-mobile/mobile-sdk/configure-settings/#unity).
+
+      <Callout variant="important">
+        The agent runs only in Android and iOS builds. In the Unity Editor and on other platforms, this method does nothing.
+      </Callout>
+
+      ## Parameters [#unity-parameters]
+
+      <table>
+        <thead>
+          <tr>
+            <th width={200}>
+              Parameter
+            </th>
+
+            <th width={200}>
+              Type
+            </th>
+
+            <th>
+              Description
+            </th>
+          </tr>
+        </thead>
+
+        <tbody>
+          <tr>
+            <td>
+              `buildNumber`
+            </td>
+
+            <td>
+              `string`
+            </td>
+
+            <td>
+              Required. The string indicating the build ID.
+            </td>
+          </tr>
+        </tbody>
+      </table>
+
+      ## Example [#unity-example]
+
+```csharp
+NewRelicAgent.SetApplicationBuild("156");
 ```
     </TabsPageItem>
   </TabsPages>

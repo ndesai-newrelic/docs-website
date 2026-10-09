@@ -1511,6 +1511,56 @@ NewRelicAgent.NoticeHttpTransaction(
   new Dictionary<string, object>()
 );
 ```
-    </TabsPageItem>
+    
+
+      ## Get distributed tracing headers [#unity-distributed-tracing]
+
+      Use `NoticeDistributedTrace` to get the distributed tracing headers for an outgoing request. Add the headers to your request so that New Relic can connect the request to your backend services, and pass the dictionary to `NoticeHttpTransaction` as `dtHeaders`.
+
+```csharp
+NewRelicAgent.NoticeDistributedTrace() : Dictionary<string, object>;
+```
+
+      The method takes no parameters. It returns a dictionary that always includes the `traceparent` and `tracestate` entries. On Android, the dictionary also includes `trace.id`, `id`, and `guid`. On iOS, the dictionary can also include `newrelic` if the native agent returns it. The method returns `null` if the agent has not started, for example in the Unity Editor.
+
+```csharp
+Dictionary<string, object> dtHeaders = NewRelicAgent.NoticeDistributedTrace();
+
+if (dtHeaders != null)
+{
+    // Add the headers to your outgoing request, for example with UnityWebRequest
+    request.SetRequestHeader("traceparent", dtHeaders["traceparent"].ToString());
+    request.SetRequestHeader("tracestate", dtHeaders["tracestate"].ToString());
+}
+```
+
+      ## Instrument HttpClient requests [#unity-httpclient]
+
+      To automatically record requests that you make with `System.Net.Http.HttpClient`, create the client with the New Relic message handler. `getHttpMessageHandler` returns a `NewRelicHttpClientHandler`, which is an `HttpClientHandler`. For each request, the handler adds the `traceparent` and `tracestate` distributed tracing headers and records the request as an HTTP transaction, so you don't need to call `NoticeHttpTransaction` yourself.
+
+```csharp
+NewRelicAgent.getHttpMessageHandler() : NewRelicHttpClientHandler;
+```
+
+      The method name starts with a lowercase `g`, unlike the other `NewRelicAgent` methods. It requires the agent to be running. If the agent has not started, as in the Unity Editor, using it throws a `NullReferenceException`, so use it only in Android and iOS builds.
+
+```csharp
+using System.Net.Http;
+
+#if !UNITY_EDITOR && (UNITY_ANDROID || UNITY_IOS)
+HttpClient client = new HttpClient(NewRelicAgent.getHttpMessageHandler());
+#else
+HttpClient client = new HttpClient();
+#endif
+
+HttpResponseMessage response = await client.GetAsync("https://github.com");
+```
+
+      ## Instrument UnityWebRequest requests [#unity-unitywebrequest]
+
+      You don't need to change your code to monitor `UnityWebRequest` calls. When Unity compiles your project in the Editor, the agent rewrites the `UnityWebRequest.SendWebRequest()` and `Dispose()` calls in your project's `Assembly-CSharp` assembly so that they run through a New Relic wrapper. Code in other assemblies, such as assembly definition files, is not rewritten. The rewrite relies on the `com.unity.nuget.mono-cecil` package, which the agent package installs as a dependency.
+
+      Currently, the wrapper adds the `traceparent` and `tracestate` headers to the request and records an HTTP transaction when the request completes on Android only.
+</TabsPageItem>
   </TabsPages>
 </Tabs>
