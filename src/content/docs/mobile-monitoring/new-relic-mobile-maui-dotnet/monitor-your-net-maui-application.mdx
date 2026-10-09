@@ -41,10 +41,11 @@ If you need to install the agent manually, follow these steps:
 
     Before you install our .NET MAUI agent, make sure your app meets these version requirements:
 
-    * .NET 9 or .NET 10 (the `NewRelic.MAUI.Plugin` package targets `net9.0` and `net10.0`, with the matching Android and iOS target frameworks)
-    * For Android-native apps: Android 7 (API 24) or higher
-    * For iOS-native apps:
+    * .NET 9 or .NET 10. The `NewRelic.MAUI.Plugin` package targets `net9.0-android`, `net9.0-ios`, `net10.0-android`, and `net10.0-ios`.
+    * For Android: Android 7 (API 24) or higher
+    * For iOS:
       * iOS 16 or higher, using the latest release of Xcode
+    * For Android crash reporting, configure ProGuard or R8 rules for New Relic in your Android project. For details, see [Configure ProGuard or DexGuard](/docs/mobile-monitoring/new-relic-mobile-android/install-configure/configure-proguard-or-dexguard-android-apps).
   </Step>
 
   <Step>
@@ -328,7 +329,7 @@ The following customizations are available for the .NET MAUI agent.
       </td>
     </tr>
     <tr>
-      <td id="create-custom">
+      <td id="record-exceptions">
         Record handled exceptions, with or without attributes.
       </td>
       <td>
@@ -443,3 +444,7 @@ HttpClient myClient = new HttpClient(CrossNewRelic.Current.GetHttpMessageHandler
 ### App crashes with TrackShellNavigatedEvents [#track-shell-crash]
 
 If you experience a `System.NullReferenceException` when calling `CrossNewRelic.Current.TrackShellNavigatedEvents()` in the `App()` constructor, it is likely because the application shell is not fully bootstrapped yet. To resolve this, move the call out of the constructor and into the MAUI `OnStart()` lifecycle method within your `App.xaml.cs` file (see the [Screen tracking events](#screen-tracking-events) section for code examples).
+
+### Troubleshoot missing crash reports on Android [#proguard]
+
+If Android crash reports don't appear, make sure you've added the correct ProGuard rules for New Relic to your ProGuard configuration file. For details, see [Configure ProGuard or DexGuard](/docs/mobile-monitoring/new-relic-mobile-android/install-configure/configure-proguard-or-dexguard-android-apps).
