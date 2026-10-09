@@ -62,7 +62,7 @@ freshnessValidatedDate: 2024-09-06
 
   <TabsPages>
     <TabsPageItem id="android">
-      Use the methods below to change default mobile monitoring settings. All settings, including the call to invoke the agent, are called in the `onCreate` method of the `MainActivity` class.
+      Use the methods below to change default mobile monitoring settings. Configure the agent before you start it: call these methods before `start()`, typically in the `onCreate` method of your app's main activity.
 
       To change settings, you have two options (if the setting supports it):
 
@@ -74,15 +74,30 @@ NewRelic.enableFeature(FeatureFlag.CrashReporting);
 NewRelic.withApplicationToken(NEW_RELIC_TOKEN).start(this.getApplication());
 ```
 
+```kotlin
+NewRelic.disableFeature(FeatureFlag.DefaultInteractions)
+NewRelic.enableFeature(FeatureFlag.CrashReporting)
+NewRelic.withApplicationToken(NEW_RELIC_TOKEN).start(this.application)
+```
+
         OR
-      * Change the setting as part of the agent start call using the `.with` method. For example:
+      * Change the setting as part of the agent start call using the `.with` or `.using` methods. For example:
 
 ```java
 NewRelic.withApplicationToken(NEW_RELIC_TOKEN)
-        .withDefaultInteractions(false)
+        .withLoggingEnabled(true)
         .withCrashReportingEnabled(true)
         .start(this.getApplication());
 ```
+
+```kotlin
+NewRelic.withApplicationToken(NEW_RELIC_TOKEN)
+    .withLoggingEnabled(true)
+    .withCrashReportingEnabled(true)
+    .start(this.application)
+```
+
+      The `.with` and `.using` methods are instance methods. Call them on the object returned by `NewRelic.withApplicationToken()`, and end the chain with `start()`. The `FeatureFlag` enum is in the `com.newrelic.agent.android` package.
 
       ## Data endpoint settings [#android-data-endpoint-settings]
 
@@ -102,21 +117,27 @@ NewRelic.withApplicationToken(NEW_RELIC_TOKEN)
         <tbody>
           <tr>
             <td>
-              Enable or disable crash reporting, which appears on the [<DNT>**Crash analysis**</DNT> page](/docs/mobile-monitoring/mobile-monitoring-ui/crashes/crash-analysis-group-filter-your-crashes).
-
               Specifies the URI authority component of the harvest data upload endpoint. This endpoint is also used for handled exception uploads.
 
-              To replace data endpoint the agent will use when reporting data harvests, add `andCollectorAddress:` to your `NewRelic.withApplicationToken(“<TOKEN>”)` method call.
+              To replace the data endpoint the agent uses when reporting data harvests, add `usingCollectorAddress` to your `NewRelic.withApplicationToken("<TOKEN>")` method call.
 
-              Default value is `mobile-collector.newrelic.com`.
+              Default value is `mobile-collector.newrelic.com`. If your application token has a region prefix, such as `eu01`, the default is `mobile-collector.<region>.nr-data.net`. If the `FedRampEnabled` feature flag is enabled, the default is `gov-mobile-collector.newrelic.com`.
             </td>
 
             <td>
+
 ```java
-NewRelic.withApplicationToken(“<TOKEN>”)
+NewRelic.withApplicationToken("<TOKEN>")
         .usingCollectorAddress("harvest-upload.domain.com")
-        .usingCrashCollectorAddress("crash-upload.domain.com")
+        .start(this.getApplication());
 ```
+
+```kotlin
+NewRelic.withApplicationToken("<TOKEN>")
+    .usingCollectorAddress("harvest-upload.domain.com")
+    .start(this.application)
+```
+
             </td>
           </tr>
 
@@ -124,22 +145,29 @@ NewRelic.withApplicationToken(“<TOKEN>”)
             <td>
               Specifies the authority component of the crash data upload URI.
 
-              To replace data endpoint the agent will use when reporting crashes, add `andCrashCollectorAddress:` to your `NewRelic.withApplicationToken(“<TOKEN>”)` method call.
+              To replace the data endpoint the agent uses when reporting crashes, add `usingCrashCollectorAddress` to your `NewRelic.withApplicationToken("<TOKEN>")` method call.
 
-              Default value is `mobile-crash.newrelic.com`.
+              Default value is `mobile-crash.newrelic.com`. If your application token has a region prefix, such as `eu01`, the default is `mobile-crash.<region>.nr-data.net`. If the `FedRampEnabled` feature flag is enabled, the default is `gov-mobile-crash.newrelic.com`.
             </td>
 
             <td>
+
 ```java
-NewRelic.withApplicationToken(“<TOKEN>”)
-        .usingCollectorAddress("harvest-upload.domain.com")
+NewRelic.withApplicationToken("<TOKEN>")
         .usingCrashCollectorAddress("crash-upload.domain.com")
+        .start(this.getApplication());
 ```
+
+```kotlin
+NewRelic.withApplicationToken("<TOKEN>")
+    .usingCrashCollectorAddress("crash-upload.domain.com")
+    .start(this.application)
+```
+
             </td>
           </tr>
         </tbody>
       </table>
-
 
       ## Analytics settings [#android-analytics-settings]
 
@@ -156,34 +184,29 @@ NewRelic.withApplicationToken(“<TOKEN>”)
           </tr>
         </thead>
 
-        <tr>
-          <td>
-            Enable or disable collection of event data. These events [can be queried with NRQL](/docs/insights/explore-data/attributes/mobile-default-attributes-insights) and used in the [<DNT>**Crash analysis**</DNT> page](/docs/mobile-monitoring/mobile-monitoring-ui/crashes/crash-analysis-group-filter-your-crashes).
+        <tbody>
+          <tr>
+            <td>
+              Enable or disable the reporting of event data. These events [can be queried with NRQL](/docs/insights/explore-data/attributes/mobile-default-attributes-insights) and used in the [<DNT>**Crash analysis**</DNT> page](/docs/mobile-monitoring/mobile-monitoring-ui/crashes/crash-analysis-group-filter-your-crashes). When disabled, the agent doesn't send event data to the collector.
 
-            Default value is `true`.
-          </td>
+              Default value is `true`.
+            </td>
 
-          <td>
+            <td>
+
 ```java
-withAnalyticsEvents(false)
+NewRelic.enableFeature(FeatureFlag.AnalyticsEvents);
+NewRelic.disableFeature(FeatureFlag.AnalyticsEvents);
 ```
-          </td>
-        </tr>
 
-        <tr>
-          <td>
-            Enable or disable the reporting of event data. Event <DNT>**collection**</DNT> will still occur, but the events will not be sent to our collector. You might decide to use this instead of `withAnalyticsEvents` if you wanted to disable collection but still be able to see what the agent was collecting.
-
-            Default value is `true`.
-          </td>
-
-          <td>
-```java
+```kotlin
 NewRelic.enableFeature(FeatureFlag.AnalyticsEvents)
 NewRelic.disableFeature(FeatureFlag.AnalyticsEvents)
 ```
-          </td>
-        </tr>
+
+            </td>
+          </tr>
+        </tbody>
       </table>
 
       ## App launch time settings [#android-applaunchtime]
@@ -201,23 +224,32 @@ NewRelic.disableFeature(FeatureFlag.AnalyticsEvents)
           </tr>
         </thead>
 
-        <tr>
-          <td>
-            Enable or disable reporting app launch time (cold and hot time) to the [metrics](/docs/data-apis/understand-data/new-relic-data-types/#metrics):
+        <tbody>
+          <tr>
+            <td>
+              Enable or disable reporting app launch time (cold and hot time) to the [metrics](/docs/data-apis/understand-data/new-relic-data-types/#metrics):
 
-            * Cold start time refers to an app’s starting from scratch. This means that the app’s process has not been created by the system until then.
-            * Hot start time refers to when your app’s process is already running in the background.
+              * Cold start time refers to an app's starting from scratch. This means that the app's process has not been created by the system until then.
+              * Hot start time refers to when your app's process is already running in the background.
 
               Default value is `true`.
-          </td>
+            </td>
 
-          <td>
+            <td>
+
 ```java
+NewRelic.enableFeature(FeatureFlag.AppStartMetrics);
+NewRelic.disableFeature(FeatureFlag.AppStartMetrics);
+```
+
+```kotlin
 NewRelic.enableFeature(FeatureFlag.AppStartMetrics)
 NewRelic.disableFeature(FeatureFlag.AppStartMetrics)
 ```
-          </td>
-        </tr>
+
+            </td>
+          </tr>
+        </tbody>
       </table>
 
       ## Application settings [#android-application-settings]
@@ -235,29 +267,51 @@ NewRelic.disableFeature(FeatureFlag.AppStartMetrics)
           </tr>
         </thead>
 
-        <tr>
-          <td>
-            Set the application's version as a string. Defaults to version number set in `AndroidManifest.xml`.
-          </td>
+        <tbody>
+          <tr>
+            <td>
+              Set the application's version as a string. Defaults to the version name set in your app's Gradle build or `AndroidManifest.xml`. See [Set application version](/docs/mobile-monitoring/new-relic-mobile/mobile-sdk/set-application-version).
+            </td>
 
-          <td>
+            <td>
+
 ```java
-withApplicationVersion("MY APP VERSION")
+NewRelic.withApplicationToken("<TOKEN>")
+        .withApplicationVersion("MY APP VERSION")
+        .start(this.getApplication());
 ```
-          </td>
-        </tr>
 
-        <tr>
-          <td>
-            Set the build's version as a string. Defaults to build ID set in `AndroidManifest.xml`.
-          </td>
+```kotlin
+NewRelic.withApplicationToken("<TOKEN>")
+    .withApplicationVersion("MY APP VERSION")
+    .start(this.application)
+```
 
-          <td>
-            ```java
-            withApplicationBuild("MY BUILD VERSION")
-            ```
-          </td>
-        </tr>
+            </td>
+          </tr>
+
+          <tr>
+            <td>
+              Set the build's version as a string. Defaults to the build ID set in your app's Gradle build or `AndroidManifest.xml`. See [Set application build number](/docs/mobile-monitoring/new-relic-mobile/mobile-sdk/set-application-build-number).
+            </td>
+
+            <td>
+
+```java
+NewRelic.withApplicationToken("<TOKEN>")
+        .withApplicationBuild("MY BUILD VERSION")
+        .start(this.getApplication());
+```
+
+```kotlin
+NewRelic.withApplicationToken("<TOKEN>")
+    .withApplicationBuild("MY BUILD VERSION")
+    .start(this.application)
+```
+
+            </td>
+          </tr>
+        </tbody>
       </table>
 
       ## Background reporting [#android-background-reporting]
@@ -279,20 +333,29 @@ withApplicationVersion("MY APP VERSION")
           <tr>
             <td>
               Enable or disable background reporting when application goes to the background state. When enabled, the agent reports data captured while the app is in the background, and the [`background` attribute](/attribute-dictionary/?event=MobileSession&attribute=background) is added to session attributes.
+
+              Requires Android agent v7.4.0 or higher.
+
+              Background reporting is disabled by default. To enable it, add the following feature flag:
             </td>
 
             <td>
-              Background reporting is disabled by default. To enable it, add the following feature flag:
 
 ```java
+NewRelic.enableFeature(FeatureFlag.BackgroundReporting);
+NewRelic.disableFeature(FeatureFlag.BackgroundReporting);
+```
+
+```kotlin
 NewRelic.enableFeature(FeatureFlag.BackgroundReporting)
 NewRelic.disableFeature(FeatureFlag.BackgroundReporting)
 ```
+
             </td>
           </tr>
         </tbody>
       </table>
-      
+
       ## Crash and error reporting settings [#crash-error-reporting-settings]
 
       <table>
@@ -308,43 +371,145 @@ NewRelic.disableFeature(FeatureFlag.BackgroundReporting)
           </tr>
         </thead>
 
-        <tr>
-          <td>
-            Enables or disables [deferred crash reporting](/docs/mobile-monitoring/new-relic-mobile-android/install-configure/android-agent-crash-reporting/#deferred-crash-reporting). Default value is `false`.
-          </td>
+        <tbody>
+          <tr>
+            <td>
+              Enable or disable crash reporting, which appears on the [<DNT>**Crash analysis**</DNT> page](/docs/mobile-monitoring/mobile-monitoring-ui/crashes/crash-analysis-group-filter-your-crashes). When disabled, the agent doesn't install its crash handler.
 
-          <td>
+              Default value is `true`.
+            </td>
+
+            <td>
+
 ```java
-withCrashReportingEnabled(true)
+NewRelic.enableFeature(FeatureFlag.CrashReporting);
+NewRelic.disableFeature(FeatureFlag.CrashReporting);
 ```
-          </td>
-        </tr>
 
-        <tr>
-          <td>
-            Enable or disable recording handled exceptions events, which appear on the [Handled exception page](/docs/mobile-monitoring/mobile-monitoring-ui/crashes/handled-exceptions-analyze-trends-prevent-crashes). Default value is `true`.
-          </td>
+```kotlin
+NewRelic.enableFeature(FeatureFlag.CrashReporting)
+NewRelic.disableFeature(FeatureFlag.CrashReporting)
+```
 
-          <td>
+            </td>
+          </tr>
+
+          <tr>
+            <td>
+              Enables or disables just-in-time crash reporting. When set to `true`, the agent tries to upload the crash report before the app process terminates. When `false`, crashes are recorded when they occur and uploaded on the next app launch ([deferred crash reporting](/docs/mobile-monitoring/new-relic-mobile-android/install-configure/android-agent-crash-reporting/#deferred-crash-reporting)).
+
+              Default value is `false` (deferred crash reporting).
+            </td>
+
+            <td>
+
 ```java
+NewRelic.withApplicationToken("<TOKEN>")
+        .withCrashReportingEnabled(true)
+        .start(this.getApplication());
+```
+
+```kotlin
+NewRelic.withApplicationToken("<TOKEN>")
+    .withCrashReportingEnabled(true)
+    .start(this.application)
+```
+
+            </td>
+          </tr>
+
+          <tr>
+            <td>
+              Enable or disable recording handled exceptions events, which appear on the [Handled exception page](/docs/mobile-monitoring/mobile-monitoring-ui/crashes/handled-exceptions-analyze-trends-prevent-crashes). `recordHandledException` is also active when `NativeReporting` is enabled.
+
+              Default value is `true`.
+            </td>
+
+            <td>
+
+```java
+NewRelic.enableFeature(FeatureFlag.HandledExceptions);
+NewRelic.disableFeature(FeatureFlag.HandledExceptions);
+```
+
+```kotlin
 NewRelic.enableFeature(FeatureFlag.HandledExceptions)
 NewRelic.disableFeature(FeatureFlag.HandledExceptions)
 ```
-          </td>
-        </tr>
 
-        <tr>
-          <td>
-            Enable or disable recording of native runtime crashes, exceptions and Application Not Responding (ANR) conditions, which appear on the [Crash Analysis page](/docs/mobile-monitoring/mobile-monitoring-ui/crashes). Default value is `true`.
-          </td>
+            </td>
+          </tr>
 
-          <td>
+          <tr>
+            <td>
+              Enable or disable recording of native runtime crashes, exceptions and Application Not Responding (ANR) conditions, which appear on the [Crash Analysis page](/docs/mobile-monitoring/mobile-monitoring-ui/crashes). Requires the `agent-ndk` dependency. See [Android native crash reporting](/docs/mobile-monitoring/new-relic-mobile-android/install-configure/android-agent-native-crash-reporting).
+
+              Default value is `false`.
+            </td>
+
+            <td>
+
 ```java
+NewRelic.enableFeature(FeatureFlag.NativeReporting);
+NewRelic.disableFeature(FeatureFlag.NativeReporting);
+```
+
+```kotlin
 NewRelic.enableFeature(FeatureFlag.NativeReporting)
 NewRelic.disableFeature(FeatureFlag.NativeReporting)
 ```
-          </td>
-        </tr>
+
+            </td>
+          </tr>
+
+          <tr>
+            <td>
+              Enable or disable reporting of JavaScript error data (`MobileJSError` events). When disabled, the agent drops JavaScript error data.
+
+              Requires Android agent v7.8.0 or higher.
+
+              Default value is `true`.
+            </td>
+
+            <td>
+
+```java
+NewRelic.enableFeature(FeatureFlag.JSError);
+NewRelic.disableFeature(FeatureFlag.JSError);
+```
+
+```kotlin
+NewRelic.enableFeature(FeatureFlag.JSError)
+NewRelic.disableFeature(FeatureFlag.JSError)
+```
+
+            </td>
+          </tr>
+
+          <tr>
+            <td>
+              Enable or disable collection of Android application exit information (`ApplicationExitInfo`), which the agent reports as `MobileApplicationExit` events. Application exit reporting must also be enabled in your remote configuration.
+
+              Requires Android agent v7.4.0 or higher. Applies to devices running Android 11 (API level 30) and higher.
+
+              Default value is `true`.
+            </td>
+
+            <td>
+
+```java
+NewRelic.enableFeature(FeatureFlag.ApplicationExitReporting);
+NewRelic.disableFeature(FeatureFlag.ApplicationExitReporting);
+```
+
+```kotlin
+NewRelic.enableFeature(FeatureFlag.ApplicationExitReporting)
+NewRelic.disableFeature(FeatureFlag.ApplicationExitReporting)
+```
+
+            </td>
+          </tr>
+        </tbody>
       </table>
 
       ## Distributed tracing [#dt]
@@ -362,25 +527,34 @@ NewRelic.disableFeature(FeatureFlag.NativeReporting)
           </tr>
         </thead>
 
-        <tr>
-          <td>
-            Enable or disable the adding of distributed tracing headers to network requests.
+        <tbody>
+          <tr>
+            <td>
+              Enable or disable the adding of distributed tracing headers to network requests.
 
-            Default value is `true`.
+              Default value is `true`.
 
-            Refer to [How New Relic distributed tracing works](/docs/distributed-tracing/concepts/how-new-relic-distributed-tracing-works#browser-spans) for more information on distributed tracing in mobile apps.
-          </td>
+              Refer to [How New Relic distributed tracing works](/docs/distributed-tracing/concepts/how-new-relic-distributed-tracing-works#browser-spans) for more information on distributed tracing in mobile apps.
+            </td>
 
-          <td>
+            <td>
+
 ```java
+NewRelic.enableFeature(FeatureFlag.DistributedTracing);
+NewRelic.disableFeature(FeatureFlag.DistributedTracing);
+```
+
+```kotlin
 NewRelic.enableFeature(FeatureFlag.DistributedTracing)
 NewRelic.disableFeature(FeatureFlag.DistributedTracing)
 ```
-          </td>
-        </tr>
+
+            </td>
+          </tr>
+        </tbody>
       </table>
 
-## Event persistence [#android-event-persistence]
+      ## Event persistence [#android-event-persistence]
 
       <table>
         <thead>
@@ -399,15 +573,24 @@ NewRelic.disableFeature(FeatureFlag.DistributedTracing)
           <tr>
             <td>
               Enable or disable event persistence, which lets the agent capture events during force-close and process-exit scenarios.
+
+              Requires Android agent v7.6.0 or higher.
+
+              Event persistence is enabled by default. To disable it, add the following feature flag:
             </td>
 
             <td>
-              Event persistence is enabled by default. To disable it, add the following feature flag:
 
 ```java
+NewRelic.disableFeature(FeatureFlag.EventPersistence);
+NewRelic.enableFeature(FeatureFlag.EventPersistence);
+```
+
+```kotlin
 NewRelic.disableFeature(FeatureFlag.EventPersistence)
 NewRelic.enableFeature(FeatureFlag.EventPersistence)
 ```
+
             </td>
           </tr>
         </tbody>
@@ -428,20 +611,31 @@ NewRelic.enableFeature(FeatureFlag.EventPersistence)
           </tr>
         </thead>
 
-        <tr>
-          <td>
-            Enable or disable reporting data using different endpoints for US government clients.
+        <tbody>
+          <tr>
+            <td>
+              Enable or disable reporting data using different endpoints for US government clients.
 
-            Default value is `true` (as of agent version 6.11.0).
-          </td>
+              Default value is `false`.
 
-          <td>
+              Enable this feature flag before you call `NewRelic.withApplicationToken()`. The agent chooses the default collector and crash hosts when it receives the application token.
+            </td>
+
+            <td>
+
 ```java
-NewRelic.enableFeature(FeatureFlag.FedRampEnabled)
-NewRelic.disableFeature(FeatureFlag.FedRampEnabled)
+NewRelic.enableFeature(FeatureFlag.FedRampEnabled);
+NewRelic.withApplicationToken("<TOKEN>").start(this.getApplication());
 ```
-          </td>
-        </tr>
+
+```kotlin
+NewRelic.enableFeature(FeatureFlag.FedRampEnabled)
+NewRelic.withApplicationToken("<TOKEN>").start(this.application)
+```
+
+            </td>
+          </tr>
+        </tbody>
       </table>
 
       ## Interaction settings [#interaction-settings]
@@ -459,35 +653,93 @@ NewRelic.disableFeature(FeatureFlag.FedRampEnabled)
           </tr>
         </thead>
 
-        <tr>
-          <td>
-            Enable or disable interaction tracing. Trace instrumentation still occurs, but no traces are harvested. This will disable default and custom interactions.
+        <tbody>
+          <tr>
+            <td>
+              Enable or disable interaction tracing. Trace instrumentation still occurs, but no traces are harvested. This will disable default and custom interactions.
 
-            Default value is `true`.
-          </td>
+              Default value is `true`.
+            </td>
 
-          <td>
+            <td>
+
 ```java
+NewRelic.enableFeature(FeatureFlag.InteractionTracing);
+NewRelic.disableFeature(FeatureFlag.InteractionTracing);
+```
+
+```kotlin
 NewRelic.enableFeature(FeatureFlag.InteractionTracing)
 NewRelic.disableFeature(FeatureFlag.InteractionTracing)
 ```
-          </td>
-        </tr>
 
-        <tr>
-          <td>
-            Enable or disable default interactions. Trace instrumentation still occurs, but no traces are harvested. This will enable or disable default interactions only while custom interactions remain enabled.
+            </td>
+          </tr>
 
-            Default value is `true`.
-          </td>
+          <tr>
+            <td>
+              Enable or disable default interactions. Trace instrumentation still occurs, but no traces are harvested. This will enable or disable default interactions only while custom interactions remain enabled.
 
-          <td>
+              Default value is `true`.
+            </td>
+
+            <td>
+
 ```java
+NewRelic.enableFeature(FeatureFlag.DefaultInteractions);
+NewRelic.disableFeature(FeatureFlag.DefaultInteractions);
+```
+
+```kotlin
 NewRelic.enableFeature(FeatureFlag.DefaultInteractions)
 NewRelic.disableFeature(FeatureFlag.DefaultInteractions)
 ```
-          </td>
-        </tr>
+
+            </td>
+          </tr>
+        </tbody>
+      </table>
+
+      ## Jetpack Compose settings [#android-jetpack]
+
+      <table>
+        <thead>
+          <tr>
+            <th style={{ width: "800px" }}>
+              Description
+            </th>
+
+            <th>
+              Example
+            </th>
+          </tr>
+        </thead>
+
+        <tbody>
+          <tr>
+            <td>
+              Enable or disable instrumentation of Jetpack Compose navigation. When enabled, the agent records Compose navigation events as `MobileBreadcrumb` events.
+
+              Requires Android agent v7.2.0 or higher.
+
+              Default value is `false`.
+            </td>
+
+            <td>
+
+```java
+NewRelic.enableFeature(FeatureFlag.Jetpack);
+NewRelic.disableFeature(FeatureFlag.Jetpack);
+```
+
+```kotlin
+NewRelic.enableFeature(FeatureFlag.Jetpack)
+NewRelic.disableFeature(FeatureFlag.Jetpack)
+```
+
+            </td>
+          </tr>
+        </tbody>
       </table>
 
       ## Logging settings [#logging]
@@ -505,40 +757,88 @@ NewRelic.disableFeature(FeatureFlag.DefaultInteractions)
           </tr>
         </thead>
 
-        <tr>
-          <td>
-            Enable or disable agent logging.
+        <tbody>
+          <tr>
+            <td>
+              Enable or disable agent logging. This setting controls the agent's own log output, not the remote [logs in context](/docs/mobile-monitoring/mobile-monitoring-ui/mobile-logs) feature.
 
-            Default value is `true`.
-          </td>
+              Default value is `true`.
+            </td>
 
-          <td>
+            <td>
+
 ```java
-withLoggingEnabled(false)
+NewRelic.withApplicationToken("<TOKEN>")
+        .withLoggingEnabled(false)
+        .start(this.getApplication());
 ```
-          </td>
-        </tr>
 
-        <tr>
-          <td>
-            Specifies the log level. Options include:
+```kotlin
+NewRelic.withApplicationToken("<TOKEN>")
+    .withLoggingEnabled(false)
+    .start(this.application)
+```
 
-            * `ERROR` (least verbose)
-            * `WARN`
-            * `INFO`
-            * `VERBOSE`
-            * `DEBUG`
-            * `AUDIT` (most verbose)
+            </td>
+          </tr>
 
-              Default value is `INFO`.
-          </td>
+          <tr>
+            <td>
+              Specifies the agent log level. Pass one of the `AgentLog` integer constants (`com.newrelic.agent.android.logging.AgentLog`). Options include:
 
-          <td>
+              * `AgentLog.ERROR` (least verbose)
+              * `AgentLog.WARN`
+              * `AgentLog.INFO`
+              * `AgentLog.VERBOSE`
+              * `AgentLog.DEBUG`
+              * `AgentLog.AUDIT` (most verbose)
+
+              Default value is `AgentLog.INFO`.
+
+              These constants apply to the agent's own log output only. The remote logging API uses a different `LogLevel` enum.
+            </td>
+
+            <td>
+
 ```java
-withLogLevel(AgentLog.ERROR)
+NewRelic.withApplicationToken("<TOKEN>")
+        .withLogLevel(AgentLog.ERROR)
+        .start(this.getApplication());
 ```
-          </td>
-        </tr>
+
+```kotlin
+NewRelic.withApplicationToken("<TOKEN>")
+    .withLogLevel(AgentLog.ERROR)
+    .start(this.application)
+```
+
+            </td>
+          </tr>
+
+          <tr>
+            <td>
+              Enable or disable the client-side switch for remote log reporting. Logs are reported only when this flag is enabled, the logs setting is also enabled for your app in the New Relic UI, and the configured log level isn't `NONE`. See [Mobile logs](/docs/mobile-monitoring/mobile-monitoring-ui/mobile-logs).
+
+              Requires Android agent v7.4.0 or higher.
+
+              Default value is `true`.
+            </td>
+
+            <td>
+
+```java
+NewRelic.enableFeature(FeatureFlag.LogReporting);
+NewRelic.disableFeature(FeatureFlag.LogReporting);
+```
+
+```kotlin
+NewRelic.enableFeature(FeatureFlag.LogReporting)
+NewRelic.disableFeature(FeatureFlag.LogReporting)
+```
+
+            </td>
+          </tr>
+        </tbody>
       </table>
 
       ## Networking settings [#networking]
@@ -556,50 +856,73 @@ withLogLevel(AgentLog.ERROR)
           </tr>
         </thead>
 
-        <tr>
-          <td>
-            Enable or disable reporting successful HTTP requests to the [MobileRequest](/docs/insights/nrql-new-relic-query-language/nrql-query-examples/insights-query-examples-new-relic-mobile#mobilerequest-examples) event type.
+        <tbody>
+          <tr>
+            <td>
+              Enable or disable reporting successful HTTP requests to the [MobileRequest](/docs/insights/nrql-new-relic-query-language/nrql-query-examples/insights-query-examples-new-relic-mobile#mobilerequest-examples) event type.
 
-            Default value is `true` (as of agent version 5.15.2).
-          </td>
+              Default value is `true`.
+            </td>
 
-          <td>
+            <td>
+
 ```java
+NewRelic.enableFeature(FeatureFlag.NetworkRequests);
+NewRelic.disableFeature(FeatureFlag.NetworkRequests);
+```
+
+```kotlin
 NewRelic.enableFeature(FeatureFlag.NetworkRequests)
 NewRelic.disableFeature(FeatureFlag.NetworkRequests)
 ```
-          </td>
-        </tr>
 
-        <tr>
-          <td>
-            Enable or disable reporting network and HTTP request errors to the [MobileRequestError](/docs/insights/nrql-new-relic-query-language/nrql-query-examples/insights-query-examples-new-relic-mobile#mobilerequesterror-examples) event type. Available for Android agent version 5.11.0 or higher.
+            </td>
+          </tr>
 
-            Default value is `true`.
-          </td>
+          <tr>
+            <td>
+              Enable or disable reporting network and HTTP request errors to the [MobileRequestError](/docs/insights/nrql-new-relic-query-language/nrql-query-examples/insights-query-examples-new-relic-mobile#mobilerequesterror-examples) event type.
 
-          <td>
+              Default value is `true`.
+            </td>
+
+            <td>
+
 ```java
+NewRelic.enableFeature(FeatureFlag.NetworkErrorRequests);
+NewRelic.disableFeature(FeatureFlag.NetworkErrorRequests);
+```
+
+```kotlin
 NewRelic.enableFeature(FeatureFlag.NetworkErrorRequests)
 NewRelic.disableFeature(FeatureFlag.NetworkErrorRequests)
 ```
-          </td>
-        </tr>
 
-        <tr>
-          <td>
-            Enable or disable capture of HTTP response bodies for HTTP error traces, and [MobileRequestError](/docs/insights/nrql-new-relic-query-language/nrql-query-examples/insights-query-examples-new-relic-mobile#mobilerequesterror-examples) events.
+            </td>
+          </tr>
 
-            Default value is `true`.
-          </td>
+          <tr>
+            <td>
+              Enable or disable capture of HTTP response bodies for HTTP error traces, and [MobileRequestError](/docs/insights/nrql-new-relic-query-language/nrql-query-examples/insights-query-examples-new-relic-mobile#mobilerequesterror-examples) events.
 
-          <td>
+              Default value is `true`.
+            </td>
+
+            <td>
+
 ```java
-NewRelic.enableFeature(FeatureFlag.HttpResponseBodyCaptureEnabled)
-NewRelic.disableFeature(FeatureFlag.HttpResponseBodyCaptureEnabled)
+NewRelic.enableFeature(FeatureFlag.HttpResponseBodyCapture);
+NewRelic.disableFeature(FeatureFlag.HttpResponseBodyCapture);
 ```
-          </td>
-        </tr>
+
+```kotlin
+NewRelic.enableFeature(FeatureFlag.HttpResponseBodyCapture)
+NewRelic.disableFeature(FeatureFlag.HttpResponseBodyCapture)
+```
+
+            </td>
+          </tr>
+        </tbody>
       </table>
 
       ## Offline storage [#android-offline-storage]
@@ -622,21 +945,29 @@ NewRelic.disableFeature(FeatureFlag.HttpResponseBodyCaptureEnabled)
             <td>
               Enable or disable offline data storage when no internet connection is available.
 
+              Requires Android agent v7.3.0 or higher.
+
               To configure the amount of offline storage, see [Set max offline storage size](/docs/mobile-monitoring/new-relic-mobile/mobile-sdk/set-max-offline-storage).
+
+              Offline storage is disabled by default. To enable it, add the following feature flag:
             </td>
 
             <td>
-              Offline storage is disabled by default. To enable it, add the following feature flag:
 
 ```java
+NewRelic.enableFeature(FeatureFlag.OfflineStorage);
+NewRelic.disableFeature(FeatureFlag.OfflineStorage);
+```
+
+```kotlin
 NewRelic.enableFeature(FeatureFlag.OfflineStorage)
 NewRelic.disableFeature(FeatureFlag.OfflineStorage)
 ```
+
             </td>
           </tr>
         </tbody>
       </table>
-
     </TabsPageItem>
 
     <TabsPageItem id="ios">

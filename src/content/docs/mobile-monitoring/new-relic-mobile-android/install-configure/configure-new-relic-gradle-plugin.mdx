@@ -29,6 +29,26 @@ The New Relic Gradle plugin extension allows you to configure the behavior of pl
   <tbody>
     <tr>
       <td>
+        `enabled`
+      </td>
+
+      <td>
+        Master switch for the plugin. Set to `false` to disable the plugin. Default: `true`.
+      </td>
+    </tr>
+
+    <tr>
+      <td>
+        `instrumentTests`
+      </td>
+
+      <td>
+        Controls whether test variants, such as unit test and Android test variants, are instrumented. Default: `false`.
+      </td>
+    </tr>
+
+    <tr>
+      <td>
         `variantMapsEnabled`
       </td>
 
@@ -43,7 +63,7 @@ The New Relic Gradle plugin extension allows you to configure the behavior of pl
       </td>
 
       <td>
-        Specify which variant build types should report ProGuard maps to New Relic. For React Native apps, this also controls which variant build types automatically upload the JavaScript source map. Default: `Release`
+        Specify which variant build types should report ProGuard maps to New Relic. For React Native apps, this also controls which variant build types automatically upload the JavaScript source map (see `reactNativeSourceMapUploadEnabled`). Default: `Release`
       </td>
     </tr>
 
@@ -89,7 +109,7 @@ The New Relic Gradle plugin extension allows you to configure the behavior of pl
       </td>
 
       <td>
-          Set to `false` to create `DefaultInteractions` for Activities and Fragments.
+          Set to `false` to disable default interactions for Activities and Fragments.
           * Default: `true`
 
           Supported when used with Gradle 7.4 and higher.
@@ -106,6 +126,33 @@ The New Relic Gradle plugin extension allows you to configure the behavior of pl
           * Default: `true`
 
           Supported when used with android agent v7.6.15 and later.
+      </td>
+    </tr>
+
+    <tr>
+      <td>
+        `reactNativeSourceMapUploadEnabled`
+      </td>
+
+      <td>
+          Set to `false` to disable automatic upload of React Native JavaScript source maps during the build.
+          * Default: `true`
+
+          Supported when used with android agent v7.8.0 and later.
+      </td>
+    </tr>
+
+    <tr>
+      <td>
+        `variantConfigurations`
+      </td>
+
+      <td>
+          Configure individual variants by name. The variant name can be the full name of the variant, its build type, or its product flavor. For each variant, you can set:
+
+          * `instrument`: Set to `false` to exclude the variant from instrumentation. Default: `true`
+          * `uploadMappingFile`: Set to `true` to upload the variant's obfuscation map. Default: `false`
+          * `mappingFile`: Path to the map file, as an absolute path or a path relative to the app project directory. Use this only when the map file is outside the standard Android Gradle plugin location, such as with DexGuard. The tokens `<name>` and `<dirName>` are replaced with the variant name and the variant directory name.
       </td>
     </tr>
 
@@ -143,12 +190,28 @@ Here are some simple examples showing how to apply plugin configuration options 
 
         // Enable webview instrumentation
         webviewInstrumentationEnabled true
+
+        // Upload React Native source maps (default: true)
+        reactNativeSourceMapUploadEnabled true
+    }
+    ```
+
+    The same options in the Kotlin DSL (`build.gradle.kts`):
+
+    ```kotlin
+    newrelic {
+        variantMapsEnabled.set(true)
+        uploadMapsForVariant("Release")
+        logInstrumentationEnabled.set(true)
+        defaultInteractionsEnabled.set(true)
+        webviewInstrumentationEnabled.set(true)
+        reactNativeSourceMapUploadEnabled.set(true)
     }
     ```
   </Collapser>
 
   <Collapser
-    id="app-level"
+    id="map-uploads-multiple"
     title="Enable map uploads for multiple variants"
   >
     Multiple build types can be specified, separated by commas. For React Native apps, adding `Debug` here also enables automatic upload of the JavaScript source map for debug builds:
@@ -162,7 +225,7 @@ Here are some simple examples showing how to apply plugin configuration options 
   </Collapser>
 
   <Collapser
-    id="app-level"
+    id="map-uploads-disable"
     title="Disable map uploads"
   >
     To disable map uploads entirely, use an empty string:
@@ -176,7 +239,7 @@ Here are some simple examples showing how to apply plugin configuration options 
   </Collapser>
 
   <Collapser
-    id="app-level"
+    id="exclude-variants"
     title="Disable instrumentation of debug variants"
   >
     Multiple build types can be specified, separated by commas:
@@ -190,7 +253,7 @@ Here are some simple examples showing how to apply plugin configuration options 
   </Collapser>
 
   <Collapser
-    id="app-level"
+    id="exclude-classes"
     title="Disable instrumentation of specific classes"
   >
     You can specificy multiple package patterns, separated by commas, with support for Regexp patterns:
@@ -204,7 +267,7 @@ Here are some simple examples showing how to apply plugin configuration options 
   </Collapser>
 
   <Collapser
-    id="app-level"
+    id="disable-log-instrumentation"
     title="Disable log instrumentation"
   >
     To disable log instrumentation:
@@ -218,7 +281,7 @@ Here are some simple examples showing how to apply plugin configuration options 
   </Collapser>
 
     <Collapser
-    id="app-level"
+    id="disable-default-interactions"
     title="Disable Default Interactions"
   >
     To disable default Interactions for Activities and Fragments:
@@ -232,7 +295,7 @@ Here are some simple examples showing how to apply plugin configuration options 
   </Collapser>
 
   <Collapser
-    id="app-level"
+    id="disable-webview"
     title="Disable Webview Instrumentation"
   >
     To disable webview instrumentation
@@ -241,6 +304,43 @@ Here are some simple examples showing how to apply plugin configuration options 
     newrelic {
          // disable default webview instrumentation
         webviewInstrumentationEnabled false
+    }
+    ```
+  </Collapser>
+
+  <Collapser
+    id="disable-react-native-source-maps"
+    title="Disable React Native source map upload"
+  >
+    To disable automatic upload of React Native JavaScript source maps:
+
+    ```gradle
+    newrelic {
+        // disable React Native source map upload
+        reactNativeSourceMapUploadEnabled false
+    }
+    ```
+  </Collapser>
+
+  <Collapser
+    id="variant-configurations"
+    title="Configure individual variants"
+  >
+    To control instrumentation and map uploads for specific variants:
+
+    ```gradle
+    newrelic {
+        variantConfigurations {
+            debug {
+                // don't instrument the debug variant
+                instrument = false
+            }
+            release {
+                uploadMappingFile = true
+                // only needed if the map file is in a non-standard location
+                mappingFile = 'build/outputs/mapping/release/mapping.txt'
+            }
+        }
     }
     ```
   </Collapser>
