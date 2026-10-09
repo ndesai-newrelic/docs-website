@@ -25,8 +25,14 @@ Before you install the Cordova agent, ensure your app meets these requirements:
 * Cordova 7.x or higher
 * Node.js 6.0 or higher
 * Cordova CLI tools
+* For Android apps: Android API 24 or higher
+* For iOS apps: iOS 15 or higher (Cordova agent 7.1.0 and higher), with an iOS deployment target of 15.0. See [Set the iOS deployment target](#ios-deployment-target).
 * An [Android](https://cordova.apache.org/docs/en/latest/guide/platforms/android) or [iOS](https://cordova.apache.org/docs/en/latest/guide/platforms/ios/index.html) Cordova platform for your project
 * Mobile [application tokens](/docs/mobile-monitoring/new-relic-mobile/maintenance/viewing-your-application-token)
+
+### Native agent versions [#native-versions]
+
+The Cordova agent wraps the New Relic native mobile agents. Cordova agent 7.1.12 includes Android agent 7.8.3 and iOS agent 7.7.7. Each Cordova agent release updates the native agent versions it includes, so updating the Cordova agent also updates the native agents. For details on each release, see the [Cordova agent release notes](/docs/release-notes/mobile-release-notes/cordova-release-notes/).
 
 ## (Recommended) Guided installation [#guided-install]
 
@@ -53,6 +59,8 @@ If you need to install the agent manually, follow these steps:
     # Install from github repository
     cordova plugin add https://github.com/newrelic/newrelic-cordova-plugin.git --variable IOS_APP_TOKEN="YOUR_IOS_APP_TOKEN" --variable ANDROID_APP_TOKEN="YOUR_ANDROID_APP_TOKEN"
     ```
+
+    When you add the plugin to an Android platform, the install step also adds the New Relic Android agent and the New Relic Android Gradle plugin to your app's `platforms/android/app/build.gradle` file, and writes your Android application token to a `newrelic.properties` file in your project directory. You don't need to configure Gradle yourself. On iOS, the plugin installs the New Relic iOS agent with Swift Package Manager (cordova-ios 8 and higher) or CocoaPods (earlier versions).
   </Step>
 
   <Step>
@@ -207,6 +215,7 @@ The following customizations are available for the Cordova agent.
         * [Remove all attributes](/docs/mobile-monitoring/new-relic-mobile/mobile-sdk/remove-all-attributes)
         * [Record custom events](/docs/mobile-monitoring/new-relic-mobile/mobile-sdk/record-custom-events)
         * [Set the maximum size of an event pool](/docs/mobile-monitoring/new-relic-mobile/mobile-sdk/set-max-event-pool-size)
+        * [Set the maximum offline storage size](/docs/mobile-monitoring/new-relic-mobile/mobile-sdk/set-max-offline-storage)
         * [Set maximum time the agent stores events in memory](/docs/mobile-monitoring/new-relic-mobile/mobile-sdk/set-max-event-buffer-time)
         * [Get a current session's ID](/docs/mobile-monitoring/new-relic-mobile/mobile-sdk/current-session-id)
         * [Set a custom user ID to associate with events and attributes](/docs/mobile-monitoring/new-relic-mobile/mobile-sdk/set-custom-user-id)
@@ -224,6 +233,26 @@ The following customizations are available for the Cordova agent.
         [Track HTTP requests](/docs/mobile-monitoring/new-relic-mobile/mobile-sdk/network-request-success)
 
         [Track failing HTTP requests](/docs/mobile-monitoring/new-relic-mobile/mobile-sdk/network-request-failures)
+      </td>
+    </tr>
+
+    <tr>
+      <td>
+        Send logs to New Relic.
+      </td>
+
+      <td>
+        [Mobile logs](/docs/mobile-monitoring/mobile-monitoring-ui/mobile-logs)
+      </td>
+    </tr>
+
+    <tr>
+      <td>
+        Record HTTP header fields with network request events.
+      </td>
+
+      <td>
+        [Add tracked headers](/docs/mobile-monitoring/new-relic-mobile/mobile-sdk/add-tracked-headers)
       </td>
     </tr>
 
@@ -266,3 +295,5 @@ To update your Cordova agent version, run this simple command:
 ```shell
 cordova plugin update
 ```
+
+Updating the Cordova agent also updates the Android and iOS agent versions it includes. See [Native agent versions](#native-versions).
