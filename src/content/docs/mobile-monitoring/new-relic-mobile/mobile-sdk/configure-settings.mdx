@@ -2278,7 +2278,9 @@ const agentConfiguration = {
   crashCollectorAddress: '',
   fedRampEnabled: false,
   offlineStorageEnabled: true,
-  backgroundReportingEnabled: false
+  backgroundReportingEnabled: false,
+  distributedTracingEnabled: true,
+  newEventSystemEnabled: false // iOS only
 };
 
 NewRelic.startAgent(appToken, agentConfiguration);
@@ -2464,18 +2466,6 @@ crashCollectorAddress: "crash-upload-delegate.domain.com"
 
           <tr>
             <td>
-              Enable or disable sending JavaScript console logs to New Relic.
-            </td>
-
-            <td>
-```javascript
-sendConsoleEvents: true
-```
-            </td>
-          </tr>
-
-          <tr>
-            <td>
               Enable or disable reporting data using different endpoints for US government clients. Default value is `false`.
             </td>
 
@@ -2519,6 +2509,32 @@ backgroundReportingEnabled: true
               * In the **Background Modes** section of Xcode project capabilities, enable **Background Fetch** and **Background Processing**.
 
               Note: iOS only guarantees that iOS will harvest in the background once per twenty-four hour period.
+            </td>
+          </tr>
+
+          <tr>
+            <td>
+              Enable or disable the adding of distributed tracing headers to network requests. Default value is `true`. Available for React Native agent version 1.4.3 or higher.
+
+              For more information on distributed tracing in mobile apps, see [browser and mobile trace reporting](/docs/distributed-tracing/concepts/how-new-relic-distributed-tracing-works#browser-spans).
+            </td>
+
+            <td>
+```javascript
+distributedTracingEnabled: true
+```
+            </td>
+          </tr>
+
+          <tr>
+            <td>
+              (iOS only) Enable or disable the new, more stable event system in the iOS agent. Default value is `false`. The Android agent ignores this setting. Available for React Native agent version 1.3.8 or higher.
+            </td>
+
+            <td>
+```javascript
+newEventSystemEnabled: true
+```
             </td>
           </tr>
         </tbody>

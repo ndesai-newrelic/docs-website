@@ -88,6 +88,13 @@ If you need to install the agent manually, follow these steps:
       // Optional:Enable or disable crash reporting.
       crashReportingEnabled: true,
 
+      // Android Specific
+      // Optional:Enable or disable native crash reporting. Default is false.
+      nativeCrashReportingEnabled: false,
+
+      // Optional:Enable or disable automatic reporting of JavaScript errors as MobileJSError events. Default is true.
+      jsErrorReportingEnabled: true,
+
       // Optional:Enable or disable interaction tracing. Default is false. When disabled, trace instrumentation still occurs, but no traces are harvested.
       // This will disable default and custom interactions.
       interactionTracingEnabled: false,
@@ -131,6 +138,9 @@ If you need to install the agent manually, follow these steps:
       // iOS Specific
       // Optional: Enable or disable to use our new, more stable event system for iOS agent.
       newEventSystemEnabled: false,
+
+      // Optional: Enable or disable the adding of distributed tracing headers to network requests. Default is true.
+      distributedTracingEnabled: true,
     };
 
     NewRelic.startAgent(appToken, agentConfiguration);
