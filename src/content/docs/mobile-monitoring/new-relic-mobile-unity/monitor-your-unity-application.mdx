@@ -211,6 +211,38 @@ If you need to install the agent manually, follow these steps:
   </Step>
 </Steps>
 
+## Call the agent API from your code [#call-api]
+
+The Unity agent starts automatically from the `NewRelicAgent` component. Your own scripts call the agent through the static methods on `NewRelic.NewRelicAgent`. For example:
+
+```csharp
+using System.Collections.Generic;
+using NewRelic;
+using UnityEngine;
+
+public class GameEvents : MonoBehaviour
+{
+    void Start()
+    {
+        NewRelicAgent.SetUserId("User123");
+        NewRelicAgent.SetAttribute("playerLevel", 12);
+    }
+
+    public void OnLevelFinished(string levelName, int score)
+    {
+        NewRelicAgent.RecordCustomEvent("LevelFinished", new Dictionary<string, object>
+        {
+            { "levelName", levelName },
+            { "score", score }
+        });
+    }
+}
+```
+
+<Callout variant="important">
+  The agent runs only in Android and iOS builds. When you run your game in the Unity Editor or on any other platform, the agent is disabled and calls to the `NewRelicAgent` API have no effect. To test, build and run your game on a device or emulator.
+</Callout>
+
 ## Customize the agent instrumentation [#mobile-sdk]
 
 Need to customize your agent instrumentation? Our public mobile SDK API methods let you collect custom data, configure default settings, and more.

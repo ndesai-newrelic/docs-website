@@ -564,7 +564,7 @@ NewRelicAgent.StopCurrentInteraction(string interactionIdentifier) : void;
 
       ## Description [#description]
 
-      This uses the string ID for the interaction you want to end. This string is returned when you use [`StartInteractionWithName()`](/docs/mobile-monitoring/new-relic-mobile/mobile-sdk/start-interaction).
+      Ends an interaction. This uses the string ID for the interaction you want to end. This string is returned when you use [`StartInteractionWithName()`](/docs/mobile-monitoring/new-relic-mobile/mobile-sdk/start-interaction).
 
       ## Parameters [#parameters]
 
@@ -606,14 +606,11 @@ NewRelicAgent.StopCurrentInteraction(string interactionIdentifier) : void;
       ## Example [#example]
 
 ```csharp
-string interActionId = NewRelicAgent.StartInteractionWithName("Unity InterAction Example");
+// Keep the ID that StartInteractionWithName returns
+string interactionId = NewRelicAgent.StartInteractionWithName("Load level");
 
-for(int i =0; i < 4;i++)
-{
-    Thread.Sleep(1000);
-}
-
-NewRelicAgent.StopCurrentInteraction(interActionId);
+// ... later, when the tracked activity is finished ...
+NewRelicAgent.StopCurrentInteraction(interactionId);
 ```
     </TabsPageItem>
 

@@ -719,10 +719,14 @@ NewRelicAgent.RecordBreadCrumb(string name, Dictionary<string, object> attribute
       ## Example [#example]
 
 ```csharp
-Dictionary<string, object> dic = new Dictionary<string, object>();
-dic.Add("Unity Attribute", "Data1");
+// Attribute values can be strings, numbers, or booleans
+Dictionary<string, object> attributes = new Dictionary<string, object>
+{
+    { "levelName", "Forest" },
+    { "attempt", 3 }
+};
 
-NewRelicAgent.RecordBreadCrumb("Unity BreadCrumb Example", dic);
+bool recorded = NewRelicAgent.RecordBreadCrumb("Level started", attributes);
 ```
     </TabsPageItem>
 

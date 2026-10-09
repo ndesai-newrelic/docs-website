@@ -543,6 +543,7 @@ NewRelicAgent.SetMaxEventPoolSize(uint size) : void;
       ## Example [#example]
 
 ```csharp
+// Allow up to 1500 events to be stored in memory per harvest cycle (the default is 1000)
 NewRelicAgent.SetMaxEventPoolSize(1500);
 ```
     </TabsPageItem>

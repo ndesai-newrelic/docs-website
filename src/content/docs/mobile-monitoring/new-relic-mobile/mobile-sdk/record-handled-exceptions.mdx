@@ -395,10 +395,13 @@ NewRelicAgent.RecordException(System.Exception exception) : void;
       ## Example [#unity-example]
 
 ```csharp
-try {
-  some_code_that_throws_error();
-} catch(Exception ex) {
-  NewRelicAgent.RecordException(ex);
+try
+{
+    LoadSaveGame();
+}
+catch (Exception ex)
+{
+    NewRelicAgent.RecordException(ex);
 }
 ```
     </TabsPageItem>

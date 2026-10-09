@@ -264,7 +264,12 @@ NewRelicAgent.CurrentSessionId() : string;
       ## Example [#example]
 
 ```csharp
-string sessionId =  NewRelicAgent.CurrentSessionId();
+string sessionId = NewRelicAgent.CurrentSessionId();
+
+if (sessionId != null)
+{
+    Debug.Log("New Relic session ID: " + sessionId);
+}
 ```
     </TabsPageItem>
 

@@ -598,7 +598,9 @@ NewRelicAgent.StartInteractionWithName(string name) : string;
 
       ## Description [#description]
 
-      Track a method as an interaction.
+      Track a method as an interaction. The interaction records all instrumented methods until you call `StopCurrentInteraction` with the returned ID, or until the interaction times out. The method returns the interaction ID as a `string`, or `null` if the agent has not started.
+
+      The Unity agent also starts an interaction automatically for each Unity scene, named after the scene, and starts a new one when the active scene changes. You only need to start interactions yourself to track activity within a scene, such as loading a level or opening a menu.
 
       ## Parameters [#parameters]
 
@@ -639,14 +641,22 @@ NewRelicAgent.StartInteractionWithName(string name) : string;
       ## Example [#example]
 
 ```csharp
-string interActionId = NewRelicAgent.StartInteractionWithName("Unity InterAction Example");
+using System.Collections;
+using NewRelic;
+using UnityEngine;
 
-for(int i = 0; i < 4; i++)
+public class LevelLoader : MonoBehaviour
 {
-    Thread.Sleep(1000);
-}
+    IEnumerator Start()
+    {
+        string interactionId = NewRelicAgent.StartInteractionWithName("Load level");
 
-NewRelicAgent.StopCurrentInteraction(interActionId);
+        // Do the work you want to track. Don't block the main thread.
+        yield return new WaitForSeconds(4f);
+
+        NewRelicAgent.StopCurrentInteraction(interactionId);
+    }
+}
 ```
     
 

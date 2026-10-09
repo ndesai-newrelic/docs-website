@@ -868,10 +868,15 @@ NewRelicAgent.RecordCustomEvent(string eventName, Dictionary<string, object> att
       ## Example [#example]
 
 ```csharp
-Dictionary<string, object> dic = new Dictionary<string, object>();
-dic.Add("Unity Custom Attribute", "Data2");
+// Attribute values can be strings, numbers, or booleans
+Dictionary<string, object> attributes = new Dictionary<string, object>
+{
+    { "levelName", "Forest" },
+    { "score", 1250 },
+    { "completed", true }
+};
 
-NewRelicAgent.RecordCustomEvent("Unity Custom Event Example", dic);
+bool recorded = NewRelicAgent.RecordCustomEvent("LevelFinished", attributes);
 ```
     </TabsPageItem>
 
